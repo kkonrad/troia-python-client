@@ -63,11 +63,14 @@ class TroiaClient(object):
         return self._do_raw_request(requests.get, "status/pingDB")
 
     def create(self, typee=None):
-        return self._do_raw_request(requests.post, "",
-                data='id=%s&type=%s' % (self.jid, typee))
+        arg = 'id=' + self.jid
+        if typee is not None:
+            arg += '&type=' + typee
+        return self._do_raw_request(requests.post, "jobs",
+                data=arg)
 
     def delete(self):
-        return self._do_raw_request(requests.delete, "",
+        return self._do_raw_request(requests.delete, "jobs",
                 data='id=%s' % (self.jid, ))
 
     def info(self):
