@@ -1,4 +1,5 @@
 import json
+import time
 
 import requests
 
@@ -76,7 +77,20 @@ class TroiaClient(object):
     def info(self):
         return self._do_request_get("")
 
-    def load_categories_def_prior(self, categories, prior=1.):
+    def get_status(self, stat_id):
+        return self._do_request_get("status/" + stat_id)
+
+    def await_completion(self, request_response, timeout=0.5):
+        if request_response['status'] == 'ERROR':
+            raise Exception(request_response['message'])
+        status_id = request_response['redirect']
+        resp = self.get_status(status_id)
+        while resp['status'] == 'NOT_READY':
+            time.sleep(timeout)
+            resp = self.get_status(status_id)
+        return resp
+
+    def post_categories_def_prior_cost(self, categories, prior=1.):
         ''' Loads to Troia server given categories.
         Generates default cost matrix
         for them (1. on error, 0. otherwise)
@@ -85,13 +99,13 @@ class TroiaClient(object):
         :param prior: default priority
         '''
         categories = [{
-                'name':c,
-                'prior':prior,
-                'misclassification_cost':generate_miss_costs(categories, c)
+                'name': c,
+                'prior': prior,
+                'misclassification_cost': generate_miss_costs(categories, c)
             } for c in categories]
         return self._do_request_post("categories", {'categories': categories})
 
-    def load_categories(self, categories):
+    def post_categories_def_prior(self, categories, prior=1.):
         ''' Load categories to Troia server with their cost matrices.
         Costs should be iterable with iterables in form:
 
@@ -105,9 +119,11 @@ class TroiaClient(object):
                 'name': category,
                 'prior': prior,
                 'misclassification_cost': mc
-            } for category, prior, mc in categories]
+            } for category, mc in categories]
         return self._do_request_post("categories", {'categories': categories})
 
+    def get_categories(self):
+        return self._do_request_get("categories")
 
 # **** PROGRESS BARRIER
     def load_costs(self, costs, idd=None):
