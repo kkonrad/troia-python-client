@@ -62,6 +62,14 @@ class TroiaClientTestBase(unittest.TestCase):
         self.tc = TroiaClient(ADRESS, self.JOB_ID)
         self.tc.delete()
 
+    def assert_fail_with_code(self, fun, expected_code):
+        try:
+            fun()
+            self.fail('Expected error with status_code ' + expected_code)
+        except Exception as ex:
+            self.assertEqual(expected_code, ex.args[0])
+            return ex.args[1]
+
 
 class TestJobManipulation(TroiaClientTestBase):
 
@@ -71,7 +79,7 @@ class TestJobManipulation(TroiaClientTestBase):
         super(TestJobManipulation, self).setUp()
 
     def test_creation(self):
-        w = self.tc.info()
+        w = self.assert_fail_with_code(self.tc.info, 400)
         self.assertEqual('ERROR', w['status'])
         w = self.tc.create()
         self.assertEqual('OK', w['status'])
@@ -79,7 +87,7 @@ class TestJobManipulation(TroiaClientTestBase):
         self.assertEqual('OK', w['status'])
 
     def test_deletion(self):
-        w = self.tc.info()
+        w = self.assert_fail_with_code(self.tc.info, 400)
         self.assertEqual('ERROR', w['status'])
         w = self.tc.create()
         self.assertEqual('OK', w['status'])
@@ -87,7 +95,7 @@ class TestJobManipulation(TroiaClientTestBase):
         self.assertEqual('OK', w['status'])
         w = self.tc.delete()
         self.assertEqual('OK', w['status'])
-        w = self.tc.info()
+        w = self.assert_fail_with_code(self.tc.info, 400)
         self.assertEqual('ERROR', w['status'])
 
 

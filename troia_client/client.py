@@ -36,7 +36,10 @@ class TroiaClient(object):
 
     def _do_raw_request(self, method, path, **kwargs):
         req = method(self.url + path, **kwargs)
-        return json.loads(req.content)
+        resp = json.loads(req.content)
+        if not 200 <= req.status_code < 300:
+            raise Exception(req.status_code, resp)
+        return resp
 
     def _do_request_get(self, path, args=None):
         args = self._jsonify(args)
