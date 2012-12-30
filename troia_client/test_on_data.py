@@ -74,7 +74,7 @@ def test_all(tc, gold_labels, cost_matrix, labels):
             tc.post_compute(50))
 
     print "DATA_PREDICTIONS:", tc.await_completion(
-            tc.get_predictions_for_objects())
+            tc.get_predictions_objects())
 
 if __name__ == "__main__":
     jid = ''

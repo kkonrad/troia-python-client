@@ -71,7 +71,7 @@ class TroiaClient(object):
         return resp
 
     def _do_request_get(self, path, args=None):
-        args = self._jsonify(args)
+        # args = self._jsonify(args)
         return self._do_raw_request(requests.get,
             "jobs/%s/%s" % (self.jid, path), params=args)
 
@@ -184,11 +184,17 @@ class TroiaClient(object):
     def get_assigned_labels(self):
         return self._do_request_get("assignedLabels")
 
-    def post_compute(self, iterations):
+    def post_compute(self, iterations=20):
         return self._do_request_post("compute", {'iterations': iterations})
 
-    def get_predictions_for_objects(self):
-        return self._do_request_get("prediction/data")
+    def get_predictions_objects(self, algorithm="DS",
+            labelChoosing="MaxLikelihood"):
+        return self._do_request_get("prediction/data", {
+            'algorithm': algorithm,
+            'labelChoosing': labelChoosing})
+
+    def get_predictions_workers(self):
+        return self._do_request_get("prediction/workers")
 
 # **** PROGRESS BARRIER
     def load_costs(self, costs, idd=None):
