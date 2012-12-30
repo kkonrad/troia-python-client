@@ -162,56 +162,6 @@ class TroiaClient(object):
         return self._do_request_post("loadCosts",
             {'id': idd, 'costs': costs})
 
-    def _create_assign_label(self, worker, objectn, category):
-        return {
-            'workerName': worker,
-            'objectName': objectn,
-            'categoryName': category
-        }
-
-    def load_worker_assigned_label(self, worker, objectn, category, idd=None):
-        ''' Adds information that given worker voted on given object with given label
-        :param worker: worker id
-        :param objectn: object id
-        :param category: assigned label
-        '''
-        data = self._create_assign_label(worker, objectn, category)
-        return self._do_request_post("loadWorkerAssignedLabel",
-            {'id': idd, 'label': data})
-
-    def load_worker_assigned_labels(self, data, idd=None):
-        ''' Adding many votes at once
-
-        :param data: iterable with tuples in form (worker_id, object_id, label)
-        :param idd: job ID
-        '''
-        data = [self._create_assign_label(w, o, c) for w, o, c in data]
-        return self._do_request_post("loadWorkerAssignedLabels",
-            {'id': idd, 'labels': data})
-
-    def _create_gold_label(self, objectn, category):
-        return {"objectName": objectn, "correctCategory": category}
-
-    def load_gold_label(self, objectn, category, idd=None):
-        ''' Adds gold sample into job
-
-        :param objectn: id of the gold object
-        :param category: true category for this object
-        :param idd: job ID
-        '''
-        data = self._create_gold_label(objectn, category)
-        return self._do_request_post("loadGoldLabel", {'id': idd, 'label': data})
-
-    def load_gold_labels(self, data, idd=None):
-        ''' Adding many gold samples at once
-
-        :param data: iterable of tuples in form (object_id, label)
-        :param idd: job ID
-        '''
-        data = [self._create_gold_label(on, c) for on, c in data]
-        return self._do_request_post("loadGoldLabels",
-            {'id': idd, 'labels': data})
-
     def majority_vote(self, objectName, idd=None):
         ''' Returns label? for given object using majority votes rule
 
