@@ -52,10 +52,13 @@ WORKERS_LABELS = [
 def test_all(tc, gold_labels, cost_matrix, labels):
 
     print "PING:", tc.ping()
-    print "DELETE:", tc.delete()
-    print "CREATE:", tc.create()
-    print "POST_CATEGORIES:", tc.await_completion(
-            tc.post_categories_def_prior(cost_matrix))
+    try:
+        tc.delete()
+    except:
+        pass
+    print "CREATE:", tc.create(cost_matrix)
+    # print "POST_CATEGORIES:", tc.await_completion(
+    #         tc.post_categories_def_prior(cost_matrix))
     print "GET_CATEGORIES:", tc.await_completion(
             tc.get_categories())
     print "POST_GOLDS:", tc.await_completion(

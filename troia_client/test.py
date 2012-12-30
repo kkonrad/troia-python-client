@@ -81,7 +81,7 @@ class TestJobManipulation(TroiaClientTestBase):
     def test_job_creation(self):
         w = self.assert_fail_with_code(self.tc.info, 400)
         self.assertEqual('ERROR', w['status'])
-        w = self.tc.create()
+        w = self.tc.create(COST_MATRIX)
         self.assertEqual('OK', w['status'])
         w = self.tc.info()
         self.assertEqual('OK', w['status'])
@@ -89,7 +89,7 @@ class TestJobManipulation(TroiaClientTestBase):
     def test_job_deletion(self):
         w = self.assert_fail_with_code(self.tc.info, 400)
         self.assertEqual('ERROR', w['status'])
-        w = self.tc.create()
+        w = self.tc.create(COST_MATRIX)
         self.assertEqual('OK', w['status'])
         w = self.tc.info()
         self.assertEqual('OK', w['status'])
@@ -121,7 +121,7 @@ class TestJobDataFilling(TroiaClientTestBase):
 
     def setUp(self):
         super(TestJobDataFilling, self).setUp()
-        w = self.tc.create()
+        w = self.tc.create(COST_MATRIX)
         self.assertEqual('OK', w['status'])
 
     def data_init_upload_test(self, after_upload, exp_str, get_fun):
@@ -133,16 +133,11 @@ class TestJobDataFilling(TroiaClientTestBase):
         self.assertEqual('OK', w['status'])
         return w
 
-    def test_categories_load(self):
-        w = self.data_init_upload_test(
-            self.tc.post_categories_def_prior(COST_MATRIX),
-            'Categories added', self.tc.get_categories)
+    def test_get_categories_load(self):
+        w = self.tc.await_completion(self.tc.get_categories())
         self.assertEqual(set(('porn', 'notporn')), set(w['result']))
 
     def test_golds_load(self):
-        w = self.tc.await_completion(
-                self.tc.post_categories_def_prior(COST_MATRIX))
-        self.assertEqual('OK', w['status'])
         w = self.data_init_upload_test(
             self.tc.post_gold_data(GOLD_SAMPLES),
             'Correct data added', self.tc.get_gold_data)

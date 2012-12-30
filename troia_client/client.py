@@ -10,6 +10,35 @@ def generate_miss_costs(labels, label):
     return d
 
 
+def prepare_categories_def_prior_cost(categories, prior=1.):
+    ''' Generates default cost matrix
+    for them (1. on error, 0. otherwise)
+
+    :param categories: list of categories ids
+    :param prior: default priority
+    '''
+    return [{
+            'name': c,
+            'prior': prior,
+            'misclassification_cost': generate_miss_costs(categories, c)
+        } for c in categories]
+
+
+def prepare_categories_def_prior(categories, prior=1.):
+    ''' Costs should be iterable with iterables in form:
+    ..
+
+        (name, prior, dict-misclassification_cost { class_ : cost })
+
+    Only default priority is used
+    '''
+    return [{
+            'name': category,
+            'prior': prior,
+            'misclassification_cost': mc
+        } for category, mc in categories]
+
+
 class TroiaClient(object):
     ''' Base class providing wrappers for all REST request
     '''
@@ -66,10 +95,10 @@ class TroiaClient(object):
     def pingDB(self):
         return self._do_raw_request(requests.get, "status/pingDB")
 
-    def create(self, typee=None):
-        arg = ''
+    def create(self, categories, typee=None):
+        arg = 'categories=' + json.dumps(prepare_categories_def_prior(categories))
         if self.jid:
-            arg += 'id=' + self.jid
+            arg += '&id=' + self.jid
         if typee is not None:
             arg += '&type=' + typee
         w = self._do_raw_request(requests.post, "jobs",
