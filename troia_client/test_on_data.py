@@ -67,6 +67,12 @@ def test_all(tc, gold_labels, cost_matrix, labels):
     print "GET_ASSIGNS:", tc.await_completion(
             tc.get_assigned_labels())
 
+    print "COMPUTATION:", tc.await_completion(
+            tc.post_compute(50))
+
+    print "DATA_PREDICTIONS:", tc.await_completion(
+            tc.get_predictions_for_objects())
+
 if __name__ == "__main__":
     jid = ''
     if len(sys.argv) > 1:

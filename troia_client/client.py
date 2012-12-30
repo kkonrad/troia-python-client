@@ -155,6 +155,12 @@ class TroiaClient(object):
     def get_assigned_labels(self):
         return self._do_request_get("assignedLabels")
 
+    def post_compute(self, iterations):
+        return self._do_request_post("compute", {'iterations': iterations})
+
+    def get_predictions_for_objects(self):
+        return self._do_request_get("prediction/data")
+
 # **** PROGRESS BARRIER
     def load_costs(self, costs, idd=None):
         ''' TODO
@@ -178,33 +184,6 @@ class TroiaClient(object):
         :param idd: job ID
         '''
         return json.loads(self._do_request_get("majorityVotes", {'id': idd}))
-
-    def compute_blocking(self, iterations, idd=None):
-        ''' Starts computations in blocking mode.
-        See Troia server documentation for more informations.
-
-        :param iterations: integer with number of iterations to perform
-        :param idd: job ID
-        '''
-        return self._do_request_get("computeBlocking",
-            {'id': idd, 'iterations': iterations})
-
-
-    def compute_non_blocking(self, iterations, idd=None):
-        ''' Starts computations in non-blocking mode.
-        See Troia server documentation for more informations.
-
-        :param iterations: integer with number of iterations to perform
-        :param idd: job ID
-        '''
-        return self._do_request_get("computeNotBlocking",
-            {'id': idd, 'iterations': iterations})
-
-    def compute(self, iterations, idd=None):
-        return self.compute_non_blocking(iterations, idd)
-
-    def is_computed(self, idd=None):
-        return self._do_request_get("isComputed", {'id': idd})
 
     def print_worker_summary(self, verbose, idd=None):
         ''' Returns printable workers summary
