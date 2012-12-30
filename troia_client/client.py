@@ -14,7 +14,7 @@ class TroiaClient(object):
     ''' Base class providing wrappers for all REST request
     '''
 
-    def __init__(self, base_url, job_id):
+    def __init__(self, base_url, job_id=''):
         '''
         Initializes new client
 
@@ -67,11 +67,16 @@ class TroiaClient(object):
         return self._do_raw_request(requests.get, "status/pingDB")
 
     def create(self, typee=None):
-        arg = 'id=' + self.jid
+        arg = ''
+        if self.jid:
+            arg += 'id=' + self.jid
         if typee is not None:
             arg += '&type=' + typee
-        return self._do_raw_request(requests.post, "jobs",
+        w = self._do_raw_request(requests.post, "jobs",
                 data=arg)
+        if not self.jid:
+            self.jid = w['result'].split(' ')[-1]
+        return w
 
     def delete(self):
         return self._do_raw_request(requests.delete, "jobs",
@@ -127,6 +132,28 @@ class TroiaClient(object):
 
     def get_categories(self):
         return self._do_request_get("categories")
+
+    def post_gold_data(self, gold_data):
+        gold_data = [{
+            "correctCategory": label,
+            "objectName": obj_id,
+        } for obj_id, label in gold_data]
+        return self._do_request_post("goldData", {'labels': gold_data})
+
+    def get_gold_data(self):
+        return self._do_request_get("goldData")
+
+    def post_assigned_labels(self, assigned_labels):
+        assigned_labels = [{
+            "workerName": worker,
+            "objectName": object_id,
+            "categoryName": category,
+        } for worker, object_id, category in assigned_labels]
+        return self._do_request_post("assignedLabels",
+                {"labels": assigned_labels})
+
+    def get_assigned_labels(self):
+        return self._do_request_get("assignedLabels")
 
 # **** PROGRESS BARRIER
     def load_costs(self, costs, idd=None):

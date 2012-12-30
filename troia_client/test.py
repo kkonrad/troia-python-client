@@ -78,7 +78,7 @@ class TestJobManipulation(TroiaClientTestBase):
     def setUp(self):
         super(TestJobManipulation, self).setUp()
 
-    def test_creation(self):
+    def test_job_creation(self):
         w = self.assert_fail_with_code(self.tc.info, 400)
         self.assertEqual('ERROR', w['status'])
         w = self.tc.create()
@@ -86,7 +86,7 @@ class TestJobManipulation(TroiaClientTestBase):
         w = self.tc.info()
         self.assertEqual('OK', w['status'])
 
-    def test_deletion(self):
+    def test_job_deletion(self):
         w = self.assert_fail_with_code(self.tc.info, 400)
         self.assertEqual('ERROR', w['status'])
         w = self.tc.create()
@@ -124,16 +124,36 @@ class TestJobDataFilling(TroiaClientTestBase):
         w = self.tc.create()
         self.assertEqual('OK', w['status'])
 
-    def test_categories_load(self):
-        tc = self.tc
-        w = tc.await_completion(tc.post_categories_def_prior(COST_MATRIX))
+    def data_init_upload_test(self, after_upload, exp_str, get_fun):
+        w = self.tc.await_completion(after_upload)
         self.assertEqual('OK', w['status'])
-        self.assertTrue('add' in w['result'].lower())
-        self.assertTrue('categor' in w['result'].lower())
+        self.assertEqual(exp_str, w['result'])
 
-        w = tc.await_completion(tc.get_categories())
+        w = self.tc.await_completion(get_fun())
         self.assertEqual('OK', w['status'])
+        return w
+
+    def test_categories_load(self):
+        w = self.data_init_upload_test(
+            self.tc.post_categories_def_prior(COST_MATRIX),
+            'Categories added', self.tc.get_categories)
         self.assertEqual(set(('porn', 'notporn')), set(w['result']))
+
+    def test_golds_load(self):
+        w = self.tc.await_completion(
+                self.tc.post_categories_def_prior(COST_MATRIX))
+        self.assertEqual('OK', w['status'])
+        w = self.data_init_upload_test(
+            self.tc.post_gold_data(GOLD_SAMPLES),
+            'Correct data added', self.tc.get_gold_data)
+        expected = [
+                {u'correctCategory': u'notporn', u'objectName': u'url1'},
+                {u'correctCategory': u'porn', u'objectName': u'url2'}
+            ]
+        res = w['result']
+        self.assertTrue(expected[0] == res[0] or expected[0] == res[1])
+        self.assertTrue(expected[1] == res[0] or expected[1] == res[1])
+        self.assertTrue(res[0] != res[1])
 
 
 if __name__ == '__main__':
