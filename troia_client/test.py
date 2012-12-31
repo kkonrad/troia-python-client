@@ -3,7 +3,7 @@ import unittest
 from client import TroiaClient
 
 
-ADRESS = 'http://localhost:8080/troia-server-0.0.1'
+ADRESS = 'http://localhost:8080/troia-server-0.8'
 
 
 ITERATIONS = 5

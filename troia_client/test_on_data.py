@@ -80,5 +80,5 @@ if __name__ == "__main__":
     jid = ''
     if len(sys.argv) > 1:
         jid = sys.argv[1]
-    tc = TroiaClient('http://localhost:8080/troia-server-0.0.1', jid)
+    tc = TroiaClient('http://localhost:8080/troia-server-0.8', jid)
     test_all(tc, GOLD_SAMPLES, COST_MATRIX, WORKERS_LABELS)
