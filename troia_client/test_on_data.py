@@ -48,6 +48,8 @@ WORKERS_LABELS = [
     ('worker5', 'url5', 'porn'),
 ]
 
+OBJECTS = ['url1', 'url2', 'url3', 'url4', 'url5']
+
 
 def test_all(tc, gold_labels, cost_matrix, labels):
 
@@ -69,18 +71,25 @@ def test_all(tc, gold_labels, cost_matrix, labels):
             tc.post_assigned_labels(labels))
     print "GET_ASSIGNS:", tc.await_completion(
             tc.get_assigned_labels())
+    
+    print 'GET_COST_MATRIX:', tc.await_completion(tc.get_cost_matrix())
 
     print "COMPUTATION:", tc.await_completion(
             tc.post_compute(50))
 
-    print "DATA_PREDICTIONS:", tc.await_completion(
-            tc.get_predictions_objects())
+    for alg in ("DS", "MV"):
+        for label_choosing in ("MaxLikelihood", "MinCost"):
+            print "DATA_PREDICTIONS ({}, {}):".format(alg, label_choosing), tc.await_completion(tc.get_predictions_objects(alg, label_choosing))
 
-    print "DATA_COST:", tc.await_completion(
-            tc.get_prediction_data_cost())
+    for alg in ("DS", "MV"):
+        for cost_alg in ("ExpectedCost", "MinCost"):
+            print "DATA_COST ({}, {})".format(alg, cost_alg), tc.await_completion(tc.get_prediction_data_cost(alg, cost_alg))
 
-    print "DATA_QUALITY:", tc.await_completion(
-            tc.get_prediction_data_quality())
+    for alg in ("DS", "MV"):
+        for d in OBJECTS:
+            print "PROB. DIST. ({}) for {}:".format(alg, d), tc.await_completion(tc.get_probability_distribution(d, alg))
+#    print "DATA_QUALITY:", tc.await_completion(
+#            tc.get_prediction_data_quality())
 
     print "DATA_EV_COST:", tc.await_completion(
             tc.get_evaluation_data_cost())
@@ -93,5 +102,5 @@ if __name__ == "__main__":
     jid = ''
     if len(sys.argv) > 1:
         jid = sys.argv[1]
-    tc = TroiaClient('http://localhost:8080/troia-server-0.8', jid)
+    tc = TroiaClient('http://localhost:8080/troia_server2/rest', jid)
     test_all(tc, GOLD_SAMPLES, COST_MATRIX, WORKERS_LABELS)

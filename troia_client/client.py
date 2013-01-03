@@ -196,8 +196,8 @@ class TroiaClient(object):
     def get_predictions_workers(self):
         return self._do_request_get("prediction/workers")
 
-    def get_prediction_data_cost(self):
-        return self._do_request_get("prediction/dataCost")
+    def get_prediction_data_cost(self, algorithm="DS", cost_algorithm="ExpectedCost"):
+        return self._do_request_get("prediction/dataCost", {'algorithm': algorithm, 'costAlgorithm': cost_algorithm})
 
     def get_prediction_data_quality(self):
         return self._do_request_get("prediction/dataQuality")
@@ -208,7 +208,11 @@ class TroiaClient(object):
     def get_evaluation_data_quality(self):
         return self._do_request_get("evaluation/dataQuality")
 
-
+    def get_cost_matrix(self):
+        return self._do_request_get("costs")
+    
+    def get_probability_distribution(self, datum, typ):
+        return self._do_request_get("data/{}/categoryProbability".format(datum), {"type": typ})
 
 # **** PROGRESS BARRIER
     def load_costs(self, costs, idd=None):
