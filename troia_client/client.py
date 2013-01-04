@@ -10,7 +10,7 @@ def generate_miss_costs(labels, label):
     return d
 
 
-def prepare_categories_def_prior_cost(categories, prior=1.):
+def prepare_categories_def_prior_cost(categories):
     ''' Generates default cost matrix
     for them (1. on error, 0. otherwise)
 
@@ -19,12 +19,12 @@ def prepare_categories_def_prior_cost(categories, prior=1.):
     '''
     return [{
             'name': c,
-            'prior': prior,
+            'prior': 1. / len(categories),
             'misclassification_cost': generate_miss_costs(categories, c)
         } for c in categories]
 
 
-def prepare_categories_def_prior(categories, prior=1.):
+def prepare_categories_def_prior(categories):
     ''' Costs should be iterable with iterables in form:
     ..
 
@@ -34,7 +34,7 @@ def prepare_categories_def_prior(categories, prior=1.):
     '''
     return [{
             'name': category,
-            'prior': prior,
+            'prior': 1. / len(categories),
             'misclassification_cost': mc
         } for category, mc in categories]
 
@@ -171,6 +171,16 @@ class TroiaClient(object):
 
     def get_gold_data(self):
         return self._do_request_get("goldData")
+    
+    def post_evaluation_data(self, eval_data):
+        eval_data = [{
+            "correctCategory": label,
+            "objectName": obj_id,
+        } for obj_id, label in eval_data]
+        return self._do_request_post("evaluationData", {'labels': eval_data})
+
+    def get_evaluation_data(self):
+        return self._do_request_get("evaluationData")
 
     def post_assigned_labels(self, assigned_labels):
         assigned_labels = [{
@@ -199,11 +209,13 @@ class TroiaClient(object):
     def get_prediction_data_cost(self, algorithm="DS", cost_algorithm="ExpectedCost"):
         return self._do_request_get("prediction/dataCost", {'algorithm': algorithm, 'costAlgorithm': cost_algorithm})
 
-    def get_prediction_data_quality(self):
-        return self._do_request_get("prediction/dataQuality")
+    def get_prediction_data_quality(self, algorithm="DS", cost_algorithm="ExpectedCost"):
+        return self._do_request_get("prediction/dataQuality", {'algorithm': algorithm, 'costAlgorithm': cost_algorithm})
 
-    def get_evaluation_data_cost(self):
-        return self._do_request_get("evaluation/dataCost")
+    def get_evaluation_data_cost(self, algorithm, labelChoosing):
+        return self._do_request_get("evaluation/dataCost", {
+            'algorithm': algorithm,
+            'labelChoosing': labelChoosing})
 
     def get_evaluation_data_quality(self):
         return self._do_request_get("evaluation/dataQuality")
@@ -229,14 +241,6 @@ class TroiaClient(object):
         '''
         return self._do_request_get("majorityVote",
             {'id': idd, 'objectName': objectName})
-
-    def majority_votes(self, idd=None):
-        ''' Returns labels for all objects using
-        *majority voting algorithm*.
-
-        :param idd: job ID
-        '''
-        return json.loads(self._do_request_get("majorityVotes", {'id': idd}))
 
     def print_worker_summary(self, verbose, idd=None):
         ''' Returns printable workers summary
@@ -273,10 +277,3 @@ class TroiaClient(object):
         :param idd: ID of the job which class priorities we want
         '''
         return self._do_request_get("classPriors", {'id': idd})
-
-    def get_dawid_skene(self, idd=None):
-        ''' Returns quite big dictionary. See Troia server documentation for more info.
-
-        :param idd: ID of the job which results we want
-        '''
-        return json.loads(self._do_request_get("getDawidSkene", {'id': idd}))

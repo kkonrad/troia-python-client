@@ -19,6 +19,13 @@ GOLD_SAMPLES = [
     ('url2', 'porn'),
 ]
 
+EVALUATION_DATA = [
+    ('url1', 'notporn'),
+    ('url2', 'porn'),
+    ('url3', 'porn'),
+    ('url4', 'notporn'),
+    ('url5', 'notporn')
+]
 
 WORKERS_LABELS = [
     ('worker1', 'url1', 'porn'),
@@ -48,10 +55,15 @@ WORKERS_LABELS = [
     ('worker5', 'url5', 'porn'),
 ]
 
+
+
 OBJECTS = ['url1', 'url2', 'url3', 'url4', 'url5']
 
+ALGORITHMS = ["DS", "MV"]
+LABEL_CHOOSING = ["MaxLikelihood", "MinCost"]
+COST_ALGORITHM = ["ExpectedCost", "MinCost"]
 
-def test_all(tc, gold_labels, cost_matrix, labels):
+def test_all(tc, gold_labels, cost_matrix, labels, eval_data):
 
     print "PING:", tc.ping()
     try:
@@ -71,31 +83,36 @@ def test_all(tc, gold_labels, cost_matrix, labels):
             tc.post_assigned_labels(labels))
     print "GET_ASSIGNS:", tc.await_completion(
             tc.get_assigned_labels())
-    
     print 'GET_COST_MATRIX:', tc.await_completion(tc.get_cost_matrix())
 
     print "COMPUTATION:", tc.await_completion(
             tc.post_compute(50))
 
-    for alg in ("DS", "MV"):
-        for label_choosing in ("MaxLikelihood", "MinCost"):
+    for alg in ALGORITHMS:
+        for label_choosing in LABEL_CHOOSING:
             print "DATA_PREDICTIONS ({}, {}):".format(alg, label_choosing), tc.await_completion(tc.get_predictions_objects(alg, label_choosing))
 
-    for alg in ("DS", "MV"):
-        for cost_alg in ("ExpectedCost", "MinCost"):
+    for alg in ALGORITHMS:
+        for cost_alg in COST_ALGORITHM:
             print "DATA_COST ({}, {})".format(alg, cost_alg), tc.await_completion(tc.get_prediction_data_cost(alg, cost_alg))
 
-    for alg in ("DS", "MV"):
+    for alg in ALGORITHMS:
+        for cost_alg in COST_ALGORITHM:
+            print "DATA_ESTM_QUALITY ({}, {}):".format(alg, cost_alg), tc.await_completion(tc.get_prediction_data_quality(alg, cost_alg))
+
+    for alg in ALGORITHMS:
         for d in OBJECTS:
             print "PROB. DIST. ({}) for {}:".format(alg, d), tc.await_completion(tc.get_probability_distribution(d, alg))
-#    print "DATA_QUALITY:", tc.await_completion(
-#            tc.get_prediction_data_quality())
+    
+    print "POST_EVALUATION_DATA:", tc.await_completion(tc.post_evaluation_data(eval_data))
+    print "GET_EVALUATION_DATA:", tc.await_completion(tc.get_evaluation_data())
+    
+    for alg in ALGORITHMS:
+        for label_choosing in LABEL_CHOOSING:
+            print "DATA_EV_COST ({}, {}):".format(alg, label_choosing), tc.await_completion(tc.get_evaluation_data_cost(alg, label_choosing))
 
-    print "DATA_EV_COST:", tc.await_completion(
-            tc.get_evaluation_data_cost())
-
-    print "DATA_EV_QUALITY:", tc.await_completion(
-            tc.get_evaluation_data_quality())
+#    print "DATA_EV_QUALITY:", tc.await_completion(
+#            tc.get_evaluation_data_quality())
 
 
 if __name__ == "__main__":
@@ -103,4 +120,4 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         jid = sys.argv[1]
     tc = TroiaClient('http://localhost:8080/troia_server2/rest', jid)
-    test_all(tc, GOLD_SAMPLES, COST_MATRIX, WORKERS_LABELS)
+    test_all(tc, GOLD_SAMPLES, COST_MATRIX, WORKERS_LABELS, EVALUATION_DATA)
