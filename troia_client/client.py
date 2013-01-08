@@ -227,6 +227,16 @@ class TroiaClient(object):
     
     def get_probability_distribution(self, datum, typ):
         return self._do_request_get("data/{}/categoryProbability".format(datum), {"type": typ})
+    
+    def get_prediction_workers_cost(self, cost_algorithm="ExpectedCost"):
+        return self._do_request_get("prediction/workersCost", {'costAlgorithm': cost_algorithm})
+    
+    def get_prediction_workers_quality(self, cost_algorithm="ExpectedCost"):
+        return self._do_request_get("prediction/workersQuality", {'costAlgorithm': cost_algorithm})
+
+    def get_evaluation_workers_quality(self, cost_algorithm="ExpectedCost"):
+        return self._do_request_get("evaluation/workersQuality", {'costAlgorithm': cost_algorithm})
+
 
 # **** PROGRESS BARRIER
     def load_costs(self, costs, idd=None):

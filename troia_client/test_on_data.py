@@ -104,20 +104,30 @@ def test_all(tc, gold_labels, cost_matrix, labels, eval_data):
         for d in OBJECTS:
             print "PROB. DIST. ({}) for {}:".format(alg, d), tc.await_completion(tc.get_probability_distribution(d, alg))
     
+    for cost_alg in COST_ALGORITHM:
+        print "WORKER_ESTM_COST ({}):".format(cost_alg), tc.await_completion(tc.get_prediction_workers_cost(cost_alg))
+        
+    for cost_alg in COST_ALGORITHM:
+        print "WORKER_ESTM_QUALITY ({}):".format(cost_alg), tc.await_completion(tc.get_prediction_workers_quality(cost_alg))
+    
     print "POST_EVALUATION_DATA:", tc.await_completion(tc.post_evaluation_data(eval_data))
     print "GET_EVALUATION_DATA:", tc.await_completion(tc.get_evaluation_data())
     
     for alg in ALGORITHMS:
         for label_choosing in LABEL_CHOOSING + ['Soft']:
             print "DATA_EV_COST ({}, {}):".format(alg, label_choosing), tc.await_completion(tc.get_evaluation_data_cost(alg, label_choosing))
-
-#    print "DATA_EV_QUALITY:", tc.await_completion(
-#            tc.get_evaluation_data_quality())
+            
+    for alg in ALGORITHMS:
+        for label_choosing in LABEL_CHOOSING + ["SOFT"]:
+            print "DATA_EV_QUALITY ({}, {}):".format(alg, label_choosing), tc.await_completion(tc.get_evaluation_data_quality(alg, label_choosing))
+    
+    for cost_alg in COST_ALGORITHM:
+        print "WORKER_EVAL_QUALITY ({}):".format(cost_alg), tc.await_completion(tc.get_evaluation_workers_quality(cost_alg))
 
 
 if __name__ == "__main__":
     jid = ''
     if len(sys.argv) > 1:
         jid = sys.argv[1]
-    tc = TroiaClient('http://localhost:8080/troia-server-0.8/', jid)
+    tc = TroiaClient('http://localhost:8080/troia-server-0.8', jid)
     test_all(tc, GOLD_SAMPLES, COST_MATRIX, WORKERS_LABELS, EVALUATION_DATA)
