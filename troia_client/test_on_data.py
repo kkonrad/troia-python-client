@@ -108,7 +108,7 @@ def test_all(tc, gold_labels, cost_matrix, labels, eval_data):
     print "GET_EVALUATION_DATA:", tc.await_completion(tc.get_evaluation_data())
     
     for alg in ALGORITHMS:
-        for label_choosing in LABEL_CHOOSING:
+        for label_choosing in LABEL_CHOOSING + ['Soft']:
             print "DATA_EV_COST ({}, {}):".format(alg, label_choosing), tc.await_completion(tc.get_evaluation_data_cost(alg, label_choosing))
 
 #    print "DATA_EV_QUALITY:", tc.await_completion(
@@ -119,5 +119,5 @@ if __name__ == "__main__":
     jid = ''
     if len(sys.argv) > 1:
         jid = sys.argv[1]
-    tc = TroiaClient('http://localhost:8080/troia_server2/rest', jid)
+    tc = TroiaClient('http://localhost:8080/troia-server-0.8/', jid)
     test_all(tc, GOLD_SAMPLES, COST_MATRIX, WORKERS_LABELS, EVALUATION_DATA)

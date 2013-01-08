@@ -217,8 +217,10 @@ class TroiaClient(object):
             'algorithm': algorithm,
             'labelChoosing': labelChoosing})
 
-    def get_evaluation_data_quality(self):
-        return self._do_request_get("evaluation/dataQuality")
+    def get_evaluation_data_quality(self, algorithm, labelChoosing):
+        return self._do_request_get("evaluation/dataQuality", {
+            'algorithm': algorithm,
+            'labelChoosing': labelChoosing})
 
     def get_cost_matrix(self):
         return self._do_request_get("costs")
