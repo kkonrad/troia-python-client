@@ -85,15 +85,12 @@ class TroiaClient(object):
         return self._do_raw_request(requests.delete,
             "jobs/%s/%s" % (self.jid, path), data=args)
 
-    def ping(self):
+    def status(self):
         ''' Sends test request. Should return string with current date
 
         :return: string with current date
         '''
-        return self._do_raw_request(requests.get, "status/ping")
-
-    def pingDB(self):
-        return self._do_raw_request(requests.get, "status/pingDB")
+        return self._do_raw_request(requests.get, "status")
 
     def create(self, categories, typee=None):
         arg = 'categories=' + json.dumps(prepare_categories_def_prior(categories))

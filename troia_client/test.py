@@ -106,13 +106,14 @@ class TestStatus(TroiaClientTestBase):
     def setUp(self):
         super(TestStatus, self).setUp()
 
-    def test_ping(self):
-        w = self.tc.ping()
+    def test_status(self):
+        w = self.tc.status()
         self.assertEqual('OK', w['status'])
-
-    def test_pingDB(self):
-        w = self.tc.pingDB()
-        self.assertEqual('OK', w['status'])
+        status = w['result']
+        self.assertEqual('OK', status['status'])
+        self.assertEqual('OK', status['job_storage_status'])
+        self.assertTrue('job_storage' in status)
+        self.assertTrue('deploy_time' in status)
 
 
 class TestJobDataFilling(TroiaClientTestBase):

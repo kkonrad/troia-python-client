@@ -65,7 +65,7 @@ COST_ALGORITHM = ["ExpectedCost", "MinCost", "MaxLikelihood"]
 
 def test_all(tc, gold_labels, cost_matrix, labels, eval_data):
 
-    print "PING:", tc.ping()
+    print "STATUS:", tc.status()
     try:
         tc.delete()
     except:
