@@ -61,7 +61,7 @@ OBJECTS = ['url1', 'url2', 'url3', 'url4', 'url5']
 
 ALGORITHMS = ["DS", "MV"]
 LABEL_CHOOSING = ["MaxLikelihood", "MinCost"]
-COST_ALGORITHM = ["ExpectedCost", "MinCost"]
+COST_ALGORITHM = ["ExpectedCost", "MinCost", "MaxLikelihood"]
 
 def test_all(tc, gold_labels, cost_matrix, labels, eval_data):
 
@@ -105,9 +105,6 @@ def test_all(tc, gold_labels, cost_matrix, labels, eval_data):
             print "PROB. DIST. ({}) for {}:".format(alg, d), tc.await_completion(tc.get_probability_distribution(d, alg))
     
     for cost_alg in COST_ALGORITHM:
-        print "WORKER_ESTM_COST ({}):".format(cost_alg), tc.await_completion(tc.get_prediction_workers_cost(cost_alg))
-        
-    for cost_alg in COST_ALGORITHM:
         print "WORKER_ESTM_QUALITY ({}):".format(cost_alg), tc.await_completion(tc.get_prediction_workers_quality(cost_alg))
     
     print "POST_EVALUATION_DATA:", tc.await_completion(tc.post_evaluation_data(eval_data))
@@ -124,6 +121,7 @@ def test_all(tc, gold_labels, cost_matrix, labels, eval_data):
     for cost_alg in COST_ALGORITHM:
         print "WORKER_EVAL_QUALITY ({}):".format(cost_alg), tc.await_completion(tc.get_evaluation_workers_quality(cost_alg))
 
+    print "WORKERS_SCORE", tc.await_completion(tc.get_evaluation_workers_score())
 
 if __name__ == "__main__":
     jid = ''
