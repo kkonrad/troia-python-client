@@ -60,7 +60,10 @@ class TroiaClientTestBase(unittest.TestCase):
 
     def setUp(self):
         self.tc = TroiaClient(ADRESS, self.JOB_ID)
-        self.tc.delete()
+        try:
+            self.tc.delete()
+        except:
+            pass
 
     def assert_fail_with_code(self, fun, expected_code):
         try:
