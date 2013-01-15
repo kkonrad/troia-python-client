@@ -200,9 +200,6 @@ class TroiaClient(object):
             'algorithm': algorithm,
             'labelChoosing': labelChoosing})
 
-    def get_predictions_workers(self):
-        return self._do_request_get("prediction/workers")
-
     def get_prediction_data_cost(self, algorithm="DS", cost_algorithm="ExpectedCost"):
         return self._do_request_get("prediction/dataCost", {'algorithm': algorithm, 'costAlgorithm': cost_algorithm})
 
