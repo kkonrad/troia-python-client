@@ -15,49 +15,49 @@ COST_MATRIX = [
 ]
 
 GOLD_SAMPLES = [
-    ('url1', 'notporn'),
-    ('url2', 'porn'),
+    ('http://sunnyfun.com', 'notporn'),
+    ('http://sex-mission.com', 'porn'),
 ]
 
 EVALUATION_DATA = [
-    ('url1', 'notporn'),
-    ('url2', 'porn'),
-    ('url3', 'porn'),
-    ('url4', 'notporn'),
-    ('url5', 'notporn')
+    ('http://sunnyfun.com', 'notporn'),
+    ('http://sex-mission.com', 'porn'),
+    ('http://google.com', 'porn'),
+    ('http://youporn.com', 'notporn'),
+    ('http://yahoo.com', 'notporn')
 ]
 
 WORKERS_LABELS = [
-    ('worker1', 'url1', 'porn'),
-    ('worker1', 'url2', 'porn'),
-    ('worker1', 'url3', 'porn'),
-    ('worker1', 'url4', 'porn'),
-    ('worker1', 'url5', 'porn'),
-    ('worker2', 'url1', 'notporn'),
-    ('worker2', 'url2', 'porn'),
-    ('worker2', 'url3', 'notporn'),
-    ('worker2', 'url4', 'porn'),
-    ('worker2', 'url5', 'porn'),
-    ('worker3', 'url1', 'notporn'),
-    ('worker3', 'url2', 'porn'),
-    ('worker3', 'url3', 'notporn'),
-    ('worker3', 'url4', 'porn'),
-    ('worker3', 'url5', 'notporn'),
-    ('worker4', 'url1', 'notporn'),
-    ('worker4', 'url2', 'porn'),
-    ('worker4', 'url3', 'notporn'),
-    ('worker4', 'url4', 'porn'),
-    ('worker4', 'url5', 'notporn'),
-    ('worker5', 'url1', 'porn'),
-    ('worker5', 'url2', 'notporn'),
-    ('worker5', 'url3', 'porn'),
-    ('worker5', 'url4', 'notporn'),
-    ('worker5', 'url5', 'porn'),
+    ('worker1', 'http://sunnyfun.com', 'porn'),
+    ('worker1', 'http://sex-mission.com', 'porn'),
+    ('worker1', 'http://google.com', 'porn'),
+    ('worker1', 'http://youporn.com', 'porn'),
+    ('worker1', 'http://yahoo.com', 'porn'),
+    ('worker2', 'http://sunnyfun.com', 'notporn'),
+    ('worker2', 'http://sex-mission.com', 'porn'),
+    ('worker2', 'http://google.com', 'notporn'),
+    ('worker2', 'http://youporn.com', 'porn'),
+    ('worker2', 'http://yahoo.com', 'porn'),
+    ('worker3', 'http://sunnyfun.com', 'notporn'),
+    ('worker3', 'http://sex-mission.com', 'porn'),
+    ('worker3', 'http://google.com', 'notporn'),
+    ('worker3', 'http://youporn.com', 'porn'),
+    ('worker3', 'http://yahoo.com', 'notporn'),
+    ('worker4', 'http://sunnyfun.com', 'notporn'),
+    ('worker4', 'http://sex-mission.com', 'porn'),
+    ('worker4', 'http://google.com', 'notporn'),
+    ('worker4', 'http://youporn.com', 'porn'),
+    ('worker4', 'http://yahoo.com', 'notporn'),
+    ('worker5', 'http://sunnyfun.com', 'porn'),
+    ('worker5', 'http://sex-mission.com', 'notporn'),
+    ('worker5', 'http://google.com', 'porn'),
+    ('worker5', 'http://youporn.com', 'notporn'),
+    ('worker5', 'http://yahoo.com', 'porn'),
 ]
 
 
 
-OBJECTS = ['url1', 'url2', 'url3', 'url4', 'url5']
+OBJECTS = ['http://sunnyfun.com', 'http://sex-mission.com', 'http://google.com', 'http://youporn.com', 'http://yahoo.com']
 
 ALGORITHMS = ["DS", "MV"]
 LABEL_CHOOSING = ["MaxLikelihood", "MinCost"]
