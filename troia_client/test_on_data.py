@@ -5,12 +5,12 @@ from client import TroiaClient
 
 COST_MATRIX = [
     ('porn', {
-        'porn':     0.,
-        'notporn':  1.,
+        'porn':     0.2,
+        'notporn':  0.8,
     }),
     ('notporn', {
-        'notporn':  0.,
-        'porn':     1.,
+        'notporn':  0.3,
+        'porn':     0.7,
     }),
 ]
 
@@ -73,6 +73,8 @@ def test_all(tc, gold_labels, cost_matrix, labels, eval_data):
     print "CREATE:", tc.create(cost_matrix)
     # print "POST_CATEGORIES:", tc.await_completion(
     #         tc.post_categories_def_prior(cost_matrix))
+    print "GET COST MATRIX", tc.await_completion(
+            tc.get_cost_matrix())
     print "GET_CATEGORIES:", tc.await_completion(
             tc.get_categories())
     print "POST_GOLDS:", tc.await_completion(
@@ -127,5 +129,5 @@ if __name__ == "__main__":
     jid = ''
     if len(sys.argv) > 1:
         jid = sys.argv[1]
-    tc = TroiaClient('http://localhost:8080/troia-server-0.8', jid)
+    tc = TroiaClient('http://localhost:8080/troia-server-0.8/', "ww")
     test_all(tc, GOLD_SAMPLES, COST_MATRIX, WORKERS_LABELS, EVALUATION_DATA)

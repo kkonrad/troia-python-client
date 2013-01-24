@@ -34,7 +34,6 @@ def prepare_categories_def_prior(categories):
     '''
     return [{
             'name': category,
-            'prior': 1. / len(categories),
             'misclassification_cost': mc
         } for category, mc in categories]
 
@@ -111,17 +110,17 @@ class TroiaClient(object):
     def info(self):
         return self._do_request_get("")
 
-    def get_status(self, stat_id):
-        return self._do_request_get("status/" + stat_id)
+    def get_status(self, redirect_url):
+        return self._do_raw_request(requests.get, redirect_url)
 
     def await_completion(self, request_response, timeout=0.5):
         if request_response['status'] == 'ERROR':
             raise Exception(request_response['message'])
-        status_id = request_response['redirect']
-        resp = self.get_status(status_id)
+        redirect_url = request_response['redirect']
+        resp = self.get_status(redirect_url)
         while resp['status'] == 'NOT_READY':
             time.sleep(timeout)
-            resp = self.get_status(status_id)
+            resp = self.get_status(redirect_url)
         return resp
 
     def post_categories_def_prior_cost(self, categories, prior=1.):
