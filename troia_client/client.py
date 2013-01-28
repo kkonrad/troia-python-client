@@ -65,8 +65,8 @@ class TroiaClient(object):
     def _do_raw_request(self, method, path, **kwargs):
         req = method(self.url + path, **kwargs)
         resp = json.loads(req.content)
-        if not 200 <= req.status_code < 300:
-            raise Exception(req.status_code, resp)
+        '''if not 200 <= req.status_code < 300:
+            raise Exception(req.status_code, resp)'''
         return resp
 
     def _do_request_get(self, path, args=None):
@@ -101,6 +101,19 @@ class TroiaClient(object):
                 data=arg)
         if not self.jid:
             self.jid = w['result'].split(' ')[-1]
+        return w
+    
+    def createNewJob(self, categories=None, type=None):
+        arg=''
+        if categories is not None:
+            arg +='categories=' + json.dumps(categories)
+        if self.jid:
+            arg += '&id=' + self.jid
+        if type is not None:
+            arg += '&type=' + type
+        w = self._do_raw_request(requests.post, "jobs", data=arg)
+        if 'New job created with ID: RANDOM_' in w['result']:
+            self.jid = w['result'].split(':')[1].strip()
         return w
 
     def delete(self):
@@ -157,6 +170,12 @@ class TroiaClient(object):
 
     def get_categories(self):
         return self._do_request_get("categories")
+    
+    def get_job_status(self):
+        return self._do_raw_request(requests.get, "jobs/%s" % (self.jid))
+                                        
+    def get_command_status(self, command_id):
+        return self._do_request_get('status/' + command_id)
 
     def post_gold_data(self, gold_data):
         gold_data = [{
@@ -217,6 +236,9 @@ class TroiaClient(object):
 
     def get_cost_matrix(self):
         return self._do_request_get("costs")
+    
+    def post_cost_matrix(self, costMatrix):
+        return self._do_request_post("costs",  {"costs": costMatrix})
     
     def get_probability_distribution(self, datum, typ):
         return self._do_request_get("data/{}/categoryProbability".format(datum), {"type": typ})
