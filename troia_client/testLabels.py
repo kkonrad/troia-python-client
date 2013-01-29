@@ -21,7 +21,7 @@ class TestLabels(unittest.TestCase):
             command_id = response['redirect']
             
             #check the command status
-            response = client.get_command_status(command_id)
+            response = client.get_status(command_id)
             self.assertEqual('OK', response['status'])
             self.assertEqual('Assigns added', response['result'])
             
@@ -30,7 +30,7 @@ class TestLabels(unittest.TestCase):
             command_id = response['redirect']
             
             #check the command status
-            response = client.get_command_status(command_id)
+            response = client.get_status(command_id)
             self.assertEqual('OK', response['status'])
             result = response['result']
             

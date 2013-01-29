@@ -25,9 +25,9 @@ class TestJobs(unittest.TestCase):
             
             response = client.get_job_status()
             self.assertEqual('OK', response['status'])
-            response = client.get_command_status(response['redirect'])
+            response = client.get_status(response['redirect'])
             self.assertJobData(response, 'class com.datascience.gal.BatchDawidSkene', '0', '0', '0', '0')
-            
+        
         def test_createJob_NoJobId_BatchJobType(self):
             client = TroiaClient(TestSettings.ADDRESS)
             response = client.createNewJob(TestSettings.CATEGORIES, 'batch')
@@ -36,9 +36,9 @@ class TestJobs(unittest.TestCase):
             
             response = client.get_job_status()
             self.assertEqual('OK', response['status'])           
-            response = client.get_command_status(response['redirect'])
+            response = client.get_status(response['redirect'])
             self.assertJobData(response, 'class com.datascience.gal.BatchDawidSkene', '0', '0', '0', '0')
-            
+           
         def test_createJob_NoJobId_IncrementalJobType(self):
             client = TroiaClient(TestSettings.ADDRESS)
             response = client.createNewJob(TestSettings.CATEGORIES, 'incremental')
@@ -47,15 +47,15 @@ class TestJobs(unittest.TestCase):
             
             response = client.get_job_status()
             self.assertEqual('OK', response['status'])
-            response = client.get_command_status(response['redirect'])
+            response = client.get_status(response['redirect'])
             self.assertJobData(response, 'class com.datascience.gal.IncrementalDawidSkene', '0', '0', '0', '0')
-        
+
         def test_createJob_NoJobId_WrongJobType(self):
             client = TroiaClient(TestSettings.ADDRESS)
             response = client.createNewJob(TestSettings.CATEGORIES, 'test')
             self.assertEqual('ERROR', response['status'])
             self.assertEqual('Unknown Job type: test', response['result'])
-            
+        
         def test_createJob_GivenJobId_NoJobType(self):
             jobId = self.generateId(10).join('job')
             client = TroiaClient(TestSettings.ADDRESS, jobId)
@@ -65,7 +65,7 @@ class TestJobs(unittest.TestCase):
             
             response = client.get_job_status()
             self.assertEqual('OK', response['status'])           
-            response = client.get_command_status(response['redirect'])
+            response = client.get_status(response['redirect'])
             self.assertJobData(response, 'class com.datascience.gal.BatchDawidSkene', '0', '0', '0', '0')
         
         def test_createJob_GivenJobId_BatchJobType(self):
@@ -77,7 +77,7 @@ class TestJobs(unittest.TestCase):
             
             response = client.get_job_status()
             self.assertEqual('OK', response['status'])         
-            response = client.get_command_status(response['redirect'])
+            response = client.get_status(response['redirect'])
             self.assertJobData(response, 'class com.datascience.gal.BatchDawidSkene', '0', '0', '0', '0')
             
         def test_createJob_GivenJobId_IncrementalJobType(self):
@@ -89,7 +89,7 @@ class TestJobs(unittest.TestCase):
             
             response = client.get_job_status()
             self.assertEqual('OK', response['status'])         
-            response = client.get_command_status(response['redirect'])
+            response = client.get_status(response['redirect'])
             self.assertJobData(response, 'class com.datascience.gal.IncrementalDawidSkene', '0', '0', '0', '0')
 
         def test_createJob_GivenJobId_WrongJobType(self):
@@ -106,7 +106,7 @@ class TestJobs(unittest.TestCase):
             response = client.createNewJob(TestSettings.CATEGORIES)
             self.assertEqual('ERROR', response['status'])
             self.assertEqual('Job with ID ' + jobId + ' already exists', response['result']) 
-                        
+                    
         def test_createJob_GivenJobId_NoCategories(self):
             jobId = self.generateId(10).join('job')
             client = TroiaClient(TestSettings.ADDRESS, jobId)
@@ -146,7 +146,7 @@ class TestJobs(unittest.TestCase):
             
             response = client.get_job_status()
             self.assertEqual('OK', response['status'])          
-            response = client.get_command_status(response['redirect'])
+            response = client.get_status(response['redirect'])
             self.assertJobData(response, 'class com.datascience.gal.BatchDawidSkene', '0', '0', '0', '0')
                     
         def test_createJob_SumOfPriorsLessThanOne_WithCostMatrix(self):
@@ -175,7 +175,7 @@ class TestJobs(unittest.TestCase):
             
             response = client.get_job_status()
             self.assertEqual('OK', response['status'])            
-            response = client.get_command_status(response['redirect'])
+            response = client.get_status(response['redirect'])
             self.assertJobData(response, 'class com.datascience.gal.BatchDawidSkene', '0', '0', '0', '0')
             
         def test_createJob_NoPriors_NoCostMatrix(self):
@@ -188,7 +188,7 @@ class TestJobs(unittest.TestCase):
             
             response = client.get_job_status()
             self.assertEqual('OK', response['status'])       
-            response = client.get_command_status(response['redirect'])
+            response = client.get_status(response['redirect'])
             self.assertJobData(response, 'class com.datascience.gal.BatchDawidSkene', '0', '0', '0', '0')
         
         def test_createJob_NoPriors_WithCostMatrix(self):
@@ -201,7 +201,7 @@ class TestJobs(unittest.TestCase):
             
             response = client.get_job_status()
             self.assertEqual('OK', response['status'])          
-            response = client.get_command_status(response['redirect'])
+            response = client.get_status(response['redirect'])
             self.assertJobData(response, 'class com.datascience.gal.BatchDawidSkene', '0', '0', '0', '0')
         
         def test_deleteJob_ExistingJobId(self):
@@ -225,5 +225,4 @@ class TestJobs(unittest.TestCase):
             response = client.delete()
             self.assertEqual('ERROR', response['status'])
             self.assertEqual('Job with ID ' + jobId + ' does not exist', response['result'])
-            
-
+     

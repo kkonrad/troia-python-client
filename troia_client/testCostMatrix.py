@@ -21,7 +21,7 @@ class TestCostMatrix(unittest.TestCase):
             response = client.get_cost_matrix()
             self.assertEqual('OK', response['status'])
             command_id = response['redirect']
-            response = client.get_command_status(command_id)
+            response = client.get_status(command_id)
             self.assertEqual('OK', response['status'])
             result = response['result']
             self.assertEqual(len(categories), len(result))
@@ -41,7 +41,7 @@ class TestCostMatrix(unittest.TestCase):
             response = client.get_cost_matrix()
             self.assertEqual('OK', response['status'])
             command_id = response['redirect']
-            response = client.get_command_status(command_id)
+            response = client.get_status(command_id)
             self.assertEqual('OK', response['status'])
             result = response['result']
             self.assertEqual(len(categories), len(result))
@@ -64,7 +64,7 @@ class TestCostMatrix(unittest.TestCase):
             response = client.post_cost_matrix(newCostMatrix)
             self.assertEqual('OK', response['status'])
             command_id = response['redirect']
-            response = client.get_command_status(command_id)
+            response = client.get_status(command_id)
             self.assertEqual('OK', response['status'])
             self.assertEqual('Costs set', response['result'])
             
@@ -72,7 +72,7 @@ class TestCostMatrix(unittest.TestCase):
             response = client.get_cost_matrix()
             self.assertEqual('OK', response['status'])
             command_id = response['redirect']
-            response = client.get_command_status(command_id)
+            response = client.get_status(command_id)
             result = response['result']
             expectedCategories = [{'prior':0.5, 'name':'porn', 'misclassification_cost': {'notporn': 1.7, 'porn': 0.3}}, 
                                   {'prior':0.5, 'name':'notporn', 'misclassification_cost': {'notporn': 0.3, 'porn': 1.7}}]
