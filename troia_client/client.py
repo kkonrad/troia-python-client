@@ -128,7 +128,7 @@ class TroiaClient(object):
 
     def await_completion(self, request_response, timeout=0.5):
         if request_response['status'] == 'ERROR':
-            raise Exception(request_response['message'])
+            raise Exception(request_response['stacktrace'])
         redirect_url = request_response['redirect']
         resp = self.get_status(redirect_url)
         while resp['status'] == 'NOT_READY':
