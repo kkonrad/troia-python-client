@@ -20,7 +20,7 @@ def prepare_categories_def_prior_cost(categories):
     return [{
             'name': c,
             'prior': 1. / len(categories),
-            'misclassification_cost': generate_miss_costs(categories, c)
+            'misclassificationCost': generate_miss_costs(categories, c)
         } for c in categories]
 
 
@@ -34,7 +34,7 @@ def prepare_categories_def_prior(categories):
     '''
     return [{
             'name': category,
-            'misclassification_cost': mc
+            'misclassificationCost': mc
         } for category, mc in categories]
 
 
@@ -136,38 +136,6 @@ class TroiaClient(object):
             resp = self.get_status(redirect_url)
         return resp
 
-    def post_categories_def_prior_cost(self, categories, prior=1.):
-        ''' Loads to Troia server given categories.
-        Generates default cost matrix
-        for them (1. on error, 0. otherwise)
-
-        :param categories: list of categories ids
-        :param prior: default priority
-        '''
-        categories = [{
-                'name': c,
-                'prior': prior,
-                'misclassification_cost': generate_miss_costs(categories, c)
-            } for c in categories]
-        return self._do_request_post("categories", {'categories': categories})
-
-    def post_categories_def_prior(self, categories, prior=1.):
-        ''' Load categories to Troia server with their cost matrices.
-        Costs should be iterable with iterables in form:
-
-        ..
-
-            (name, prior, dict-misclassification_cost { class_ : cost })
-
-        Only default priority is used
-        '''
-        categories = [{
-                'name': category,
-                'prior': prior,
-                'misclassification_cost': mc
-            } for category, mc in categories]
-        return self._do_request_post("categories", {'categories': categories})
-
     def get_categories(self):
         return self._do_request_get("categories")
     
@@ -186,6 +154,9 @@ class TroiaClient(object):
 
     def get_gold_data(self):
         return self._do_request_get("goldData")
+    
+    def get_data(self):
+        return self._do_request_get("data")
     
     def post_evaluation_data(self, eval_data):
         eval_data = [{
@@ -208,6 +179,9 @@ class TroiaClient(object):
 
     def get_assigned_labels(self):
         return self._do_request_get("assignedLabels")
+    
+    def get_workers(self):
+        return self._do_request_get("workers")
 
     def post_compute(self, iterations=20):
         return self._do_request_post("compute", {'iterations': iterations})

@@ -4,14 +4,22 @@ from client import TroiaClient
 
 
 COST_MATRIX = [
-    ('porn', {
-        'porn':     0.2,
-        'notporn':  0.8,
-    }),
-    ('notporn', {
-        'notporn':  0.3,
-        'porn':     0.7,
-    }),
+    ('porn', [{
+               'categoryName': 'porn',
+               'value': 0.}, 
+              {
+               'categoryName': 'notporn',
+               'value': 1.}
+              ]
+     ),
+    ('notporn', [{
+               'categoryName': 'porn',
+               'value': 1.}, 
+              {
+               'categoryName': 'notporn',
+               'value': 0.}
+              ]
+     ),
 ]
 
 GOLD_SAMPLES = [
@@ -67,12 +75,10 @@ def test_all(tc, gold_labels, cost_matrix, labels, eval_data):
 
     print "STATUS:", tc.status()
     try:
-        tc.delete()
+        print "DELETE", tc.delete()
     except:
         pass
     print "CREATE:", tc.create(cost_matrix)
-    # print "POST_CATEGORIES:", tc.await_completion(
-    #         tc.post_categories_def_prior(cost_matrix))
     print "GET COST MATRIX", tc.await_completion(
             tc.get_cost_matrix())
     print "GET_CATEGORIES:", tc.await_completion(
@@ -85,7 +91,8 @@ def test_all(tc, gold_labels, cost_matrix, labels, eval_data):
             tc.post_assigned_labels(labels))
     print "GET_ASSIGNS:", tc.await_completion(
             tc.get_assigned_labels())
-    print 'GET_COST_MATRIX:', tc.await_completion(tc.get_cost_matrix())
+    print 'GET_DATA:', tc.await_completion(tc.get_data())
+    print 'GET_WORKERS', tc.await_completion(tc.get_workers())
 
     print "COMPUTATION:", tc.await_completion(
             tc.post_compute(50))
