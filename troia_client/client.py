@@ -214,8 +214,9 @@ class TroiaClient(object):
     def post_cost_matrix(self, costMatrix):
         return self._do_request_post("costs",  {"costs": costMatrix})
     
-    def get_probability_distribution(self, datum, typ):
-        return self._do_request_get("data/{}/categoryProbability".format(datum), {"type": typ})
+    def get_probability_distribution(self, datum, typ=None):
+        data = {"type": typ} if typ else None
+        return self._do_request_get("data/{}/categoryProbability".format(datum), data)
     
     def get_prediction_workers_quality(self, cost_algorithm="ExpectedCost"):
         return self._do_request_get("prediction/workersQuality", {'costAlgorithm': cost_algorithm})
