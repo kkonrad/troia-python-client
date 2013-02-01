@@ -6,8 +6,8 @@ class TestSettings(object):
     ITERATIONS = 5
     
     CATEGORIES = [
-    {"prior":"0.5", "name":"porn", "misclassification_cost": { "porn":"0", "notporn":"1"}}, 
-    {"prior":"0.5", "name":"notporn", "misclassification_cost":{"porn":"1", "notporn":"0"}}]
+    {"prior":"0.5", "name":"porn", "misclassificationCost": [{'categoryName': 'porn', 'value': 0}, {'categoryName': 'notporn', 'value': 1}]}, 
+    {"prior":"0.5", "name":"notporn", "misclassificationCost":[{'categoryName': 'porn', 'value': 1}, {'categoryName': 'notporn', 'value': 0}]}]
     
     ASSIGNED_LABELS = [
     ('worker1', 'url1', 'porn'),
