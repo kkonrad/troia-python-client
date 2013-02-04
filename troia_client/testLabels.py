@@ -33,10 +33,9 @@ class TestLabels(unittest.TestCase):
             response = client.get_status(command_id)
             self.assertEqual('OK', response['status'])
             result = response['result']
+            assignedLabels = str(result).replace('u\'', '\'')
             
-            self.assertEqual(set(result.keys()), set((x[1] for x in TestSettings.ASSIGNED_LABELS)))
-            for _, dictt in result.iteritems():
-                self.assertEqual(5, len(dictt['labels']))
-                for worker in set((x[0] for x in TestSettings.ASSIGNED_LABELS)):
-                    self.assertTrue(worker in str(dictt))
-            
+            keys = ["workerName", "objectName", "categoryName"]
+            for initialLabel in TestSettings.ASSIGNED_LABELS:
+                dictionary = dict(zip(keys, initialLabel))
+                self.assertTrue(str(dictionary) in assignedLabels)

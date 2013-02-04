@@ -31,6 +31,7 @@ class TestJobs(unittest.TestCase):
         def test_createJob_NoJobId_BatchJobType(self):
             client = TroiaClient(TestSettings.ADDRESS)
             response = client.createNewJob(TestSettings.CATEGORIES, 'batch')
+            print response
             self.assertEqual('OK', response['status'])
             self.assertTrue('New job created with ID: RANDOM_' in response['result'])
             
@@ -38,7 +39,7 @@ class TestJobs(unittest.TestCase):
             self.assertEqual('OK', response['status'])           
             response = client.get_status(response['redirect'])
             self.assertJobData(response, 'class com.datascience.gal.BatchDawidSkene', '0', '0', '0', '0')
-           
+   
         def test_createJob_NoJobId_IncrementalJobType(self):
             client = TroiaClient(TestSettings.ADDRESS)
             response = client.createNewJob(TestSettings.CATEGORIES, 'incremental')
@@ -151,7 +152,8 @@ class TestJobs(unittest.TestCase):
                     
         def test_createJob_SumOfPriorsLessThanOne_WithCostMatrix(self):
             jobId = self.generateId(10).join('job')
-            categories = [{"prior":"0.3", "name":"porn", "misclassification_cost": { "porn":"0", "notporn":"1"}}, {"prior":"0.5", "name":"notporn", "misclassification_cost": { "porn":"1", "notporn":"0"}}]
+            categories = [{"prior":"0.3", "name":"porn", "misclassificationCost": [{'categoryName': 'porn', 'value': 0}, {'categoryName': 'notporn', 'value': 1}]}, 
+                          {"prior":"0.5", "name":"notporn", "misclassificationCost":[{'categoryName': 'porn', 'value': 1}, {'categoryName': 'notporn', 'value': 0}]}]
             client = TroiaClient(TestSettings.ADDRESS, jobId)
             response = client.createNewJob(categories)
             self.assertEqual('ERROR', response['status']) 
@@ -159,7 +161,8 @@ class TestJobs(unittest.TestCase):
         
         def test_createJob_SumOfPriorsGreaterThanOne_WithCostMatrix(self):
             jobId = self.generateId(10).join('job')
-            categories = [{"prior":"0.81", "name":"porn", "misclassification_cost": { "porn":"0", "notporn":"1"}}, {"prior":"0.5", "name":"notporn", "misclassification_cost": { "porn":"1", "notporn":"0"}}]
+            categories = [{"prior":"0.5", "name":"porn", "misclassificationCost": [{'categoryName': 'porn', 'value': 0}, {'categoryName': 'notporn', 'value': 1}]}, 
+                          {"prior":"0.52", "name":"notporn", "misclassificationCost":[{'categoryName': 'porn', 'value': 1}, {'categoryName': 'notporn', 'value': 0}]}]
             client = TroiaClient(TestSettings.ADDRESS, jobId)
             response = client.createNewJob(categories)
             self.assertEqual('ERROR', response['status']) 
@@ -167,7 +170,8 @@ class TestJobs(unittest.TestCase):
         
         def test_createJob_SumOfPriorsEqualsOne_WithCostMatrix(self):
             jobId = self.generateId(10).join('job')
-            categories = [{"prior":"0.1234", "name":"porn", "misclassification_cost": { "porn":"0", "notporn":"1"}}, {"prior":"0.8766", "name":"notporn", "misclassification_cost": { "porn":"1", "notporn":"0"}}]
+            categories = [{"prior":"0.1234", "name":"porn", "misclassificationCost": [{'categoryName': 'porn', 'value': 0}, {'categoryName': 'notporn', 'value': 1}]}, 
+                          {"prior":"0.8766", "name":"notporn", "misclassificationCost":[{'categoryName': 'porn', 'value': 1}, {'categoryName': 'notporn', 'value': 0}]}]
             client = TroiaClient(TestSettings.ADDRESS, jobId)
             response = client.createNewJob(categories)
             self.assertEqual('OK', response['status']) 
@@ -180,7 +184,7 @@ class TestJobs(unittest.TestCase):
             
         def test_createJob_NoPriors_NoCostMatrix(self):
             jobId = self.generateId(10).join('job')
-            categories = [{"prior":"0.1234", "name":"porn"}, {"prior":"0.8766", "name":"notporn"}]
+            categories = [{"name":"porn"}, {"name":"notporn"}]
             client = TroiaClient(TestSettings.ADDRESS, jobId)
             response = client.createNewJob(categories)
             self.assertEqual('OK', response['status']) 
@@ -193,7 +197,8 @@ class TestJobs(unittest.TestCase):
         
         def test_createJob_NoPriors_WithCostMatrix(self):
             jobId = self.generateId(10).join('job')
-            categories = [{"name":"porn", "misclassification_cost": { "porn":"0", "notporn":"1"}}, {"name":"notporn", "misclassification_cost": { "porn":"1", "notporn":"0"}}]
+            categories = [{"name":"porn", "misclassificationCost": [{'categoryName': 'porn', 'value': 0}, {'categoryName': 'notporn', 'value': 1}]}, 
+                          {"name":"notporn", "misclassificationCost":[{'categoryName': 'porn', 'value': 1}, {'categoryName': 'notporn', 'value': 0}]}]
             client = TroiaClient(TestSettings.ADDRESS, jobId)
             response = client.createNewJob(categories)
             self.assertEqual('OK', response['status']) 
@@ -225,4 +230,3 @@ class TestJobs(unittest.TestCase):
             response = client.delete()
             self.assertEqual('ERROR', response['status'])
             self.assertEqual('Job with ID ' + jobId + ' does not exist', response['result'])
-     

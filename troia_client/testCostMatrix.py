@@ -11,8 +11,8 @@ class TestCostMatrix(unittest.TestCase):
         
         def test_CostMatrix_01Values(self):
             jobId = self.generateId(10)
-            categories = [{"name":"porn", "prior":0.5,  "misclassification_cost":{"porn":0.0, "notporn":1.0}}, 
-                          {"name":"notporn", "prior":0.5, "misclassification_cost":{"porn":1.0, "notporn":0.0}}]
+            categories = [{"name":"porn", "prior":0.3, "misclassificationCost": [{'categoryName': 'porn', 'value': 0.0}, {'categoryName': 'notporn', 'value': 1.0}]}, 
+                          {"name":"notporn", "prior":0.7, "misclassificationCost":[{'categoryName': 'porn', 'value': 1.0}, {'categoryName': 'notporn', 'value': 0.0}]}]
             client = TroiaClient(TestSettings.ADDRESS, jobId)
             response = client.createNewJob(categories)
             self.assertEqual('OK', response['status'])
@@ -31,8 +31,8 @@ class TestCostMatrix(unittest.TestCase):
             
         def test_CostMatrix_DoubleValues(self):
             jobId = self.generateId(10)
-            categories = [{"prior":0.3, "name":"porn", "misclassification_cost": { "porn":0.4, "notporn":0.6}}, 
-                          {"prior":0.7, "name":"notporn", "misclassification_cost":{"porn":0.6, "notporn":0.4}}]
+            categories = [{"name":"porn", "prior":0.3, "misclassificationCost": [{'categoryName': 'porn', 'value': 0.4}, {'categoryName': 'notporn', 'value': 0.6}]}, 
+                          {"name":"notporn", "prior":0.7, "misclassificationCost":[{'categoryName': 'porn', 'value': 0.6}, {'categoryName': 'notporn', 'value': 0.4}]}]
             client = TroiaClient(TestSettings.ADDRESS, jobId)
             response = client.createNewJob(categories)
             self.assertEqual('OK', response['status'])
@@ -52,8 +52,8 @@ class TestCostMatrix(unittest.TestCase):
         def test_UpdateCostMatrix(self):
             #create a job with some default categories
             jobId = self.generateId(10)
-            categories = [{"name":"porn", "prior":0.5,  "misclassification_cost":{"porn":0.0, "notporn":1.0}}, 
-                          {"name":"notporn", "prior":0.5, "misclassification_cost":{"porn":1.0, "notporn":0.0}}]
+            categories = [{"name":"porn", "prior":0.5, "misclassificationCost": [{'categoryName': 'porn', 'value': 0.0}, {'categoryName': 'notporn', 'value': 1.0}]}, 
+                          {"name":"notporn", "prior":0.5, "misclassificationCost":[{'categoryName': 'porn', 'value': 1.0}, {'categoryName': 'notporn', 'value': 0.0}]}]
             client = TroiaClient(TestSettings.ADDRESS, jobId)
             response = client.createNewJob(categories)
             self.assertEqual('OK', response['status'])
@@ -61,6 +61,7 @@ class TestCostMatrix(unittest.TestCase):
             
             #update the cost matrix
             newCostMatrix = [{"categoryTo":"porn", "cost":0.3, "categoryFrom":"porn"}, {"categoryTo":"porn", "cost":1.7, "categoryFrom":"notporn"}, {"categoryTo":"notporn", "cost":1.7, "categoryFrom":"porn"}, {"categoryTo":"notporn", "cost":0.3, "categoryFrom":"notporn"}]
+            
             response = client.post_cost_matrix(newCostMatrix)
             self.assertEqual('OK', response['status'])
             command_id = response['redirect']
@@ -74,8 +75,8 @@ class TestCostMatrix(unittest.TestCase):
             command_id = response['redirect']
             response = client.get_status(command_id)
             result = response['result']
-            expectedCategories = [{'prior':0.5, 'name':'porn', 'misclassification_cost': {'notporn': 1.7, 'porn': 0.3}}, 
-                                  {'prior':0.5, 'name':'notporn', 'misclassification_cost': {'notporn': 0.3, 'porn': 1.7}}]
+            expectedCategories = [{'prior':0.5, 'misclassificationCost': [{'categoryName': 'porn', 'value': 0.3}, {'categoryName': 'notporn', 'value': 1.7}], 'name':'porn'}, 
+                                  {'prior':0.5, 'misclassificationCost': [{'categoryName': 'porn', 'value': 1.7}, {'categoryName': 'notporn', 'value': 0.3}], 'name':'notporn'}]
             self.assertEqual(len(expectedCategories), len(result))
             for retrievedCategories in result:
                 category = str(retrievedCategories).replace('u\'', '\'')
