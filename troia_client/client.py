@@ -155,8 +155,11 @@ class TroiaClient(object):
     def get_gold_data(self):
         return self._do_request_get("goldData")
     
-    def get_data(self):
-        return self._do_request_get("data")
+    def post_data(self, data):
+        return self._do_request_post("data", {'objects':data})
+    
+    def get_data(self, type="all"):
+        return self._do_request_get("data", {'type': type})
     
     def post_evaluation_data(self, eval_data):
         eval_data = [{
