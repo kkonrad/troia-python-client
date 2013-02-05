@@ -37,15 +37,9 @@ class TestLabels(unittest.TestCase):
             self.assertEqual('Correct data added', response['result'])
             
             #get the assigned labels
-            response = client.await_completion(client.get_assigned_labels())
+            response = client.await_completion(client.get_gold_data()())
             self.assertEqual('OK', response['status'])
-            result = response['result']
-            assignedLabels = str(result).replace('u\'', '\'')
-            
-            keys = ["worker", "object", "label"]
-            for initialLabel in TestSettings.ASSIGNED_LABELS_CONT:
-                dictionary = dict(zip(keys, initialLabel))
-                self.assertTrue(str(dictionary) in assignedLabels)
+
                 
         def test_AddGetObjects(self):
             client = TroiaContClient(TestSettings.ADDRESS)
@@ -60,11 +54,7 @@ class TestLabels(unittest.TestCase):
             #get all the objects
             response = client.await_completion(client.get_data())
             self.assertEqual('OK', response['status'])
-            self.assertEqual(1, len(response['result']))
-            result = dict(response['result'][0])
-                  
-            self.assertFalse(result['isGold'])
-            self.assertEqual("testObject1", result['name'])
+            
             
         def test_GetObjectData(self):
             client = TroiaContClient(TestSettings.ADDRESS)
@@ -80,8 +70,7 @@ class TestLabels(unittest.TestCase):
             #get the data for the given object
             response = client.await_completion(client.get_object_data(objects[0]))
             self.assertEqual('OK', response['status'])
-            self.assertEqual(1, len(response['result']))
-            result = dict(response['result'][0])
+
             
         def test_GetObjectAssigns(self):
             client = TroiaContClient(TestSettings.ADDRESS)
@@ -97,8 +86,7 @@ class TestLabels(unittest.TestCase):
             #get the assigned labels for the given object
             response = client.await_completion(client.get_object_assigns(objects[0]))
             self.assertEqual('OK', response['status'])
-            self.assertEqual(1, len(response['result']))
-            result = dict(response['result'][0])
+
 
         
             

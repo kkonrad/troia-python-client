@@ -127,6 +127,12 @@ class TroiaContClient(object):
 
     def post_calculate(self):
         return self._do_request_post("calculate")
+     
+    def get_prediction_objects(self):
+        return self._do_request_post("prediction/objects")
+    
+    def get_prediction_workers(self):
+        return self._do_request_post("prediction/workers")
 
 
     
