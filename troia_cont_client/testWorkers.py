@@ -4,44 +4,38 @@ from testSettings import TestSettings
 
 class TestWorkers(unittest.TestCase):
 
-    def test_GetAllWorkers(self):
-        client = TroiaContClient(TestSettings.ADDRESS)
-        response = client.createNewJob()
+    def setUp(self):
+        self.client = TroiaContClient(TestSettings.ADDRESS)
+        response = self.client.createNewJob()
         self.assertEqual('OK', response['status'])
-         
-        #post the assigned labels
-        response = client.await_completion(client.post_assigned_labels(TestSettings.ASSIGNED_LABELS_CONT))
-        self.assertEqual('OK', response['status'])
-        self.assertEqual('Assigns added', response['result'])
         
+    def load_assigns(self):
+        #post the assigned labels
+        for worker, obj, label in TestSettings.ASSIGNED_LABELS_CONT:
+            response = self.client.await_completion(self.client.post_assigned_label(worker, obj, float(label)), 0.5)
+            self.assertEqual('OK', response['status'])
+            self.assertEqual('Assigns added', response['result'])
+        
+    def test_GetAllWorkers(self):
+        self.load_assigns()
         #get all workers
-        response = client.await_completion(client.get_workers())
-        print response
+        response = self.client.await_completion(self.client.get_workers())
+        self.assertEqual(5, len(response['result']))
+        self.assertEqual('OK', response['status'])
 
     def test_GetWorkerData(self):
-        client = TroiaContClient(TestSettings.ADDRESS)
-        response = client.createNewJob()
-        self.assertEqual('OK', response['status'])
-         
-        #post the assigned labels
-        client.post_assigned_labels(TestSettings.ASSIGNED_LABELS_CONT)
-#        self.assertEqual('OK', response['status'])
-#        self.assertEqual('Assigns added', response['result'])
-        
+        self.load_assigns()
         #get the data for the given worker
-        response = client.await_completion(client.get_worker_data("worker1"))
-        print response
+        response = self.client.await_completion(self.client.get_worker_data("worker1"))
+        self.assertEqual('worker1', response['result']['name'])
+        self.assertEqual(5, len(response['result']['assigns']))
+        self.assertEqual('OK', response['status'])
 
     def test_GetWorkerAssigns(self):
-        client = TroiaContClient(TestSettings.ADDRESS)
-        response = client.createNewJob()
-        self.assertEqual('OK', response['status'])
-         
-        #post the assigned labels
-        response = client.await_completion(client.post_assigned_labels(TestSettings.ASSIGNED_LABELS_CONT))
-        self.assertEqual('OK', response['status'])
-        self.assertEqual('Assigns added', response['result'])
-        
+        self.load_assigns()
         #get the assigns for the given worker
-        response = client.await_completion(client.get_worker_assigns("worker1"))
-        print response
+        response = self.client.await_completion(self.client.get_worker_assigns("worker1"))
+        for al in response['result']:
+            self.assertEqual(al['worker'], 'worker1')
+        self.assertEqual(5, len(response['result']))
+        self.assertEqual('OK', response['status'])

@@ -82,35 +82,41 @@ class TroiaContClient(object):
     def get_command_status(self, command_id):
         return self._do_request_get('status/' + command_id)
 
-    def post_gold_data(self, gold_data):
-        gold_data = [{
-            "objectId": objectId,
-            "label": label,
-            "zeta": zeta
-        } for objectId, label, zeta in gold_data]
-        return self._do_request_post("goldData", {'labels': gold_data})
+#    def post_gold_data(self, gold_data):
+#        gold_data = [{
+#            "objectId": objectId,
+#            "label": label,
+#            "zeta": zeta
+#        } for objectId, label, zeta in gold_data]
+#        return self._do_request_post("goldData", {'labels': gold_data})
+
+    def post_gold_datum(self, objectId, label, zeta):
+        return self._do_request_post("goldObjects", "objectId={}&label={}&zeta={}".format(objectId, label, zeta))
 
     def get_gold_data(self):
-        return self._do_request_get("goldData")
+        return self._do_request_get("goldObjects")
     
-    def post_objects(self, data):
-        return self._do_request_post("data", {'objects':data})
+#    def post_objects(self, data):
+#        return self._do_request_post("data", {'objects':data})
+
+    def post_object(self, objectId):
+        return self._do_request_post("objects", "objectId={}".format(objectId))
     
     def get_objects(self, type="all"):
-        return self._do_request_get("data", {'type': type})
+        return self._do_request_get("objects", )
     
-    def get_object_data(self, objectId):
-        return self._do_request_get("data/%s" %objectId)
+    def get_object(self, objectId):
+        return self._do_request_get("objects/%s" %objectId)
     
     def get_object_assigns(self, objectId):
-        return self._do_request_get("data/%s/assignedLabels" %objectId)
+        return self._do_request_get("objects/%s/assigns" %objectId)
     
-    def post_assigned_labels(self, assigned_labels):
-        for worker, obj, label in assigned_labels:
-            self.await_completion(self.post_assigned_label(worker, obj, float(label)), 0.5)
+#    def post_assigned_labels(self, assigned_labels):
+#        for worker, obj, label in assigned_labels:
+#            self.await_completion(self.post_assigned_label(str(worker), str(obj), float(label)), 0.5)
 
     def post_assigned_label(self, worker, obj, label):
-        return self._do_request_post("assigns", {"label": label, "object": obj, "worker": worker})
+        return self._do_request_post("assigns", "label={}&object={}&worker={}".format(label, obj, worker))
     
     def get_assigned_labels(self):
         return self._do_request_get("assigns")
