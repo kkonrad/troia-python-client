@@ -71,8 +71,8 @@ class TestLabels(unittest.TestCase):
             self.assertFalse(result['isGold'])
             self.assertEqual("testObject1", result['name'])
             categoryProbabilities = str(result['categoryProbability']).replace('u\'', '\'')
-            self.assertTrue("{'categoryName': 'porn', 'value': 0.32}" in categoryProbabilities)
-            self.assertTrue("{'categoryName': 'notporn', 'value': 0.68}" in categoryProbabilities)
+            self.assertTrue("{'categoryName': 'porn', 'value': 0.5}" in categoryProbabilities)
+            self.assertTrue("{'categoryName': 'notporn', 'value': 0.5}" in categoryProbabilities)
             
 
 if __name__ == '__main__':

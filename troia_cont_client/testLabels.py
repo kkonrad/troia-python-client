@@ -10,7 +10,7 @@ class TestLabels(unittest.TestCase):
             self.assertEqual('OK', response['status'])
              
             #post the assigned labels
-            response = client.await_completion(client.post_assigned_labels(TestSettings.ASSIGNED_LABELS_CONT))
+            response = client.post_assigned_labels(TestSettings.ASSIGNED_LABELS_CONT)
             self.assertEqual('OK', response['status'])
             self.assertEqual('Assigns added', response['result'])
             
@@ -25,7 +25,7 @@ class TestLabels(unittest.TestCase):
                 dictionary = dict(zip(keys, initialLabel))
                 self.assertTrue(str(dictionary) in assignedLabels)
                 
-            
+                    
         def test_AddGetGoldLabels(self):
             client = TroiaContClient(TestSettings.ADDRESS)
             response = client.createNewJob()
@@ -86,9 +86,3 @@ class TestLabels(unittest.TestCase):
             #get the assigned labels for the given object
             response = client.await_completion(client.get_object_assigns(objects[0]))
             self.assertEqual('OK', response['status'])
-
-
-        
-            
-                
-        

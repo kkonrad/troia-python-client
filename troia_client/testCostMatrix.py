@@ -24,7 +24,7 @@ class TestCostMatrix(unittest.TestCase):
             for retrievedCategories in result:
                 category = str(retrievedCategories).replace('u\'', '\'')
                 self.assertTrue(category in str(categories))
-            
+
         def test_CostMatrix_DoubleValues(self):
             categories = [{"name":"porn", "prior":0.3, "misclassificationCost": [{'categoryName': 'porn', 'value': 0.4}, {'categoryName': 'notporn', 'value': 0.6}]}, 
                           {"name":"notporn", "prior":0.7, "misclassificationCost":[{'categoryName': 'porn', 'value': 0.6}, {'categoryName': 'notporn', 'value': 0.4}]}]
@@ -33,7 +33,7 @@ class TestCostMatrix(unittest.TestCase):
             self.assertEqual('OK', response['status'])
             self.assertEqual('New job created with ID: ' + client.jid, response['result'])
             
-            response = client.await_completion(client.createNewJob(categories))
+            response = client.await_completion(client.get_cost_matrix())
             self.assertEqual('OK', response['status'])
             result = response['result']
             self.assertEqual(len(categories), len(result))
@@ -67,7 +67,6 @@ class TestCostMatrix(unittest.TestCase):
             for retrievedCategories in result:
                 category = str(retrievedCategories).replace('u\'', '\'')
                 self.assertTrue(category in str(expectedCategories))
-       
             
             
             
