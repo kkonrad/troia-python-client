@@ -35,13 +35,14 @@ class TestLabels(unittest.TestCase):
             response = client.createNewJob(TestSettings.CATEGORIES)
             self.assertEqual('OK', response['status'])
              
-            #post the assigned labels
+            #post the gold labels
             goldLabels = [{"correctCategory": "notporn", "objectName": "url1"}]
-            response = client.await_completion(client.post_gold_data(goldLabels))
+            post_gold_labels = [("url1", "notporn")]
+            response = client.await_completion(client.post_gold_data(post_gold_labels))
             self.assertEqual('OK', response['status'])
             self.assertEqual('Correct data added', response['result'])
             
-            #get the assigned labels
+            #get the gold labels
             response = client.await_completion(client.get_gold_data())
             self.assertEqual('OK', response['status'])
             result = response['result']
@@ -73,6 +74,7 @@ class TestLabels(unittest.TestCase):
             self.assertTrue("{'categoryName': 'porn', 'value': 0.32}" in categoryProbabilities)
             self.assertTrue("{'categoryName': 'notporn', 'value': 0.68}" in categoryProbabilities)
             
-       
-                
-            
+
+if __name__ == '__main__':
+    unittest.main()
+
