@@ -106,13 +106,12 @@ class TroiaContClient(object):
         return self._do_request_get("data/%s/assignedLabels" %objectId)
     
     def post_assigned_labels(self, assigned_labels):
-        assigned_labels = [{
-            "worker": worker,
-            "object": object,
-            "label": label,
-        } for worker, object, label in assigned_labels]
-        return self._do_request_post("assigns", {"labels": assigned_labels})
+        for worker, obj, label in assigned_labels:
+            self.await_completion(self.post_assigned_label(worker, obj, float(label)), 0.5)
 
+    def post_assigned_label(self, worker, obj, label):
+        return self._do_request_post("assigns", {"label": label, "object": obj, "worker": worker})
+    
     def get_assigned_labels(self):
         return self._do_request_get("assigns")
     
