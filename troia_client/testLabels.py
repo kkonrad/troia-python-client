@@ -5,10 +5,7 @@ import random
 import string
 
 class TestLabels(unittest.TestCase):
-    
-        def generateId(self, length):
-            return "".join([random.choice(string.ascii_lowercase) for x in xrange(length)])
-        
+           
         def test_AddGetAssignedLabels(self):
             client = TroiaClient(TestSettings.ADDRESS)
             response = client.createNewJob(TestSettings.CATEGORIES)

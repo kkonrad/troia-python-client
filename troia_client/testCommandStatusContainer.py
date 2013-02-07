@@ -4,10 +4,10 @@ from testSettings import TestSettings
 from test_on_data import COST_MATRIX, WORKERS_LABELS
 import time
 
-class TestStatus(unittest.TestCase):
+class TestCommandStatus(unittest.TestCase):
 
         def setUp(self):
-            self.tc = TroiaClient(TestSettings.ADDRESS, "test")
+            self.tc = TroiaClient(TestSettings.ADDRESS)
             
         def test_GetRedirectData(self):
             try:

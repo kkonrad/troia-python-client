@@ -133,8 +133,7 @@ def test_all(tc, gold_labels, cost_matrix, labels, eval_data):
     print "WORKERS_SCORE", tc.await_completion(tc.get_evaluation_workers_score())
 
 if __name__ == "__main__":
-    jid = ''
     if len(sys.argv) > 1:
         jid = sys.argv[1]
-    tc = TroiaClient('http://localhost:8080/troia-server-0.8/', "ww")
+    tc = TroiaClient('http://localhost:8080/troia-server-0.8/')
     test_all(tc, GOLD_SAMPLES, COST_MATRIX, WORKERS_LABELS, EVALUATION_DATA)

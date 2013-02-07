@@ -59,7 +59,7 @@ WORKERS_LABELS = [
 class TroiaClientTestBase(unittest.TestCase):
 
     def setUp(self):
-        self.tc = TroiaClient(ADRESS, self.JOB_ID)
+        self.tc = TroiaClient(ADRESS)
         try:
             self.tc.delete()
         except:

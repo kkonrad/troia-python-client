@@ -5,9 +5,6 @@ import random
 import string
 
 class TestCostMatrix(unittest.TestCase):
-    
-        def generateId(self, length):
-            return "".join([random.choice(string.ascii_lowercase) for x in xrange(length)])
         
         def test_CostMatrix_01Values(self):
             categories = [{"name":"porn", "prior":0.3, "misclassificationCost": [{'categoryName': 'porn', 'value': 0.0}, {'categoryName': 'notporn', 'value': 1.0}]}, 
