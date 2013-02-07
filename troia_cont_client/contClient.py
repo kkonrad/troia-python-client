@@ -28,8 +28,6 @@ class TroiaContClient(object):
 
     def _do_raw_request(self, method, path, **kwargs):
         req = method(self.url + path, **kwargs)
-        print "_do_raw_request"
-        print req.content
         resp = json.loads(req.content)
         return resp
 

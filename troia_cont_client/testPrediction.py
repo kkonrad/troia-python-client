@@ -28,7 +28,7 @@ class TestPrediction(unittest.TestCase):
         self.assertEqual('Internal error: Run compute first!', response['result'])
         
     def test_GetPredictionObjects_WithCompute(self):
-        response = self.client.await_completion(self.client.get_prediction_objects())
+        response = self.client.await_completion(self.client.post_compute())
         self.assertEqual('OK', response['status'])
             
         response = self.client.await_completion(self.client.get_prediction_objects())
@@ -37,15 +37,14 @@ class TestPrediction(unittest.TestCase):
     def test_GetPredictionWorkers_WithoutCompute(self):
         response = self.client.await_completion(self.client.get_prediction_workers())
         self.assertEqual('Internal error: Run compute first!', response['result'])
-        
+
     def test_GetPredictionWorkers_WithCompute(self):
-        response = self.client.await_completion(self.client.get_prediction_objects())
+        response = self.client.await_completion(self.client.post_compute())
         self.assertEqual('OK', response['status'])
         
         response = self.client.await_completion(self.client.get_prediction_workers())
         self.assertEqual('OK', response['status'])
-        
+
 
 if __name__ == '__main__':
     unittest.main()
-
