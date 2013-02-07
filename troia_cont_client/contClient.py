@@ -85,7 +85,7 @@ class TroiaContClient(object):
         return self._do_request_get('status/' + command_id)
 
     def post_gold_datum(self, objectId, label, zeta):
-        return self._do_request_post("goldObjects", "objectId={}&label={}&zeta={}".format(objectId, label, zeta))
+        return self._do_request_post("goldObjects", "objectId={}&label={}&zeta={}".format(objectId, repr(label), repr(zeta)))
 
     def get_gold_data(self):
         return self._do_request_get("goldObjects")
