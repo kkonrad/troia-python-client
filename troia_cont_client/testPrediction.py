@@ -45,5 +45,7 @@ class TestPrediction(unittest.TestCase):
         response = self.client.await_completion(self.client.get_prediction_workers())
         self.assertEqual('OK', response['status'])
         
-            
-    
+
+if __name__ == '__main__':
+    unittest.main()
+
