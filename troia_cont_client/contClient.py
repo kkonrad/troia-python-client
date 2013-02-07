@@ -117,8 +117,8 @@ class TroiaContClient(object):
     def get_worker_assigns(self, workerId):
         return self._do_request_get("workers/%s/assigns" %workerId)
 
-    def post_calculate(self):
-        return self._do_request_post("calculate")
+    def post_compute(self):
+        return self._do_request_post("compute")
      
     def get_prediction_objects(self):
         return self._do_request_get("prediction/objects")

@@ -15,7 +15,7 @@ class TestLabels(unittest.TestCase):
             response = self.client.await_completion(self.client.post_assigned_label(worker, obj, float(label)), 0.5)
             self.assertEqual('OK', response['status'])
             self.assertEqual('Assigns added', response['result'])
-    '''
+
     def test_AddGetAssignedLabels(self):
         self.load_assigns()
         #get the assigned labels
@@ -25,7 +25,7 @@ class TestLabels(unittest.TestCase):
         print response['result']
         for al in response['result']:
             self.assertTrue(al['worker'] in [w for w, _, _ in TestSettings.ASSIGNED_LABELS_CONT])
-    '''        
+          
     def test_AddGetGoldLabels(self):
         #post the assigned labels
         for obj, label, zeta in TestSettings.GOLD_LABELS_CONT:
@@ -46,7 +46,6 @@ class TestLabels(unittest.TestCase):
         for label in TestSettings.GOLD_LABELS_CONT:
             self.assertTrue(label in goldLabelsList)
                     
-    '''
     def test_AddGetObjects(self):
         #add an object
         response = self.client.await_completion(self.client.post_object("object1"))
@@ -58,7 +57,7 @@ class TestLabels(unittest.TestCase):
         self.assertEqual('OK', response['status'])
         self.assertEqual(1, len(response['result']))
         self.assertEqual('object1', response['result'][0]['name'])
-        
+          
     def test_GetObjectData(self):
         #add objects
         objects = ["object2", "object3"]
@@ -72,7 +71,7 @@ class TestLabels(unittest.TestCase):
             response = self.client.await_completion(self.client.get_object(obj))
             self.assertEqual('OK', response['status'])
             self.assertEqual(obj, response['result']['name'])
-        
+               
     def test_GetObjectAssigns(self):
         #add objects
         objects = ["object2", "object3"]
@@ -87,5 +86,3 @@ class TestLabels(unittest.TestCase):
             self.assertEqual('OK', response['status'])
             for al in response['result']:
                 self.assertEqual(obj, al['object'])
-
-    '''
