@@ -15,16 +15,17 @@ class TestLabels(unittest.TestCase):
             response = self.client.await_completion(self.client.post_assigned_label(worker, obj, float(label)), 0.5)
             self.assertEqual('OK', response['status'])
             self.assertEqual('Assigns added', response['result'])
-            
+    '''
     def test_AddGetAssignedLabels(self):
         self.load_assigns()
         #get the assigned labels
         response = self.client.await_completion(self.client.get_assigned_labels())
         self.assertEqual('OK', response['status'])
         self.assertEqual(len(TestSettings.ASSIGNED_LABELS_CONT), len(response['result']))
+        print response['result']
         for al in response['result']:
             self.assertTrue(al['worker'] in [w for w, _, _ in TestSettings.ASSIGNED_LABELS_CONT])
-            
+    '''        
     def test_AddGetGoldLabels(self):
         #post the assigned labels
         for obj, label, zeta in TestSettings.GOLD_LABELS_CONT:
@@ -36,7 +37,16 @@ class TestLabels(unittest.TestCase):
         response = self.client.await_completion(self.client.get_gold_data())
         self.assertEqual('OK', response['status'])
         self.assertEqual(len(TestSettings.GOLD_LABELS_CONT), len(response['result']))
-
+        
+        goldLabelsList=[]
+        for receivedGoldLabel in response['result']:
+            labelName = str(receivedGoldLabel['name']).replace('u\'', '\'')
+            goldLabelData = (labelName, receivedGoldLabel['goldLabel']['value']['value'], receivedGoldLabel['goldLabel']['value']['zeta'])
+            goldLabelsList.append(goldLabelData)
+        for label in TestSettings.GOLD_LABELS_CONT:
+            self.assertTrue(label in goldLabelsList)
+                    
+    '''
     def test_AddGetObjects(self):
         #add an object
         response = self.client.await_completion(self.client.post_object("object1"))
@@ -78,3 +88,4 @@ class TestLabels(unittest.TestCase):
             for al in response['result']:
                 self.assertEqual(obj, al['object'])
 
+    '''
