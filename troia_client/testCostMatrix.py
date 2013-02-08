@@ -1,16 +1,14 @@
 import unittest
 from client import TroiaClient
-from testSettings import TestSettings
-import random
-import string
+from testSettings import *
 
 class TestCostMatrix(unittest.TestCase):
         
         def test_CostMatrix_01Values(self):
             categories = [{"name":"porn", "prior":0.3, "misclassificationCost": [{'categoryName': 'porn', 'value': 0.0}, {'categoryName': 'notporn', 'value': 1.0}]}, 
                           {"name":"notporn", "prior":0.7, "misclassificationCost":[{'categoryName': 'porn', 'value': 1.0}, {'categoryName': 'notporn', 'value': 0.0}]}]
-            client = TroiaClient(TestSettings.ADDRESS)
-            response = client.createNewJob(categories)
+            client = TroiaClient(ADDRESS)
+            response = client.create(categories)
             self.assertEqual('OK', response['status'])
             self.assertEqual('New job created with ID: ' + client.jid, response['result'])
             
@@ -25,8 +23,8 @@ class TestCostMatrix(unittest.TestCase):
         def test_CostMatrix_DoubleValues(self):
             categories = [{"name":"porn", "prior":0.3, "misclassificationCost": [{'categoryName': 'porn', 'value': 0.4}, {'categoryName': 'notporn', 'value': 0.6}]}, 
                           {"name":"notporn", "prior":0.7, "misclassificationCost":[{'categoryName': 'porn', 'value': 0.6}, {'categoryName': 'notporn', 'value': 0.4}]}]
-            client = TroiaClient(TestSettings.ADDRESS)
-            response = client.createNewJob(categories)
+            client = TroiaClient(ADDRESS)
+            response = client.create(categories)
             self.assertEqual('OK', response['status'])
             self.assertEqual('New job created with ID: ' + client.jid, response['result'])
             
@@ -42,8 +40,8 @@ class TestCostMatrix(unittest.TestCase):
             #create a job with some default categories
             categories = [{"name":"porn", "prior":0.5, "misclassificationCost": [{'categoryName': 'porn', 'value': 0.0}, {'categoryName': 'notporn', 'value': 1.0}]}, 
                           {"name":"notporn", "prior":0.5, "misclassificationCost":[{'categoryName': 'porn', 'value': 1.0}, {'categoryName': 'notporn', 'value': 0.0}]}]
-            client = TroiaClient(TestSettings.ADDRESS)
-            response = client.createNewJob(categories)
+            client = TroiaClient(ADDRESS)
+            response = client.create(categories)
             self.assertEqual('OK', response['status'])
             self.assertEqual('New job created with ID: ' + client.jid, response['result'])
             

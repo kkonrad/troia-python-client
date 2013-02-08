@@ -1,18 +1,16 @@
 import unittest
 from client import TroiaClient
-from testSettings import TestSettings
-import random
-import string
+from testSettings import *
 
 class TestLabels(unittest.TestCase):
            
         def test_AddGetAssignedLabels(self):
-            client = TroiaClient(TestSettings.ADDRESS)
-            response = client.createNewJob(TestSettings.CATEGORIES)
+            client = TroiaClient(ADDRESS)
+            response = client.create(CATEGORIES)
             self.assertEqual('OK', response['status'])
              
             #post the assigned labels
-            response = client.await_completion(client.post_assigned_labels(TestSettings.ASSIGNED_LABELS))
+            response = client.await_completion(client.post_assigned_labels(ASSIGNED_LABELS))
             self.assertEqual('OK', response['status'])
             self.assertEqual('Assigns added', response['result'])
             
@@ -23,13 +21,13 @@ class TestLabels(unittest.TestCase):
             assignedLabels = str(result).replace('u\'', '\'')
             
             keys = ["workerName", "objectName", "categoryName"]
-            for initialLabel in TestSettings.ASSIGNED_LABELS:
+            for initialLabel in ASSIGNED_LABELS:
                 dictionary = dict(zip(keys, initialLabel))
                 self.assertTrue(str(dictionary) in assignedLabels)
                 
         def test_AddGetGoldLabels(self):
-            client = TroiaClient(TestSettings.ADDRESS)
-            response = client.createNewJob(TestSettings.CATEGORIES)
+            client = TroiaClient(ADDRESS)
+            response = client.create(CATEGORIES)
             self.assertEqual('OK', response['status'])
              
             #post the gold labels
@@ -47,11 +45,11 @@ class TestLabels(unittest.TestCase):
             self.assertTrue(goldLabels[0] == result[0])          
         
         def test_AddGetUnassignedLabels(self):
-            client = TroiaClient(TestSettings.ADDRESS)
+            client = TroiaClient(ADDRESS)
             categories = [
             {"prior":"0.32", "name":"porn", "misclassificationCost": [{'categoryName': 'porn', 'value': 0}, {'categoryName': 'notporn', 'value': 1}]}, 
             {"prior":"0.68", "name":"notporn", "misclassificationCost":[{'categoryName': 'porn', 'value': 1}, {'categoryName': 'notporn', 'value': 0}]}]
-            response = client.createNewJob(categories)
+            response = client.create(categories)
             self.assertEqual('OK', response['status'])
              
             #post the unassigned labels

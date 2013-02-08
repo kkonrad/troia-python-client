@@ -22,7 +22,6 @@ class TestLabels(unittest.TestCase):
         response = self.client.await_completion(self.client.get_assigned_labels())
         self.assertEqual('OK', response['status'])
         self.assertEqual(len(TestSettings.ASSIGNED_LABELS_CONT), len(response['result']))
-        print response['result']
         for al in response['result']:
             self.assertTrue(al['worker'] in [w for w, _, _ in TestSettings.ASSIGNED_LABELS_CONT])
           

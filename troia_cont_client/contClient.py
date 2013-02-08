@@ -123,6 +123,3 @@ class TroiaContClient(object):
     
     def get_prediction_workers(self):
         return self._do_request_get("prediction/workers")
-
-
-    

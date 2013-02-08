@@ -1,77 +1,13 @@
 import sys
 
 from client import TroiaClient
-
-
-COST_MATRIX = [
-    ('porn', [{
-               'categoryName': 'porn',
-               'value': 0.}, 
-              {
-               'categoryName': 'notporn',
-               'value': 1.}
-              ]
-     ),
-    ('notporn', [{
-               'categoryName': 'porn',
-               'value': 1.}, 
-              {
-               'categoryName': 'notporn',
-               'value': 0.}
-              ]
-     ),
-]
-
-GOLD_SAMPLES = [
-    ('http://sunnyfun.com', 'notporn'),
-    ('http://sex-mission.com', 'porn'),
-]
-
-EVALUATION_DATA = [
-    ('http://sunnyfun.com', 'notporn'),
-    ('http://sex-mission.com', 'porn'),
-    ('http://google.com', 'porn'),
-    ('http://youporn.com', 'notporn'),
-    ('http://yahoo.com', 'notporn')
-]
-
-WORKERS_LABELS = [
-    ('worker1', 'http://sunnyfun.com', 'porn'),
-    ('worker1', 'http://sex-mission.com', 'porn'),
-    ('worker1', 'http://google.com', 'porn'),
-    ('worker1', 'http://youporn.com', 'porn'),
-    ('worker1', 'http://yahoo.com', 'porn'),
-    ('worker2', 'http://sunnyfun.com', 'notporn'),
-    ('worker2', 'http://sex-mission.com', 'porn'),
-    ('worker2', 'http://google.com', 'notporn'),
-    ('worker2', 'http://youporn.com', 'porn'),
-    ('worker2', 'http://yahoo.com', 'porn'),
-    ('worker3', 'http://sunnyfun.com', 'notporn'),
-    ('worker3', 'http://sex-mission.com', 'porn'),
-    ('worker3', 'http://google.com', 'notporn'),
-    ('worker3', 'http://youporn.com', 'porn'),
-    ('worker3', 'http://yahoo.com', 'notporn'),
-    ('worker4', 'http://sunnyfun.com', 'notporn'),
-    ('worker4', 'http://sex-mission.com', 'porn'),
-    ('worker4', 'http://google.com', 'notporn'),
-    ('worker4', 'http://youporn.com', 'porn'),
-    ('worker4', 'http://yahoo.com', 'notporn'),
-    ('worker5', 'http://sunnyfun.com', 'porn'),
-    ('worker5', 'http://sex-mission.com', 'notporn'),
-    ('worker5', 'http://google.com', 'porn'),
-    ('worker5', 'http://youporn.com', 'notporn'),
-    ('worker5', 'http://yahoo.com', 'porn'),
-]
-
-
-
-OBJECTS = ['http://sunnyfun.com', 'http://sex-mission.com', 'http://google.com', 'http://youporn.com', 'http://yahoo.com']
+from testSettings import *
 
 ALGORITHMS = ["DS", "MV"]
 LABEL_CHOOSING = ["MaxLikelihood", "MinCost"]
 COST_ALGORITHM = ["ExpectedCost", "MinCost", "MaxLikelihood"]
 
-def test_all(tc, gold_labels, cost_matrix, labels, eval_data):
+def _test_all(tc, gold_labels, cost_matrix, labels, eval_data):
 
     print "STATUS:", tc.status()
     try:
@@ -136,4 +72,4 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         jid = sys.argv[1]
     tc = TroiaClient('http://localhost:8080/troia-server-0.8/')
-    test_all(tc, GOLD_SAMPLES, COST_MATRIX, WORKERS_LABELS, EVALUATION_DATA)
+    _test_all(tc, GOLD_SAMPLES, CATEGORIES, ASSIGNED_LABELS, EVALUATION_DATA)

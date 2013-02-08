@@ -91,29 +91,17 @@ class TroiaClient(object):
         '''
         return self._do_raw_request(requests.get, "status")
 
-    def create(self, categories, typee=None):
-        arg = 'categories=' + json.dumps(prepare_categories_def_prior(categories))
+    def create(self, categories=None, typee=None):
+        arg = ''
+        if categories is not None:
+            arg += 'categories=' + json.dumps(categories)
         if self.jid:
             arg += '&id=' + self.jid
         if typee is not None:
             arg += '&type=' + typee
-        w = self._do_raw_request(requests.post, "jobs",
-                data=arg)
+        w = self._do_raw_request(requests.post, "jobs", data=arg)
         if not self.jid:
             self.jid = w['result'].split(' ')[-1]
-        return w
-    
-    def createNewJob(self, categories=None, type=None):
-        arg=''
-        if categories is not None:
-            arg +='categories=' + json.dumps(categories)
-        if self.jid:
-            arg += '&id=' + self.jid
-        if type is not None:
-            arg += '&type=' + type
-        w = self._do_raw_request(requests.post, "jobs", data=arg)
-        if 'New job created with ID: RANDOM_' in w['result']:
-            self.jid = w['result'].split(':')[1].strip()
         return w
 
     def delete(self):
