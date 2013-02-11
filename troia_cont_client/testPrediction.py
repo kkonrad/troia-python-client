@@ -33,6 +33,28 @@ class TestPrediction(unittest.TestCase):
             
         response = self.client.await_completion(self.client.get_prediction_objects())
         self.assertEqual('OK', response['status'])
+
+        keys = ["name", "goldLabel", "est_zeta"]
+        predictionObjects =[]
+        for object in response['result']:
+            objectValues = []
+            objectName = str(object['object']['name']).replace('u\'', '\'')
+            objectValues.append(objectName)
+            goldLabel = {}
+            try:
+                goldLabel['value'] = object['object']['goldLabel']['value']['value']
+                goldLabel['zeta'] = object['object']['goldLabel']['value']['zeta']
+            except:
+                print 'No gold labels for object ' + objectName
+            
+            objectValues.append(goldLabel)
+            objectValues.append(object['est_zeta'])
+            dictionary = dict(zip(keys, objectValues))
+            predictionObjects.append(dictionary)
+
+        for expPredictionObject in TestSettings.EXPECTED_PREDICTION_OBJECTS:
+            self.assertTrue(expPredictionObject in predictionObjects)
+      
      
     def test_GetPredictionWorkers_WithoutCompute(self):
         response = self.client.await_completion(self.client.get_prediction_workers())
@@ -44,7 +66,7 @@ class TestPrediction(unittest.TestCase):
         
         response = self.client.await_completion(self.client.get_prediction_workers())
         self.assertEqual('OK', response['status'])
-
+        print response['result']
 
 if __name__ == '__main__':
     unittest.main()
