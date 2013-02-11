@@ -54,13 +54,15 @@ class TestJobs(unittest.TestCase):
         def test_createJob_NoCategories(self):
             client = TroiaClient(ADDRESS)
             response = client.create()
+
             self.assertEqual('ERROR', response['status'])
-            self.assertFalse('Internal error' in response['result'])
+            self.assertEqual('You should provide categories list', response['result'])
         
         def test_createJob_EmptyCategories(self):
             client = TroiaClient(ADDRESS)
             response = client.create([])
             self.assertEqual('ERROR', response['status'])
+            self.assertEqual('There should be at least two categories', response['result'])
                    
         def test_createJob_SumOfPriorsLessThanOne_NoCostMatrix(self):
             categories = [{"prior":"0.3", "name":"porn"}, {"prior":"0.5", "name":"notporn"}]
