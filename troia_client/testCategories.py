@@ -2,8 +2,27 @@ import unittest
 from client import TroiaClient
 from testSettings import *
 
-class TestCostMatrix(unittest.TestCase):
+class TestCategories(unittest.TestCase):
+    
+        def test_AddGetCategories_SpecialChars(self):
+            client = TroiaClient(ADDRESS)
+            categories = [{"prior":0.123, "name":"~!@#$^&)(*[]()-_+=<>?/.,;:"}, {"prior":0.456, "name":"2ndCategory"}, {"prior":0.421, "name":"3rdCategory"}]
+            response = client.create(categories)
+            self.assertEqual('OK', response['status'])
+            
+            response = client.await_completion(client.get_categories())
+            self.assertEqual('OK', response['status'])
         
+        def test_AddGetCategories_PercentChar(self):
+            client = TroiaClient(ADDRESS)
+            categories = [{"prior":0.5, "name":"a%a"}, {"prior":0.5, "name":"2ndCategory"}]
+            response = client.create(categories)
+            print response
+            self.assertEqual('OK', response['status'])
+            
+            response = client.await_completion(client.get_categories())
+            self.assertEqual('OK', response['status'])
+             
         def test_CostMatrix_01Values(self):
             categories = [{"name":"porn", "prior":0.3, "misclassificationCost": [{'categoryName': 'porn', 'value': 0.0}, {'categoryName': 'notporn', 'value': 1.0}]}, 
                           {"name":"notporn", "prior":0.7, "misclassificationCost":[{'categoryName': 'porn', 'value': 1.0}, {'categoryName': 'notporn', 'value': 0.0}]}]
