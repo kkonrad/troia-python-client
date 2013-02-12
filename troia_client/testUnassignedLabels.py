@@ -96,7 +96,8 @@ class TestUnassignedLabels(unittest.TestCase):
         self.assertEqual('OK', response['status'])
              
         #post the unassigned label
-        response = client.await_completion(client.post_data(["~!@#$%^&*()_+=-[]{}|:;<> ,./"]))
+        unassignedLabel = ["~!@#$%^&*()_+=-[]{}|:;<> ,./"]
+        response = client.await_completion(client.post_data(unassignedLabel))
         self.assertEqual('OK', response['status'])
         self.assertEqual('Object without labels added', response['result'])
             
@@ -108,7 +109,7 @@ class TestUnassignedLabels(unittest.TestCase):
         result = response['result'][0]
         self.assertFalse(result['labels'])
         self.assertFalse(result['isGold'])
-        self.assertEqual("~!@#$%^&*()_+=-[]{}|:;<> ,./", result['name'])
+        self.assertEqual(unassignedLabel[0], result['name'])
         
         expectedProbabilities = [('category1', 0.3333333333333333), ('category2', 0.3333333333333333), ('category3', 0.3333333333333333)]
         categoryProbabilies = []
@@ -119,14 +120,15 @@ class TestUnassignedLabels(unittest.TestCase):
         for categoryProb in categoryProbabilies:
             self.assertTrue(categoryProb in expectedProbabilities)
     
-    def test_AddGetUnassignedLabels_PrintableASCII_ExtendedASCIIChars(self):
+    def test_AddGetUnassignedLabels_ExtendedASCIIChars(self):
         client = TroiaClient(ADDRESS)
         categories = [{"prior":"0.2", "name":"category1"}, {"prior":"0.8", "name":"category2"}]
         response = client.create(categories)
         self.assertEqual('OK', response['status'])
              
         #post the unassigned label
-        response = client.await_completion(client.post_data(["ëñµ¼Úæ"]))
+        unassignedLabel = ["ëñµ¼Úæ"]
+        response = client.await_completion(client.post_data(unassignedLabel))
         self.assertEqual('OK', response['status'])
         self.assertEqual('Object without labels added', response['result'])
             
@@ -138,7 +140,7 @@ class TestUnassignedLabels(unittest.TestCase):
         result = response['result'][0]
         self.assertFalse(result['labels'])
         self.assertFalse(result['isGold'])
-        self.assertEqual("ëñµ¼Úæ", result['name'])
+        self.assertEqual(unassignedLabel[0], result['name'])
         
         expectedProbabilities = [('category1', 0.5), ('category2', 0.5)]
         categoryProbabilies = []
@@ -149,14 +151,15 @@ class TestUnassignedLabels(unittest.TestCase):
         for categoryProb in categoryProbabilies:
             self.assertTrue(categoryProb in expectedProbabilities)
             
-    def test_AddGetUnassignedLabels_PrintableASCII_UnicodeChars(self):
+    def test_AddGetUnassignedLabels_UnicodeChars(self):
         client = TroiaClient(ADDRESS)
         categories = [{"prior":"0.2", "name":"category1"}, {"prior":"0.8", "name":"category2"}]
         response = client.create(categories)
         self.assertEqual('OK', response['status'])
              
         #post the unassigned label
-        response = client.await_completion(client.post_data(["ూഹܬआਖ਼"]))
+        unassignedLabel = ["ూഹܬआਖ਼"]
+        response = client.await_completion(client.post_data(unassignedLabel))
         self.assertEqual('OK', response['status'])
         self.assertEqual('Object without labels added', response['result'])
             
@@ -168,7 +171,7 @@ class TestUnassignedLabels(unittest.TestCase):
         result = response['result'][0]
         self.assertFalse(result['labels'])
         self.assertFalse(result['isGold'])
-        self.assertEqual("ూഹܬआਖ਼", result['name'])
+        self.assertEqual(unassignedLabel[0], result['name'])
         
         expectedProbabilities = [('category1', 0.5), ('category2', 0.5)]
         categoryProbabilies = []
