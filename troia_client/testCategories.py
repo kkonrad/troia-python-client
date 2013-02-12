@@ -1,27 +1,75 @@
+# -*- coding: utf-8 -*-
 import unittest
 from client import TroiaClient
 from testSettings import *
 
 class TestCategories(unittest.TestCase):
     
-        def test_AddGetCategories_SpecialChars(self):
+        def test_AddGetCategories_PrintableASCII_RegularChars(self):
             client = TroiaClient(ADDRESS)
-            categories = [{"prior":0.123, "name":"~!@#$^&)(*[]()-_+=<>?/.,;:"}, {"prior":0.456, "name":"2ndCategory"}, {"prior":0.421, "name":"3rdCategory"}]
+            categories = [{"prior":0.123, "name":"category1"}, {"prior":0.456, "name":"category2"}, {"prior":0.421, "name":"category3"}]
             response = client.create(categories)
             self.assertEqual('OK', response['status'])
             
             response = client.await_completion(client.get_categories())
             self.assertEqual('OK', response['status'])
+            
+            expectedCategories = ['category1', 'category2', 'category3']
+            for category in expectedCategories:
+                self.assertTrue(category in response['result'])
+    
+        def test_AddGetCategories_PrintableASCII_SpecialChars(self):
+            client = TroiaClient(ADDRESS)
+            categories = [{"prior":0.5, "name":"~!@#$^&)(*[]()-_+=<>?/.,;:"}, {"prior":0.271, "name":"2ndCategory"}, {"prior":0.229, "name":"3rdCategory"}]
+            response = client.create(categories)
+            self.assertEqual('OK', response['status'])
+            
+            response = client.await_completion(client.get_categories())
+            self.assertEqual('OK', response['status'])
+            
+            expectedCategories = ['~!@#$^&)(*[]()-_+=<>?/.,;:', '2ndCategory', '3rdCategory']
+            for category in expectedCategories:
+                self.assertTrue(category in response['result'])
         
-        def test_AddGetCategories_PercentChar(self):
+        def test_AddGetCategories_PrintableASCII_PercentChar(self):
             client = TroiaClient(ADDRESS)
-            categories = [{"prior":0.5, "name":"a%a"}, {"prior":0.5, "name":"2ndCategory"}]
+            categories = [{"prior":0.5, "name":"a%a"}, {"prior":0.5, "name":"b%%b"}]
             response = client.create(categories)
-            print response
             self.assertEqual('OK', response['status'])
             
             response = client.await_completion(client.get_categories())
             self.assertEqual('OK', response['status'])
+            
+            expectedCategories = ['a%a', 'b%%b']
+            for category in expectedCategories:
+                self.assertTrue(category in response['result'])    
+         
+        def test_AddGetCategories_ExtendedASCIIChars(self):
+            client = TroiaClient(ADDRESS)
+            categories = [{"prior":0.5, "name":"œŒ"}, {"prior":0.5, "name":"ÀÆË™ž¤©"}]
+            response = client.create(categories)
+            self.assertEqual('OK', response['status'])
+            
+            response = client.await_completion(client.get_categories())
+            self.assertEqual('OK', response['status'])
+            
+            expectedCategories = ['œŒ', 'ÀÆË™ž¤©']
+            for category in expectedCategories:
+                self.assertTrue(category in response['result'])    
+                
+                
+        def test_AddGetCategories_UnicodeChars(self):
+            client = TroiaClient(ADDRESS)
+            categories = [{"prior":0.5, "name":"ૉେஇΨҖӖմ؂څ"}, {"prior":0.5, "name":"ూഹܬआਖ਼"}]
+            response = client.create(categories)
+            self.assertEqual('OK', response['status'])
+            
+            response = client.await_completion(client.get_categories())
+            self.assertEqual('OK', response['status'])
+            
+            expectedCategories = ['ૉେஇΨҖӖմ؂څ', 'ూഹܬआਖ਼']
+            for category in expectedCategories:
+                self.assertTrue(category in response['result'])                
              
         def test_CostMatrix_01Values(self):
             categories = [{"name":"porn", "prior":0.3, "misclassificationCost": [{'categoryName': 'porn', 'value': 0.0}, {'categoryName': 'notporn', 'value': 1.0}]}, 
