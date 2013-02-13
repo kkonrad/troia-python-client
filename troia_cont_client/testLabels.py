@@ -1,48 +1,59 @@
 import unittest
 from contClient import TroiaContClient
-from testSettings import TestSettings
+from testSettings import *
 
 class TestLabels(unittest.TestCase):
 
     def setUp(self):
-        self.client = TroiaContClient(TestSettings.ADDRESS)
+        self.client = TroiaContClient(ADDRESS)
         response = self.client.createNewJob()
         self.assertEqual('OK', response['status'])
         
     def load_assigns(self):
         #post the assigned labels
-        for worker, obj, label in TestSettings.ASSIGNED_LABELS_CONT:
+        for worker, obj, label in ASSIGNED_LABELS_CONT:
             response = self.client.await_completion(self.client.post_assigned_label(worker, obj, float(label)), 0.5)
             self.assertEqual('OK', response['status'])
             self.assertEqual('Assigns added', response['result'])
 
     def test_AddGetAssignedLabels(self):
         self.load_assigns()
+        
         #get the assigned labels
         response = self.client.await_completion(self.client.get_assigned_labels())
         self.assertEqual('OK', response['status'])
-        self.assertEqual(len(TestSettings.ASSIGNED_LABELS_CONT), len(response['result']))
-        for al in response['result']:
-            self.assertTrue(al['worker'] in [w for w, _, _ in TestSettings.ASSIGNED_LABELS_CONT])
+        self.assertEqual(len(ASSIGNED_LABELS_CONT), len(response['result']))
+        result = response['result']
+       
+        results = []
+        for label in result:
+            labelTouple = (label['worker'], label['object'], label['label']['value'])
+            results.append(labelTouple)
+        print results
+        for label in ASSIGNED_LABELS_CONT:
+            print label
+            self.assertTrue(label in results)
           
     def test_AddGetGoldLabels(self):
         #post the assigned labels
-        for obj, label, zeta in TestSettings.GOLD_LABELS_CONT:
+        for obj, label, zeta in GOLD_LABELS_CONT:
             response = self.client.await_completion(self.client.post_gold_datum(obj, label, zeta))
             self.assertEqual('OK', response['status'])
             self.assertEqual('Gold object added', response['result'])
         
-        #get the assigned labels
+        #get the gold labels
         response = self.client.await_completion(self.client.get_gold_data())
         self.assertEqual('OK', response['status'])
-        self.assertEqual(len(TestSettings.GOLD_LABELS_CONT), len(response['result']))
         
+        result = response['result']
+        self.assertEqual(len(GOLD_LABELS_CONT), len(result))
+        print result
         goldLabelsList=[]
         for receivedGoldLabel in response['result']:
-            labelName = str(receivedGoldLabel['name']).replace('u\'', '\'')
+            labelName = receivedGoldLabel['name']
             goldLabelData = (labelName, receivedGoldLabel['goldLabel']['value']['value'], receivedGoldLabel['goldLabel']['value']['zeta'])
             goldLabelsList.append(goldLabelData)
-        for label in TestSettings.GOLD_LABELS_CONT:
+        for label in GOLD_LABELS_CONT:
             self.assertTrue(label in goldLabelsList)
                     
     def test_AddGetObjects(self):

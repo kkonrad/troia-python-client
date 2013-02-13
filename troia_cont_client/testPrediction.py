@@ -1,20 +1,20 @@
 import unittest
 from contClient import TroiaContClient
-from testSettings import TestSettings
+from testSettings import *
 
 class TestPrediction(unittest.TestCase):
     
     def setUp(self):
-        self.client = TroiaContClient(TestSettings.ADDRESS)
+        self.client = TroiaContClient(ADDRESS)
         response = self.client.createNewJob()
         self.assertEqual('OK', response['status'])
         
-        for worker, obj, label in TestSettings.ASSIGNED_LABELS_CONT:
+        for worker, obj, label in ASSIGNED_LABELS_CONT:
             response = self.client.await_completion(self.client.post_assigned_label(worker, obj, float(label)), 0.5)
             self.assertEqual('OK', response['status'])
             self.assertEqual('Assigns added', response['result'])
         
-        for obj, label, zeta in TestSettings.GOLD_LABELS_CONT:
+        for obj, label, zeta in GOLD_LABELS_CONT:
             response = self.client.await_completion(self.client.post_gold_datum(obj, label, zeta))
             self.assertEqual('OK', response['status'])
             self.assertEqual('Gold object added', response['result'])
@@ -33,13 +33,12 @@ class TestPrediction(unittest.TestCase):
             
         response = self.client.await_completion(self.client.get_prediction_objects())
         self.assertEqual('OK', response['status'])
+        self.assertEqual(len(EXPECTED_PREDICTION_OBJECTS) ,len(response['result']))
 
-        keys = ["name", "goldLabel", "est_zeta"]
         predictionObjects =[]
         for object in response['result']:
-            objectValues = []
-            objectName = str(object['object']['name']).replace('u\'', '\'')
-            objectValues.append(objectName)
+            predictionObject = () 
+            objectName = object['object']['name']
             goldLabel = {}
             try:
                 goldLabel['value'] = object['object']['goldLabel']['value']['value']
@@ -47,12 +46,15 @@ class TestPrediction(unittest.TestCase):
             except:
                 print 'No gold labels for object ' + objectName
             
-            objectValues.append(goldLabel)
-            objectValues.append(object['est_zeta'])
-            dictionary = dict(zip(keys, objectValues))
-            predictionObjects.append(dictionary)
-
-        for expPredictionObject in TestSettings.EXPECTED_PREDICTION_OBJECTS:
+            estimatedZeta = object['est_zeta']
+            if goldLabel:
+                predictionObject = (estimatedZeta, objectName, goldLabel)
+            else:
+                predictionObject = (estimatedZeta, objectName)
+                
+            predictionObjects.append(predictionObject)
+        print predictionObjects
+        for expPredictionObject in EXPECTED_PREDICTION_OBJECTS:
             self.assertTrue(expPredictionObject in predictionObjects)
       
      
@@ -66,7 +68,19 @@ class TestPrediction(unittest.TestCase):
         
         response = self.client.await_completion(self.client.get_prediction_workers())
         self.assertEqual('OK', response['status'])
-        print response['result']
-
+        result = response['result']
+        self.assertEqual(5, len(result))
+        
+        for worker in result:
+            #check the assigned labels
+            estimatedMu = worker['est_mu']
+            workerName = worker['worker']
+            estimatedSigma = worker['est_sigma']
+            estimatedRho = worker['est_rho']
+            workerTouple = (workerName, estimatedMu, estimatedSigma, estimatedRho)
+            print workerTouple
+            print EXPECTED_PREDICTION_WORKERS
+            self.assertTrue(workerTouple in EXPECTED_PREDICTION_WORKERS)
+                
 if __name__ == '__main__':
     unittest.main()

@@ -1,17 +1,17 @@
 import unittest
 from contClient import TroiaContClient
-from testSettings import TestSettings
+from testSettings import *
 
 class TestWorkers(unittest.TestCase):
 
     def setUp(self):
-        self.client = TroiaContClient(TestSettings.ADDRESS)
+        self.client = TroiaContClient(ADDRESS)
         response = self.client.createNewJob()
         self.assertEqual('OK', response['status'])
         
     def load_assigns(self):
         #post the assigned labels
-        for worker, obj, label in TestSettings.ASSIGNED_LABELS_CONT:
+        for worker, obj, label in ASSIGNED_LABELS_CONT:
             response = self.client.await_completion(self.client.post_assigned_label(worker, obj, float(label)), 0.5)
             self.assertEqual('OK', response['status'])
             self.assertEqual('Assigns added', response['result'])
