@@ -28,7 +28,7 @@ class TestJobs(unittest.TestCase):
             self.assertEqual('OK', response['status'])
             response = self.client.get_status(response['redirect'])
             self.assertJobData(response, 'class com.datascience.gal.BatchDawidSkene', '0', '0', '0', '0')
-        '''
+
         def test_createJob_BatchJobType(self):
             response = self.client.create(CATEGORIES, 'batch')
             self.assertEqual('OK', response['status'])
@@ -142,4 +142,3 @@ class TestJobs(unittest.TestCase):
             response = self.client.delete()
             self.assertEqual('OK', response['status'])
             self.assertEqual('Removed job with ID: ' + self.client.jid, response['result'])
-       '''     
