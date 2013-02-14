@@ -5,34 +5,38 @@ from testSettings import *
 
 class TestEvaluationLabels(unittest.TestCase):
 
+    def setUp(self):
+        self.client = TroiaClient(ADDRESS)
+            
+    def tearDown(self):
+        self.client.delete()
+        
     def test_AddGetEmptyEvaluationLabels(self):
-        client = TroiaClient(ADDRESS)
-        response = client.create(CATEGORIES)
+        response = self.client.create(CATEGORIES)
         self.assertEqual('OK', response['status'])
              
         #post the empty assigned labels
-        response = client.await_completion(client.post_evaluation_data([]))
+        response = self.client.await_completion(self.client.post_evaluation_data([]))
         self.assertEqual('OK', response['status'])
         self.assertEqual('Evaluation datums added', response['result'])
            
         #get the evaluation labels and check that the list is empty 
-        response = client.await_completion(client.get_evaluation_data())
+        response = self.client.await_completion(self.client.get_evaluation_data())
         self.assertEqual('OK', response['status'])
         result = response['result']
         self.assertFalse(result)
         
         
     def test_AddGetEvaluationLabels_PrintableASCII_RegularChars(self):
-        client = TroiaClient(ADDRESS)
-        response = client.create(CATEGORIES)
+        response = self.client.create(CATEGORIES)
         self.assertEqual('OK', response['status'])
             
-        response = client.await_completion(client.post_evaluation_data(EVALUATION_DATA))
+        response = self.client.await_completion(self.client.post_evaluation_data(EVALUATION_DATA))
         self.assertEqual('OK', response['status'])
         self.assertEqual('Evaluation datums added', response['result'])
             
         #get the unassigned labels
-        response = client.await_completion(client.get_evaluation_data())
+        response = self.client.await_completion(self.client.get_evaluation_data())
 
         self.assertEqual('OK', response['status'])
         result = response['result']
@@ -47,17 +51,16 @@ class TestEvaluationLabels(unittest.TestCase):
             self.assertTrue(evalLabel in results)
                 
     def test_AddGetEvaluationLabel_PrintableASCII_SpecialChars(self):
-        client = TroiaClient(ADDRESS)
-        response = client.create(CATEGORIES)
+        response = self.client.create(CATEGORIES)
         self.assertEqual('OK', response['status'])
         
         evaluationLabel = [('~!@%#$^&*()_+=-[]{}|:;<> ,./', 'notporn')]          
-        response = client.await_completion(client.post_evaluation_data(evaluationLabel))
+        response = self.client.await_completion(self.client.post_evaluation_data(evaluationLabel))
         self.assertEqual('OK', response['status'])
         self.assertEqual('Evaluation datums added', response['result'])
             
         #get the unassigned labels
-        response = client.await_completion(client.get_evaluation_data())
+        response = self.client.await_completion(self.client.get_evaluation_data())
         self.assertEqual('OK', response['status'])
         result = response['result']
         self.assertEqual(1, len(result))
@@ -65,17 +68,16 @@ class TestEvaluationLabels(unittest.TestCase):
         self.assertTrue(evaluationLabel[0] == receivedLabel)     
     
     def test_AddGetEvaluationLabel_ExtendedASCIIChars(self):
-        client = TroiaClient(ADDRESS)
-        response = client.create(CATEGORIES)
+        response = self.client.create(CATEGORIES)
         self.assertEqual('OK', response['status'])
         
         evaluationLabel = [('™ž¤©', 'notporn')]          
-        response = client.await_completion(client.post_evaluation_data(evaluationLabel))
+        response = self.client.await_completion(self.client.post_evaluation_data(evaluationLabel))
         self.assertEqual('OK', response['status'])
         self.assertEqual('Evaluation datums added', response['result'])
             
         #get the unassigned labels
-        response = client.await_completion(client.get_evaluation_data())
+        response = self.client.await_completion(self.client.get_evaluation_data())
         self.assertEqual('OK', response['status'])
         result = response['result']
         self.assertEqual(1, len(result))
@@ -83,25 +85,20 @@ class TestEvaluationLabels(unittest.TestCase):
         self.assertTrue(evaluationLabel[0] == receivedLabel)    
     
     def test_AddGetEvaluationLabel_UnicodeChars(self):
-        client = TroiaClient(ADDRESS)
-        response = client.create(CATEGORIES)
+        response = self.client.create(CATEGORIES)
         self.assertEqual('OK', response['status'])
         
         evaluationLabel = [('ૉେஇ', 'notporn')]          
-        response = client.await_completion(client.post_evaluation_data(evaluationLabel))
+        response = self.client.await_completion(self.client.post_evaluation_data(evaluationLabel))
         self.assertEqual('OK', response['status'])
         self.assertEqual('Evaluation datums added', response['result'])
             
         #get the unassigned labels
-        response = client.await_completion(client.get_evaluation_data())
+        response = self.client.await_completion(self.client.get_evaluation_data())
         self.assertEqual('OK', response['status'])
-        result = response['result']
-        self.assertEqual(1, len(result))
-        receivedLabel = (result[0]['objectName'], result[0]['correctCategory'])
-        self.assertTrue(evaluationLabel[0] == receivedLabel)     
-      
-
-
+        expectedLabels = [{u'correctCategory': u'notporn', u'objectName': u'ૉେஇ'}]
+        for label in expectedLabels:
+            self.assertTrue(label in response['result'])         
 
 if __name__ == '__main__':
     unittest.main()
