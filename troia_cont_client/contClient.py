@@ -88,7 +88,7 @@ class TroiaContClient(object):
         return self._do_request_get('status/' + command_id)
 
     def post_gold_datum(self, objectId, label, zeta):
-        return self._do_request_post("goldObjects", "objectId={}&label={}&zeta={}".format(objectId, repr(label), repr(zeta)))
+        return self._do_request_post("goldObject", "objectId={}&label={}&zeta={}".format(objectId, repr(label), repr(zeta)))
 
     def post_gold_data(self, objects):
         objects = [{
@@ -101,7 +101,7 @@ class TroiaContClient(object):
         return self._do_request_get("goldObjects")
     
     def post_object(self, objectId):
-        return self._do_request_post("objects", "objectId={}".format(objectId))
+        return self._do_request_post("object", "objectId={}".format(objectId))
     
     def post_objects(self, objects):
         return self._do_request_post_json("objects", json.dumps(objects))
@@ -124,7 +124,7 @@ class TroiaContClient(object):
         return self._do_request_post_json("assigns", json.dumps(labels))
     
     def post_assigned_label(self, worker, obj, label):
-        return self._do_request_post("assigns", "label={}&object={}&worker={}".format(repr(label), obj, worker))
+        return self._do_request_post("assign", "label={}&object={}&worker={}".format(repr(label), obj, worker))
     
     def get_assigned_labels(self):
         return self._do_request_get("assigns")
