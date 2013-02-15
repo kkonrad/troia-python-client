@@ -53,7 +53,6 @@ class TestPrediction(unittest.TestCase):
                 predictionObject = (estimatedZeta, objectName)
                 
             predictionObjects.append(predictionObject)
-        print predictionObjects
         for expPredictionObject in EXPECTED_PREDICTION_OBJECTS:
             self.assertTrue(expPredictionObject in predictionObjects)
       
@@ -78,8 +77,6 @@ class TestPrediction(unittest.TestCase):
             estimatedSigma = worker['est_sigma']
             estimatedRho = worker['est_rho']
             workerTouple = (workerName, estimatedMu, estimatedSigma, estimatedRho)
-            print workerTouple
-            print EXPECTED_PREDICTION_WORKERS
             self.assertTrue(workerTouple in EXPECTED_PREDICTION_WORKERS)
                 
 if __name__ == '__main__':
