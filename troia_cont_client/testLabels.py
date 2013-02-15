@@ -11,10 +11,9 @@ class TestLabels(unittest.TestCase):
         
     def load_assigns(self):
         #post the assigned labels
-        for worker, obj, label in ASSIGNED_LABELS_CONT:
-            response = self.client.await_completion(self.client.post_assigned_label(worker, obj, float(label)), 0.5)
-            self.assertEqual('OK', response['status'])
-            self.assertEqual('Assigns added', response['result'])
+        response = self.client.await_completion(self.client.post_assigned_labels(ASSIGNED_LABELS_CONT))
+        self.assertEqual('OK', response['status'])
+        self.assertEqual('Assigns added', response['result'])
 
     def test_AddGetAssignedLabels(self):
         self.load_assigns()
@@ -23,31 +22,21 @@ class TestLabels(unittest.TestCase):
         response = self.client.await_completion(self.client.get_assigned_labels())
         self.assertEqual('OK', response['status'])
         self.assertEqual(len(ASSIGNED_LABELS_CONT), len(response['result']))
-        result = response['result']
-       
-        results = []
-        for label in result:
-            labelTouple = (label['worker'], label['object'], label['label']['value'])
-            results.append(labelTouple)
-        print results
-        for label in ASSIGNED_LABELS_CONT:
-            print label
-            self.assertTrue(label in results)
+        for al in response['result']:
+            self.assertTrue(al['worker'] in [w for w, _, _ in ASSIGNED_LABELS_CONT])
           
     def test_AddGetGoldLabels(self):
         #post the assigned labels
-        for obj, label, zeta in GOLD_LABELS_CONT:
-            response = self.client.await_completion(self.client.post_gold_datum(obj, label, zeta))
-            self.assertEqual('OK', response['status'])
-            self.assertEqual('Gold object added', response['result'])
-        
-        #get the gold labels
+        response = self.client.await_completion(self.client.post_gold_data(GOLD_LABELS_CONT))
+        self.assertEqual('OK', response['status'])
+        self.assertEqual('Gold objects added', response['result'])
+        #get the assigned labels
         response = self.client.await_completion(self.client.get_gold_data())
         self.assertEqual('OK', response['status'])
+        self.assertEqual(len(GOLD_LABELS_CONT), len(response['result']))
         
         result = response['result']
         self.assertEqual(len(GOLD_LABELS_CONT), len(result))
-        print result
         goldLabelsList=[]
         for receivedGoldLabel in response['result']:
             labelName = receivedGoldLabel['name']
@@ -56,7 +45,7 @@ class TestLabels(unittest.TestCase):
         for label in GOLD_LABELS_CONT:
             self.assertTrue(label in goldLabelsList)
                     
-    def test_AddGetObjects(self):
+    def test_AddGetObject(self):
         #add an object
         response = self.client.await_completion(self.client.post_object("object1"))
         self.assertEqual('OK', response['status'])
@@ -67,6 +56,20 @@ class TestLabels(unittest.TestCase):
         self.assertEqual('OK', response['status'])
         self.assertEqual(1, len(response['result']))
         self.assertEqual('object1', response['result'][0]['name'])
+        
+    def test_AddGetObjects(self):
+        #add an object
+        objects = ["object1", "object2", "object3"]
+        response = self.client.await_completion(self.client.post_objects(objects))
+        self.assertEqual('OK', response['status'])
+        self.assertEqual('Objects without labels added', response['result'])
+        
+        #get all the objects
+        response = self.client.await_completion(self.client.get_objects())
+        self.assertEqual('OK', response['status'])
+        self.assertEqual(3, len(response['result']))
+        for obj in response['result']:
+            self.assertTrue(obj['name'] in objects)   
           
     def test_GetObjectData(self):
         #add objects

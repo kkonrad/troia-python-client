@@ -40,6 +40,11 @@ class TroiaContClient(object):
         args = self._jsonify(args)
         return self._do_raw_request(requests.post,
             "cjobs/%s/%s" % (self.jid, path), data=args)
+        
+    def _do_request_post_json(self, path, json):
+        headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+        return self._do_raw_request(requests.post, 
+            "cjobs/%s/%s" % (self.jid, path), data=json, headers=headers)
 
     def _do_request_delete(self, path, args=None):
         args = self._jsonify(args)
@@ -85,12 +90,22 @@ class TroiaContClient(object):
     def post_gold_datum(self, objectId, label, zeta):
         return self._do_request_post("goldObjects", "objectId={}&label={}&zeta={}".format(objectId, repr(label), repr(zeta)))
 
+    def post_gold_data(self, objects):
+        objects = [{
+            "object": object_id,
+            "label": {"value": float(label), "zeta": float(zeta)},
+        } for object_id, label, zeta in objects]
+        return self._do_request_post_json("goldObjects", json.dumps(objects))
+
     def get_gold_data(self):
         return self._do_request_get("goldObjects")
     
     def post_object(self, objectId):
         return self._do_request_post("objects", "objectId={}".format(objectId))
     
+    def post_objects(self, objects):
+        return self._do_request_post_json("objects", json.dumps(objects))
+        
     def get_objects(self, type="all"):
         return self._do_request_get("objects", )
     
@@ -100,6 +115,14 @@ class TroiaContClient(object):
     def get_object_assigns(self, objectId):
         return self._do_request_get("objects/%s/assigns" %objectId)
 
+    def post_assigned_labels(self, labels):
+        labels = [{
+            "worker": worker,
+            "object": object_id,
+            "label": {"value": float(label)},
+        } for worker, object_id, label in labels]
+        return self._do_request_post_json("assigns", json.dumps(labels))
+    
     def post_assigned_label(self, worker, obj, label):
         return self._do_request_post("assigns", "label={}&object={}&worker={}".format(repr(label), obj, worker))
     
