@@ -95,7 +95,7 @@ class TroiaContClient(object):
             "object": object_id,
             "label": {"value": float(label), "zeta": float(zeta)},
         } for object_id, label, zeta in objects]
-        return self._do_request_post_json("goldObjects", json.dumps(objects))
+        return self._do_request_post_json("goldObjects", json.dumps({"objects": objects}))
 
     def get_gold_data(self):
         return self._do_request_get("goldObjects")
@@ -104,7 +104,7 @@ class TroiaContClient(object):
         return self._do_request_post("object", "objectId={}".format(objectId))
     
     def post_objects(self, objects):
-        return self._do_request_post_json("objects", json.dumps(objects))
+        return self._do_request_post_json("objects", json.dumps({"objects": objects}))
         
     def get_objects(self, type="all"):
         return self._do_request_get("objects", )
@@ -121,7 +121,7 @@ class TroiaContClient(object):
             "object": object_id,
             "label": {"value": float(label)},
         } for worker, object_id, label in labels]
-        return self._do_request_post_json("assigns", json.dumps(labels))
+        return self._do_request_post_json("assigns", json.dumps({'assigns': labels}))
     
     def post_assigned_label(self, worker, obj, label):
         return self._do_request_post("assign", "label={}&object={}&worker={}".format(repr(label), obj, worker))
