@@ -66,6 +66,8 @@ class TestPrediction(unittest.TestCase):
         self.assertEqual('OK', response['status'])
         
         response = self.client.await_completion(self.client.get_prediction_workers())
+        import pprint
+        pprint.pprint(response)
         self.assertEqual('OK', response['status'])
         result = response['result']
         self.assertEqual(5, len(result))
