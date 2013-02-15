@@ -11,10 +11,9 @@ class TestWorkers(unittest.TestCase):
         
     def load_assigns(self):
         #post the assigned labels
-        for worker, obj, label in ASSIGNED_LABELS_CONT:
-            response = self.client.await_completion(self.client.post_assigned_label(worker, obj, float(label)), 0.5)
-            self.assertEqual('OK', response['status'])
-            self.assertEqual('Assigns added', response['result'])
+        response = self.client.await_completion(self.client.post_assigned_labels(ASSIGNED_LABELS_CONT))
+        self.assertEqual('OK', response['status'])
+        self.assertEqual('Assigns added', response['result'])
         
     def test_GetAllWorkers(self):
         self.load_assigns()

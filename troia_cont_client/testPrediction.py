@@ -9,15 +9,15 @@ class TestPrediction(unittest.TestCase):
         response = self.client.createNewJob()
         self.assertEqual('OK', response['status'])
         
-        for worker, obj, label in ASSIGNED_LABELS_CONT:
-            response = self.client.await_completion(self.client.post_assigned_label(worker, obj, float(label)), 0.5)
-            self.assertEqual('OK', response['status'])
-            self.assertEqual('Assigns added', response['result'])
+        #post the assigned labels
+        response = self.client.await_completion(self.client.post_assigned_labels(ASSIGNED_LABELS_CONT))
+        self.assertEqual('OK', response['status'])
+        self.assertEqual('Assigns added', response['result'])
         
-        for obj, label, zeta in GOLD_LABELS_CONT:
-            response = self.client.await_completion(self.client.post_gold_datum(obj, label, zeta))
-            self.assertEqual('OK', response['status'])
-            self.assertEqual('Gold object added', response['result'])
+        #post golds
+        response = self.client.await_completion(self.client.post_gold_data(GOLD_LABELS_CONT))
+        self.assertEqual('OK', response['status'])
+        self.assertEqual('Gold objects added', response['result'])
 
     def test_Compute(self):
         response = self.client.await_completion(self.client.post_compute())
@@ -37,7 +37,6 @@ class TestPrediction(unittest.TestCase):
 
         predictionObjects =[]
         for object in response['result']:
-            predictionObject = () 
             objectName = object['object']['name']
             goldLabel = {}
             try:
@@ -53,7 +52,6 @@ class TestPrediction(unittest.TestCase):
                 predictionObject = (estimatedZeta, objectName)
                 
             predictionObjects.append(predictionObject)
-        print predictionObjects
         for expPredictionObject in EXPECTED_PREDICTION_OBJECTS:
             self.assertTrue(expPredictionObject in predictionObjects)
       
@@ -67,8 +65,6 @@ class TestPrediction(unittest.TestCase):
         self.assertEqual('OK', response['status'])
         
         response = self.client.await_completion(self.client.get_prediction_workers())
-        import pprint
-        pprint.pprint(response)
         self.assertEqual('OK', response['status'])
         result = response['result']
         self.assertEqual(5, len(result))
