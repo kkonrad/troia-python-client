@@ -10,7 +10,7 @@ class TestUnassignedLabels(unittest.TestCase):
     def tearDown(self):
         self.client.delete()
     
-    def test_AddGetUnassignedLabels_EmptyLabels(self):
+    def test_AddGetData_UnassignedLabels_EmptyLabels(self):
         response = self.client.create(CATEGORIES)
         self.assertEqual('OK', response['status'])
              
@@ -25,7 +25,7 @@ class TestUnassignedLabels(unittest.TestCase):
         result = response['result']
         self.assertFalse(result)
         
-    def test_AddGetUnassignedLabel_LongLabelName(self):
+    def test_AddGetData_UnassignedLabel_LongLabelName(self):
         categories = [{"prior":"0.0000000001", "name":"category1"}, {"prior":"0.9999999999", "name":"category2"}]
         response = self.client.create(categories)
         self.assertEqual('OK', response['status'])
@@ -55,7 +55,7 @@ class TestUnassignedLabels(unittest.TestCase):
         for categoryProb in categoryProbabilies:
             self.assertTrue(categoryProb in expectedProbabilities)
 
-    def test_AddGetUnassignedLabels_PrintableASCII_RegularChars(self):
+    def test_AddGetData_UnassignedLabels_PrintableASCII_RegularChars(self):
         categories = [
                       {"prior":"0.1", "name":"category1"}, 
                       {"prior":"0.3", "name":"category2"},
@@ -88,7 +88,7 @@ class TestUnassignedLabels(unittest.TestCase):
         for categoryProb in categoryProbabilies:
             self.assertTrue(categoryProb in expectedProbabilities)
     
-    def test_AddGetUnassignedLabels_PrintableASCII_SpecialChars(self):
+    def test_AddGetData_UnassignedLabels_PrintableASCII_SpecialChars(self):
         categories = [
                       {"prior":"0.2", "name":"category1"}, 
                       {"prior":"0.3", "name":"category2"},
@@ -121,7 +121,7 @@ class TestUnassignedLabels(unittest.TestCase):
         for categoryProb in categoryProbabilies:
             self.assertTrue(categoryProb in expectedProbabilities)
     
-    def test_AddGetUnassignedLabels_ExtendedASCIIChars(self):
+    def test_AddGetData_UnassignedLabels_ExtendedASCIIChars(self):
         categories = [{"prior":"0.2", "name":"category1"}, {"prior":"0.8", "name":"category2"}]
         response = self.client.create(categories)
         self.assertEqual('OK', response['status'])
@@ -137,12 +137,11 @@ class TestUnassignedLabels(unittest.TestCase):
         self.assertEqual('OK', response['status'])
         self.assertEqual(1, len(response['result']))
         result = response['result'][0]
-        print result
         
         self.assertFalse(result['labels'])
         self.assertFalse(result['isGold'])
-        expectedLabelName = [{u'name': u'ëñµ¼Úæ'}]
-        self.assertTrue(result['name'] in expectedLabelName)
+        expectedLabelName = [u'ëñµ¼Úæ']
+        self.assertTrue(result['name'] in expectedLabelName[0])
         
         expectedProbabilities = [('category1', 0.5), ('category2', 0.5)]
         categoryProbabilies = []
@@ -153,7 +152,7 @@ class TestUnassignedLabels(unittest.TestCase):
         for categoryProb in categoryProbabilies:
             self.assertTrue(categoryProb in expectedProbabilities)
             
-    def test_AddGetUnassignedLabels_UnicodeChars(self):
+    def test_AddGetData_UnassignedLabels_UnicodeChars(self):
         categories = [{"prior":"0.2", "name":"category1"}, {"prior":"0.8", "name":"category2"}]
         response = self.client.create(categories)
         self.assertEqual('OK', response['status'])
@@ -172,8 +171,8 @@ class TestUnassignedLabels(unittest.TestCase):
         result = response['result'][0]
         self.assertFalse(result['labels'])
         self.assertFalse(result['isGold'])
-        expectedLabelName = [{u'name': u'ూഹܬआਖ਼'}]
-        self.assertTrue(result['name'] in expectedLabelName)
+        expectedLabelName = [u'ూഹܬआਖ਼']
+        self.assertTrue(result['name'] in expectedLabelName[0])
         
         expectedProbabilities = [('category1', 0.5), ('category2', 0.5)]
         categoryProbabilies = []
@@ -184,6 +183,32 @@ class TestUnassignedLabels(unittest.TestCase):
         for categoryProb in categoryProbabilies:
             self.assertTrue(categoryProb in expectedProbabilities)
 
+    def test_AddGetData_AssignedLabels(self):
+        response = self.client.create(CATEGORIES)
+        self.assertEqual('OK', response['status'])
+        
+        response = self.client.await_completion(self.client.post_assigned_labels(ASSIGNED_LABELS))
+        self.assertEqual('OK', response['status'])
+             
+        #post the unassigned label
+        unassignedLabel = ["ూഹܬआਖ਼"]
+        response = self.client.await_completion(self.client.post_data(unassignedLabel))
+        self.assertEqual('OK', response['status'])
+        self.assertEqual('Object without labels added', response['result'])
+            
+        #get the unassigned labels
+        response = self.client.await_completion(self.client.get_data("assigned"))
+        self.assertEqual('OK', response['status'])
+        result = response['result']
+        results = []
+        self.assertEqual(5, len(result))
+        for object in result:
+            labels = object['labels']
+            for receivedLabel in labels:
+                labelTouple = (receivedLabel['workerName'], receivedLabel['objectName'], receivedLabel['categoryName'])
+                results.append(labelTouple)
+        for label in ASSIGNED_LABELS:
+            self.assertTrue(label in results)
 
 
 if __name__ == '__main__':
