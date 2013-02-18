@@ -136,11 +136,13 @@ class TestUnassignedLabels(unittest.TestCase):
         response = self.client.await_completion(self.client.get_data("unassigned"))
         self.assertEqual('OK', response['status'])
         self.assertEqual(1, len(response['result']))
-        
         result = response['result'][0]
+        print result
+        
         self.assertFalse(result['labels'])
         self.assertFalse(result['isGold'])
-        self.assertEqual(unassignedLabel[0], result['name'])
+        expectedLabelName = [{u'name': u'ëñµ¼Úæ'}]
+        self.assertTrue(result['name'] in expectedLabelName)
         
         expectedProbabilities = [('category1', 0.5), ('category2', 0.5)]
         categoryProbabilies = []
@@ -170,7 +172,8 @@ class TestUnassignedLabels(unittest.TestCase):
         result = response['result'][0]
         self.assertFalse(result['labels'])
         self.assertFalse(result['isGold'])
-        self.assertEqual(unassignedLabel[0], result['name'])
+        expectedLabelName = [{u'name': u'ూഹܬआਖ਼'}]
+        self.assertTrue(result['name'] in expectedLabelName)
         
         expectedProbabilities = [('category1', 0.5), ('category2', 0.5)]
         categoryProbabilies = []

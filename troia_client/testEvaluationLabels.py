@@ -81,8 +81,9 @@ class TestEvaluationLabels(unittest.TestCase):
         self.assertEqual('OK', response['status'])
         result = response['result']
         self.assertEqual(1, len(result))
-        receivedLabel = (result[0]['objectName'], result[0]['correctCategory'])
-        self.assertTrue(evaluationLabel[0] == receivedLabel)    
+        expectedLabels = [{u'correctCategory': u'notporn', u'objectName': u'™ž¤©'}]
+        for label in expectedLabels:
+            self.assertTrue(label in response['result'])    
     
     def test_AddGetEvaluationLabel_UnicodeChars(self):
         response = self.client.create(CATEGORIES)

@@ -69,7 +69,6 @@ class TestGoldLabels(unittest.TestCase):
         self.assertEqual('OK', response['status'])
              
         #post the gold labels
-        expectedGoldLabels = [{"correctCategory": "notporn", "objectName": "™ž¤©"}]
         goldLabels = [("™ž¤©", "notporn")]
         response = self.client.await_completion(self.client.post_gold_data(goldLabels))
         self.assertEqual('OK', response['status'])
@@ -80,14 +79,14 @@ class TestGoldLabels(unittest.TestCase):
         self.assertEqual('OK', response['status'])
         result = response['result']
         self.assertEqual(1, len(result))
-        self.assertTrue(expectedGoldLabels[0] == result[0])     
+        expectedGoldLabel = [{u'correctCategory': u'notporn', u'objectName': u'™ž¤©'}]
+        self.assertTrue(result[0] in expectedGoldLabel) 
     
     def test_AddGetGoldLabel_UnicodeChars(self):
         response = self.client.create(CATEGORIES)
         self.assertEqual('OK', response['status'])
              
         #post the gold labels
-        expectedGoldLabels = [{"correctCategory": "notporn", "objectName": "ૉେஇ"}]
         goldLabels = [("ૉେஇ", "notporn")]
         response = self.client.await_completion(self.client.post_gold_data(goldLabels))
         self.assertEqual('OK', response['status'])
@@ -98,9 +97,8 @@ class TestGoldLabels(unittest.TestCase):
         self.assertEqual('OK', response['status'])
         result = response['result']
         self.assertEqual(1, len(result))
-        self.assertTrue(expectedGoldLabels[0] == result[0])     
-  
-
+        expectedGoldLabel = [{u'correctCategory': u'notporn', u'objectName': u'ૉେஇ'}]
+        self.assertTrue(result[0] in expectedGoldLabel) 
 
 if __name__ == '__main__':
     unittest.main()

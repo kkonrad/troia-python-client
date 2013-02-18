@@ -96,7 +96,7 @@ class TestAssignedLabels(unittest.TestCase):
             categories = [{"prior":0.4, "name":"category1"}, {"prior":0.239, "name":"category2"}, {"prior":0.361, "name":"category3"}]
             response = self.client.create(categories)
             self.assertEqual('OK', response['status'])
-             
+                        
             #post the assigned labels
             assignedLabels = [
             ('®¶', 'œŒ', 'category1'),
@@ -113,12 +113,11 @@ class TestAssignedLabels(unittest.TestCase):
             result = response['result']
             self.assertEqual(3, len(result))
          
-            results = []
-            for receivedLabel in result:
-                labelTouple = (receivedLabel['workerName'], receivedLabel['objectName'], receivedLabel['categoryName'])
-                results.append(labelTouple)
-            for label in assignedLabels:
-                self.assertTrue(label in results)
+            expectedAssignedLabels = [{u'workerName': u'®¶', u'objectName': u'œŒ', u'categoryName': u'category1'},
+                                      {u'workerName': u'ÀÆË', u'objectName': u'™ž¤©', u'categoryName': u'category2'},
+                                      {u'workerName': u'ëñ', u'objectName': u'µ¼Úæ', u'categoryName': u'category3'}]
+            for label in expectedAssignedLabels:
+                self.assertTrue(label in result)
          
         def test_AddGetAssignedLabels_UnicodeChars(self):
             categories = [{"prior":0.4, "name":"category1"}, {"prior":0.239, "name":"category2"}, {"prior":0.361, "name":"category3"}]
@@ -140,12 +139,10 @@ class TestAssignedLabels(unittest.TestCase):
             result = response['result']
             self.assertEqual(2, len(result))
          
-            results = []
-            for receivedLabel in result:
-                labelTouple = (receivedLabel['workerName'], receivedLabel['objectName'], receivedLabel['categoryName'])
-                results.append(labelTouple)
-            for label in assignedLabels:
-                self.assertTrue(label in results)             
+            expectedAssignedLabels = [{u'workerName': u'ૉେஇ', u'objectName': u'ΨҖӖմ؂څ', u'categoryName': u'category1'},
+                                      {u'workerName': u'ూഹ', u'objectName': u'ܬआਖ਼', u'categoryName': u'category2'}]
+            for label in expectedAssignedLabels:
+                self.assertTrue(label in result)          
 
 if __name__ == '__main__':
     unittest.main()
