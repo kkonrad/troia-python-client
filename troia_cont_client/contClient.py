@@ -2,6 +2,7 @@ import json
 import time
 import requests
 
+
 class TroiaContClient(object):
     ''' Base class providing wrappers for all GALC REST request
     '''
@@ -40,10 +41,10 @@ class TroiaContClient(object):
         args = self._jsonify(args)
         return self._do_raw_request(requests.post,
             "cjobs/%s/%s" % (self.jid, path), data=args)
-        
+
     def _do_request_post_json(self, path, json):
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-        return self._do_raw_request(requests.post, 
+        return self._do_raw_request(requests.post,
             "cjobs/%s/%s" % (self.jid, path), data=json, headers=headers)
 
     def _do_request_delete(self, path, args=None):
@@ -57,7 +58,7 @@ class TroiaContClient(object):
         :return: string with current date
         '''
         return self._do_raw_request(requests.get, "status")
-    
+
     def createNewJob(self):
         w = self._do_raw_request(requests.post, "cjobs")
         if 'New job created with ID: RANDOM_' in w['result']:
@@ -80,15 +81,12 @@ class TroiaContClient(object):
             time.sleep(timeout)
             resp = self.get_status(redirect_url)
         return resp
-    
+
     def get_job_status(self):
         return self._do_raw_request(requests.get, "cjobs/%s" % (self.jid))
-                                        
+
     def get_command_status(self, command_id):
         return self._do_request_get('status/' + command_id)
-
-    def post_gold_datum(self, objectId, label, zeta):
-        return self._do_request_post("goldObject", "objectId={}&label={}&zeta={}".format(objectId, repr(label), repr(zeta)))
 
     def post_gold_data(self, objects):
         objects = [{
@@ -99,21 +97,18 @@ class TroiaContClient(object):
 
     def get_gold_data(self):
         return self._do_request_get("goldObjects")
-    
-    def post_object(self, objectId):
-        return self._do_request_post("object", "objectId={}".format(objectId))
-    
+
     def post_objects(self, objects):
         return self._do_request_post_json("objects", json.dumps({"objects": objects}))
-        
+
     def get_objects(self, type="all"):
         return self._do_request_get("objects", )
-    
+
     def get_object(self, objectId):
-        return self._do_request_get("objects/%s" %objectId)
-    
+        return self._do_request_get("objects/%s" % objectId)
+
     def get_object_assigns(self, objectId):
-        return self._do_request_get("objects/%s/assigns" %objectId)
+        return self._do_request_get("objects/%s/assigns" % objectId)
 
     def post_assigned_labels(self, labels):
         labels = [{
@@ -122,27 +117,24 @@ class TroiaContClient(object):
             "label": {"value": float(label)},
         } for worker, object_id, label in labels]
         return self._do_request_post_json("assigns", json.dumps({'assigns': labels}))
-    
-    def post_assigned_label(self, worker, obj, label):
-        return self._do_request_post("assign", "label={}&object={}&worker={}".format(repr(label), obj, worker))
-    
+
     def get_assigned_labels(self):
         return self._do_request_get("assigns")
-    
+
     def get_workers(self):
         return self._do_request_get("workers")
-    
+
     def get_worker_data(self, workerId):
-        return self._do_request_get("workers/%s" %workerId)
-    
+        return self._do_request_get("workers/%s" % workerId)
+
     def get_worker_assigns(self, workerId):
-        return self._do_request_get("workers/%s/assigns" %workerId)
+        return self._do_request_get("workers/%s/assigns" % workerId)
 
     def post_compute(self):
         return self._do_request_post("compute")
-     
+
     def get_prediction_objects(self):
         return self._do_request_get("prediction/objects")
-    
+
     def get_prediction_workers(self):
         return self._do_request_get("prediction/workers")
