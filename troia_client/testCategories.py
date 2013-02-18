@@ -12,16 +12,6 @@ class TestCategories(unittest.TestCase):
         def tearDown(self):
             self.client.delete()
 
-            response = self.client.create(categories)
-            self.assertEqual('OK', response['status'])
-
-            response = self.client.await_completion(self.client.get_categories())
-            self.assertEqual('OK', response['status'])
-
-            expectedCategories = ['category1', 'category2', 'category3']
-            for category in expectedCategories:
-                self.assertTrue(category in response['result'])
-
         def test_AddGetCategories_PrintableASCII_SpecialChars(self):
             categories = [{"prior":0.5, "name":"!@#$:;,.{}[]"}, {"prior":0.5, "name":"2ndCategory"}]
             response = self.client.create(categories)
