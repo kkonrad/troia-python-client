@@ -1,6 +1,7 @@
 import unittest
 from client import TroiaClient
 from testSettings import *
+import time
 
 class TestJobs(unittest.TestCase):   
     
@@ -34,6 +35,12 @@ class TestJobs(unittest.TestCase):
             self.assertTrue('New job created with ID: RANDOM_' in response['result'])
             
             response = self.client.get_job_status()
+            jobStatus = response['status']
+            if (jobStatus == 'NOT READY'):
+                time.sleep(5)
+                response = self.client.get_job_status()
+                jobStatus = response['status']
+            
             self.assertEqual('OK', response['status'])           
             response = self.client.get_status(response['redirect'])
             self.assertJobData(response, 'class com.datascience.gal.BatchDawidSkene', '0', '0', '0', '0')
