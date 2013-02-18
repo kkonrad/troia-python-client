@@ -3,11 +3,12 @@ from client import TroiaClient
 from testSettings import *
 import time
 
+
 class TestCommandStatus(unittest.TestCase):
 
     def setUp(self):
         self.tc = TroiaClient(ADDRESS)
-        
+
     def test_GetRedirectData(self):
         try:
             self.tc.delete()
