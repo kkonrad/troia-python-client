@@ -4,37 +4,40 @@ from client import TroiaClient
 from testSettings import *
 
 class TestUnassignedLabels(unittest.TestCase):
+    def setUp(self):
+        self.client = TroiaClient(ADDRESS)
+            
+    def tearDown(self):
+        self.client.delete()
     
     def test_AddGetUnassignedLabels_EmptyLabels(self):
-        client = TroiaClient(ADDRESS)
-        response = client.create(CATEGORIES)
+        response = self.client.create(CATEGORIES)
         self.assertEqual('OK', response['status'])
              
         #post the empty assigned labels
-        response = client.await_completion(client.post_data([]))
+        response = self.client.await_completion(self.client.post_data([]))
         self.assertEqual('OK', response['status'])
         self.assertEqual('Object without labels added', response['result'])
            
         #get the evaluation labels and check that the list is empty 
-        response = client.await_completion(client.get_data())
+        response = self.client.await_completion(self.client.get_data())
         self.assertEqual('OK', response['status'])
         result = response['result']
         self.assertFalse(result)
         
     def test_AddGetUnassignedLabel_LongLabelName(self):
-        client = TroiaClient(ADDRESS)
         categories = [{"prior":"0.0000000001", "name":"category1"}, {"prior":"0.9999999999", "name":"category2"}]
-        response = client.create(categories)
+        response = self.client.create(categories)
         self.assertEqual('OK', response['status'])
              
         #post the empty assigned labels
         unassignedLabel = ["hjkdhfhdfgjkshfghdsfkgjldkgjfdkgjdflgjfkdljajdghafdhjkdhfhdfgjkshfghdsfkgjldkgjfdkgjdflgjfkdljajdghafdhjkdhfhdfgjkshfghdsfkgjldkgjfdkgjdflgjfkdljajdghafdhjkdhfhdfgjkshfghdsfkgjldkgjfdkgjdflgjfkdljajdghafdhjkdhfhdfgjkshfghdsfkgjldkgjfdkgjdflgjfkdljajdghafdhjkdhfhdfgjkshfghdsfkgjldkgjfdkgjdflgjfkdljajdghafdhjkdhfhdfgjkshfghdsfkgjldkgjfdkgjdflgjfkdljajdghafdhjkdhfhdfgjkshfghdsfkgjldkgjfdkgjdflgjfkdljajdghafdhjkdhfhdfgjkshfghdsfkgjldkgjfdkgjdflgjfkdljajdghafdhjkdhfhdfgjkshfghdsfkgjldkgjfdkgjdflgjfkdljajdghafdhjkdhfhdfgjkshfghdsfkgjldkgjfdkgjdflgjfkdljajdghafdhjkdhfhdfgjkshfghdsfkgjldkgjfdkgjdflgjfkdljajdghafdhjkdhfhdfgjkshfghdsfkgjldkgjfdkgjdflgjfkdljajdghafdhjkdhfhdfgjkshfghdsfkgjldkgjfdkgjdflgjfkdljajdghafdhjkdhfhdfgjkshfghdsfkgjldkgjfdkgjdflgjfkdljajdghafdhjkdhfhdfgjkshfghdsfkgjldkgjfdkgjdflgjfkdljajdghafdhjkdhfhdfgjkshfghdsfkgjldkgjfdkgjdflgjfkdljajdghafdhjkdhfhdfgjkshfghdsfkgjldkgjfdkgjdflgjfkdljajdghafdhjkdhfhdfgjkshfghdsfkgjldkgjfdkgjdflgjfkdljajdghafdhjkdhfhdfgjkshfghdsfkgjldkgjfdkgjdflgjfkdljajdghafdhjkdh"];
-        response = client.await_completion(client.post_data(unassignedLabel))
+        response = self.client.await_completion(self.client.post_data(unassignedLabel))
         self.assertEqual('OK', response['status'])
         self.assertEqual('Object without labels added', response['result'])
            
         #get the unassigned labels
-        response = client.await_completion(client.get_data("unassigned"))
+        response = self.client.await_completion(self.client.get_data("unassigned"))
         self.assertEqual('OK', response['status'])
         self.assertEqual(1, len(response['result']))
         
@@ -53,22 +56,21 @@ class TestUnassignedLabels(unittest.TestCase):
             self.assertTrue(categoryProb in expectedProbabilities)
 
     def test_AddGetUnassignedLabels_PrintableASCII_RegularChars(self):
-        client = TroiaClient(ADDRESS)
         categories = [
                       {"prior":"0.1", "name":"category1"}, 
                       {"prior":"0.3", "name":"category2"},
                       {"prior":"0.5", "name":"category3"},
                       {"prior":"0.1", "name":"category4"}]
-        response = client.create(categories)
+        response = self.client.create(categories)
         self.assertEqual('OK', response['status'])
              
         #post the unassigned labelscategory2
-        response = client.await_completion(client.post_data(["testObject1"]))
+        response = self.client.await_completion(self.client.post_data(["testObject1"]))
         self.assertEqual('OK', response['status'])
         self.assertEqual('Object without labels added', response['result'])
             
         #get the unassigned labels
-        response = client.await_completion(client.get_data("unassigned"))
+        response = self.client.await_completion(self.client.get_data("unassigned"))
         self.assertEqual('OK', response['status'])
         self.assertEqual(1, len(response['result']))
         
@@ -87,22 +89,21 @@ class TestUnassignedLabels(unittest.TestCase):
             self.assertTrue(categoryProb in expectedProbabilities)
     
     def test_AddGetUnassignedLabels_PrintableASCII_SpecialChars(self):
-        client = TroiaClient(ADDRESS)
         categories = [
                       {"prior":"0.2", "name":"category1"}, 
                       {"prior":"0.3", "name":"category2"},
                       {"prior":"0.5", "name":"category3"}]
-        response = client.create(categories)
+        response = self.client.create(categories)
         self.assertEqual('OK', response['status'])
              
         #post the unassigned label
         unassignedLabel = ["~!@#$%^&*()_+=-[]{}|:;<> ,./"]
-        response = client.await_completion(client.post_data(unassignedLabel))
+        response = self.client.await_completion(self.client.post_data(unassignedLabel))
         self.assertEqual('OK', response['status'])
         self.assertEqual('Object without labels added', response['result'])
             
         #get the unassigned labels
-        response = client.await_completion(client.get_data("unassigned"))
+        response = self.client.await_completion(self.client.get_data("unassigned"))
         self.assertEqual('OK', response['status'])
         self.assertEqual(1, len(response['result']))
         
@@ -121,19 +122,18 @@ class TestUnassignedLabels(unittest.TestCase):
             self.assertTrue(categoryProb in expectedProbabilities)
     
     def test_AddGetUnassignedLabels_ExtendedASCIIChars(self):
-        client = TroiaClient(ADDRESS)
         categories = [{"prior":"0.2", "name":"category1"}, {"prior":"0.8", "name":"category2"}]
-        response = client.create(categories)
+        response = self.client.create(categories)
         self.assertEqual('OK', response['status'])
              
         #post the unassigned label
         unassignedLabel = ["ëñµ¼Úæ"]
-        response = client.await_completion(client.post_data(unassignedLabel))
+        response = self.client.await_completion(self.client.post_data(unassignedLabel))
         self.assertEqual('OK', response['status'])
         self.assertEqual('Object without labels added', response['result'])
             
         #get the unassigned labels
-        response = client.await_completion(client.get_data("unassigned"))
+        response = self.client.await_completion(self.client.get_data("unassigned"))
         self.assertEqual('OK', response['status'])
         self.assertEqual(1, len(response['result']))
         
@@ -152,19 +152,18 @@ class TestUnassignedLabels(unittest.TestCase):
             self.assertTrue(categoryProb in expectedProbabilities)
             
     def test_AddGetUnassignedLabels_UnicodeChars(self):
-        client = TroiaClient(ADDRESS)
         categories = [{"prior":"0.2", "name":"category1"}, {"prior":"0.8", "name":"category2"}]
-        response = client.create(categories)
+        response = self.client.create(categories)
         self.assertEqual('OK', response['status'])
              
         #post the unassigned label
         unassignedLabel = ["ూഹܬआਖ਼"]
-        response = client.await_completion(client.post_data(unassignedLabel))
+        response = self.client.await_completion(self.client.post_data(unassignedLabel))
         self.assertEqual('OK', response['status'])
         self.assertEqual('Object without labels added', response['result'])
             
         #get the unassigned labels
-        response = client.await_completion(client.get_data("unassigned"))
+        response = self.client.await_completion(self.client.get_data("unassigned"))
         self.assertEqual('OK', response['status'])
         self.assertEqual(1, len(response['result']))
         

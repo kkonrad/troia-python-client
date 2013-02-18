@@ -20,7 +20,6 @@ class TestJobs(unittest.TestCase):
             
         def test_createJob_NoJobType(self):
             response = self.client.create(CATEGORIES)
-            print response
             self.assertEqual('OK', response['status'])
             self.assertTrue('New job created with ID: RANDOM_' in response['result'])
             

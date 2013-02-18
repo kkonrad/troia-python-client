@@ -26,11 +26,12 @@ class TestLabels(unittest.TestCase):
             self.assertTrue(al['worker'] in [w for w, _, _ in ASSIGNED_LABELS_CONT])
           
     def test_AddGetGoldLabels(self):
-        #post the assigned labels
+        #post the gold labels
         response = self.client.await_completion(self.client.post_gold_data(GOLD_LABELS_CONT))
         self.assertEqual('OK', response['status'])
         self.assertEqual('Gold objects added', response['result'])
-        #get the assigned labels
+        
+        #get the gold labels
         response = self.client.await_completion(self.client.get_gold_data())
         self.assertEqual('OK', response['status'])
         self.assertEqual(len(GOLD_LABELS_CONT), len(response['result']))
@@ -58,7 +59,7 @@ class TestLabels(unittest.TestCase):
         self.assertEqual('object1', response['result'][0]['name'])
         
     def test_AddGetObjects(self):
-        #add an object
+        #add multiple object
         objects = ["object1", "object2", "object3"]
         response = self.client.await_completion(self.client.post_objects(objects))
         self.assertEqual('OK', response['status'])
