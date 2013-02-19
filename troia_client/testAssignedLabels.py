@@ -53,7 +53,9 @@ class TestAssignedLabels(unittest.TestCase):
             self._test_method(ASSIGNED_LABELS)
 
         def test_AddGetAssignedLabels_PrintableASCII_SpecialChars(self):
-            categories = [{"prior":0.4, "name":"category1"}, {"prior":0.239, "name":"category2"}, {"prior":0.361, "name":"category3"}]
+            categories = [{"prior":0.4, "name":"category1"},
+                          {"prior":0.239, "name":"category2"},
+                          {"prior":0.361, "name":"category3"}]
             response = self.client.create(categories)
             self.assertEqual('OK', response['status'])
 
@@ -62,7 +64,9 @@ class TestAssignedLabels(unittest.TestCase):
                 ('c%%!<>c', '~!@#$^&*[](){}-_+=<>?/.,;:', 'category3')])
 
         def test_AddGetAssignedLabels_ExtendedASCIIChars(self):
-            categories = [{"prior":0.4, "name":"category1"}, {"prior":0.239, "name":"category2"}, {"prior":0.361, "name":"category3"}]
+            categories = [{"prior":0.4, "name":"category1"},
+                {"prior":0.239, "name":"category2"},
+                {"prior":0.361, "name":"category3"}]
             response = self.client.create(categories)
             self.assertEqual('OK', response['status'])
 
@@ -71,7 +75,9 @@ class TestAssignedLabels(unittest.TestCase):
                 ('ëñ', 'µ¼Úæ', 'category3')])
 
         def test_AddGetAssignedLabels_UnicodeChars(self):
-            categories = [{"prior":0.4, "name":"category1"}, {"prior":0.239, "name":"category2"}, {"prior":0.361, "name":"category3"}]
+            categories = [{"prior":0.4, "name":"category1"},
+                {"prior":0.239, "name":"category2"},
+                {"prior":0.361, "name":"category3"}]
             response = self.client.create(categories)
             self.assertEqual('OK', response['status'])
             self._test_method([('ૉେஇ', 'ΨҖӖմ؂څ', 'category1'),
