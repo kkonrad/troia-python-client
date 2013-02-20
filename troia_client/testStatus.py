@@ -2,14 +2,15 @@ import unittest
 from client import TroiaClient
 from testSettings import *
 
+
 class TestStatus(unittest.TestCase):
 
     def setUp(self):
         self.client = TroiaClient(ADDRESS)
-    
+
     def tearDown(self):
         self.client.delete()
-        
+
     def test_GetStatus(self):
         response = self.client.status()
         self.assertEqual('OK', response['status'])

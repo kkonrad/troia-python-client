@@ -3,6 +3,7 @@ import unittest
 from client import TroiaClient
 from testSettings import ADDRESS, CATEGORIES, GOLD_SAMPLES, ASSIGNED_LABELS
 
+
 class TroiaClientTestBase(unittest.TestCase):
 
     def setUp(self):
@@ -19,6 +20,7 @@ class TroiaClientTestBase(unittest.TestCase):
             self.assertEqual(expected_code, ex.args[0])
             return ex.args[1]
 
+
 class TestUseCases(TroiaClientTestBase):
 
     JOB_ID = "TESTING_USE_cases"
@@ -27,6 +29,9 @@ class TestUseCases(TroiaClientTestBase):
         super(TestUseCases, self).setUp()
         w = self.tc.create(CATEGORIES)
         self.assertEqual('OK', w['status'])
+
+    def tearDown(self):
+        self.tc.delete()
 
     def test_tutorial(self):
         w = self.tc.await_completion(
@@ -48,7 +53,7 @@ class TestUseCases(TroiaClientTestBase):
             self.assertEqual(1, len([x for x in res if x['workerName'] == worker]))
 
         #for el in res:
-         #   self.assertEqual(5, el['Number of Annotations'])
+        #   self.assertEqual(5, el['Number of Annotations'])
 
         w = self.tc.await_completion(
             self.tc.get_predictions_objects("DS", "MaxLikelihood"))
@@ -63,7 +68,6 @@ class TestUseCases(TroiaClientTestBase):
         )
         for r in w['result']:
             self.assertTrue((r['objectName'], r['categoryName']) in expectedCategories)
-      
 
 
 if __name__ == '__main__':

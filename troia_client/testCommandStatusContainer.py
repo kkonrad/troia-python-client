@@ -9,12 +9,10 @@ class TestCommandStatus(unittest.TestCase):
     def setUp(self):
         self.tc = TroiaClient(ADDRESS)
 
+    def tearDown(self):
+        self.tc.delete()
+
     def test_GetRedirectData(self):
-        try:
-            self.tc.delete()
-            time.sleep(1)
-        except:
-            pass
         self.tc.create(CATEGORIES)
         assigend_labels_response = self.tc.get_assigned_labels()
         time.sleep(0.5)

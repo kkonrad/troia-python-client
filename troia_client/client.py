@@ -127,10 +127,10 @@ class TroiaClient(object):
 
     def get_categories(self):
         return self._do_request_get("categories")
-    
+
     def get_job_status(self):
         return self._do_raw_request(requests.get, "jobs/%s" % (self.jid))
-                                        
+
     def get_command_status(self, command_id):
         return self._do_request_get('status/' + command_id)
 
@@ -143,13 +143,13 @@ class TroiaClient(object):
 
     def get_gold_data(self):
         return self._do_request_get("goldData")
-    
+
     def post_data(self, data):
-        return self._do_request_post("data", {'objects':data})
-    
+        return self._do_request_post("data", {'objects': data})
+
     def get_data(self, type="all"):
         return self._do_request_get("data", {'type': type})
-    
+
     def post_evaluation_data(self, eval_data):
         eval_data = [{
             "correctCategory": label,
@@ -171,7 +171,7 @@ class TroiaClient(object):
 
     def get_assigned_labels(self):
         return self._do_request_get("assignedLabels")
-    
+
     def get_workers(self):
         return self._do_request_get("workers")
 
@@ -202,20 +202,20 @@ class TroiaClient(object):
 
     def get_cost_matrix(self):
         return self._do_request_get("costs")
-    
+
     def post_cost_matrix(self, costMatrix):
         return self._do_request_post("costs",  {"costs": costMatrix})
-    
+
     def get_probability_distribution(self, datum, typ=None):
         data = {"type": typ} if typ else None
         return self._do_request_get("data/{}/categoryProbability".format(datum), data)
-    
+
     def get_prediction_workers_quality(self, cost_algorithm="ExpectedCost"):
         return self._do_request_get("prediction/workersQuality", {'costAlgorithm': cost_algorithm})
 
     def get_evaluation_workers_quality(self, cost_algorithm="ExpectedCost"):
         return self._do_request_get("evaluation/workersQuality", {'costAlgorithm': cost_algorithm})
-    
+
     def get_evaluation_workers_score(self):
         return self._do_request_get("prediction/workersScore")
 

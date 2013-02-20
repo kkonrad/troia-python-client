@@ -10,6 +10,9 @@ class TestLabels(unittest.TestCase):
         response = self.client.createNewJob()
         self.assertEqual('OK', response['status'])
 
+    def tearDown(self):
+        self.client.delete()
+
     def load_assigns(self):
         #post the assigned labels
         response = self.client.await_completion(self.client.post_assigned_labels(ASSIGNED_LABELS_CONT))

@@ -22,7 +22,9 @@ class TestAssignedLabels(unittest.TestCase):
             self.assertEqual('OK', response['status'])
             self.assertEqual(len(response['result']), len(assigned_labels))
             results = [tuple(receivedLabel.values()) for receivedLabel in response['result']]
+            print results
             for label in assigned_labels:
+                print label
                 self.assertTrue(label in results)
 
         def test_AddGetEmptyAssignedLabels(self):
@@ -80,8 +82,8 @@ class TestAssignedLabels(unittest.TestCase):
                 {"prior":0.361, "name":"category3"}]
             response = self.client.create(categories)
             self.assertEqual('OK', response['status'])
-            self._test_method([('ૉେஇ', 'ΨҖӖմ؂څ', 'category1'),
-                ('ూഹ', 'ܬआਖ਼', 'category2')])
+            self._test_method([(u'ૉେஇ', u'ΨҖӖմ؂څ', u'category1'),
+                (u'ూഹ', u'ܬआਖ਼', u'category2')])
 
 if __name__ == '__main__':
     unittest.main()
