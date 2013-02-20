@@ -70,13 +70,13 @@ class TestUnassignedLabels(unittest.TestCase):
     def test_AddGetData_UnassignedLabels_ExtendedASCIIChars(self):
         categories = [{"prior":"0.2", "name":"category1"}, 
                       {"prior":"0.8", "name":"category2"}]
-        unassignedLabels = ["ëñµ¼Úæ"]
+        unassignedLabels = [u"ëñµ¼Úæ"]
         expectedProbabilities = [('category1', 0.5), ('category2', 0.5)]
         self._test_method(categories, unassignedLabels, expectedProbabilities)
 
     def test_AddGetData_UnassignedLabels_UnicodeChars(self):
-        categories = [{"prior":"0.2", "name":"category1"}, {"prior":"0.8", "name":"category2"}]
-        unassignedLabels = ["ూഹܬआਖ਼"]
+        categories = [{"prior":0.2, "name":"category1"}, {"prior":0.8, "name":"category2"}]
+        unassignedLabels = [u"ూഹܬआਖ਼"]
         expectedProbabilities = [('category1', 0.5), ('category2', 0.5)]
         self._test_method(categories, unassignedLabels, expectedProbabilities)
 
@@ -88,7 +88,7 @@ class TestUnassignedLabels(unittest.TestCase):
         self.assertEqual('OK', response['status'])
 
         #post the unassigned label
-        unassignedLabel = ["ూഹܬआਖ਼"]
+        unassignedLabel = [u"ూഹܬआਖ਼"]
         response = self.client.await_completion(self.client.post_data(unassignedLabel))
         self.assertEqual('OK', response['status'])
         self.assertEqual('Object without labels added', response['result'])

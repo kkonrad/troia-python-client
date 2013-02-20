@@ -72,9 +72,9 @@ class TestAssignedLabels(unittest.TestCase):
             response = self.client.create(categories)
             self.assertEqual('OK', response['status'])
 
-            self._test_method([('®¶', 'œŒ', 'category1'),
-                ('ÀÆË', '™ž¤©', 'category2'),
-                ('ëñ', 'µ¼Úæ', 'category3')])
+            self._test_method([(u'®¶', u'œŒ', 'category1'),
+                (u'ÀÆË', u'™ž¤©', 'category2'),
+                (u'ëñ', u'µ¼Úæ', 'category3')])
 
         def test_AddGetAssignedLabels_UnicodeChars(self):
             categories = [{"prior":0.4, "name":"category1"},
@@ -82,8 +82,8 @@ class TestAssignedLabels(unittest.TestCase):
                 {"prior":0.361, "name":"category3"}]
             response = self.client.create(categories)
             self.assertEqual('OK', response['status'])
-            self._test_method([(u'ૉେஇ', u'ΨҖӖմ؂څ', u'category1'),
-                (u'ూഹ', u'ܬआਖ਼', u'category2')])
+            self._test_method([(u'ૉେஇ', u'ΨҖӖմ؂څ', 'category1'),
+                (u'ూഹ', u'ܬआਖ਼', 'category2')])
 
 if __name__ == '__main__':
     unittest.main()

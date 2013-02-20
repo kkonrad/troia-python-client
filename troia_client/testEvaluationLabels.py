@@ -42,10 +42,10 @@ class TestEvaluationLabels(unittest.TestCase):
         self._test_method([('~!@%#$^&*()_+=-[]{}|:;<> ,./', 'notporn')])
 
     def test_AddGetEvaluationLabel_ExtendedASCIIChars(self):
-        self._test_method([('™ž¤©', 'notporn')])
+        self._test_method([(u'™ž¤©', 'notporn')])
 
     def test_AddGetEvaluationLabel_UnicodeChars(self):
-        self._test_method([('ૉେஇ', 'notporn')])
+        self._test_method([(u'ૉେஇ', 'notporn')])
 
 if __name__ == '__main__':
     unittest.main()
