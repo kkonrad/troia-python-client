@@ -97,7 +97,7 @@ class TroiaClient(object):
         if categories is not None:
             arg += 'categories=' + json.dumps(categories)
         if self.jid:
-            arg += '&id=' + self.jid
+            arg += '&id=' + str(self.jid)
         if typee is not None:
             arg += '&type=' + typee
         w = self._do_raw_request(requests.post, "jobs", data=arg)

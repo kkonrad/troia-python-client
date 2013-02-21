@@ -60,7 +60,8 @@ class TroiaContClient(object):
         return self._do_raw_request(requests.get, "status")
 
     def createNewJob(self):
-        w = self._do_raw_request(requests.post, "cjobs")
+        post_data = "id=" + str(self.jid) if self.jid else None
+        w = self._do_raw_request(requests.post, "cjobs", data=post_data)
         if 'New job created with ID: RANDOM_' in w['result']:
             self.jid = w['result'].split(':')[1].strip()
         return w
