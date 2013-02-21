@@ -45,7 +45,7 @@ class TestLabels(unittest.TestCase):
         goldLabelsList = []
         for receivedGoldLabel in response['result']:
             labelName = receivedGoldLabel['name']
-            goldLabelData = (labelName, receivedGoldLabel['goldLabel']['value']['value'], receivedGoldLabel['goldLabel']['value']['zeta'])
+            goldLabelData = (labelName, receivedGoldLabel['goldLabel']['value'], receivedGoldLabel['goldLabel']['zeta'])
             goldLabelsList.append(goldLabelData)
         for label in GOLD_LABELS_CONT:
             self.assertTrue(label in goldLabelsList)

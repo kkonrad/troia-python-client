@@ -2,6 +2,7 @@ import unittest
 from contClient import TroiaContClient
 from testSettings import *
 
+
 class TestPrediction(unittest.TestCase):
 
     def setUp(self):
@@ -36,15 +37,15 @@ class TestPrediction(unittest.TestCase):
 
         response = self.client.await_completion(self.client.get_prediction_objects())
         self.assertEqual('OK', response['status'])
-        self.assertEqual(len(EXPECTED_PREDICTION_OBJECTS) ,len(response['result']))
+        self.assertEqual(len(EXPECTED_PREDICTION_OBJECTS), len(response['result']))
 
-        predictionObjects =[]
+        predictionObjects = []
         for object in response['result']:
             objectName = object['object']['name']
             goldLabel = {}
             try:
-                goldLabel['value'] = object['object']['goldLabel']['value']['value']
-                goldLabel['zeta'] = object['object']['goldLabel']['value']['zeta']
+                goldLabel['value'] = object['object']['goldLabel']['value']
+                goldLabel['zeta'] = object['object']['goldLabel']['zeta']
             except:
                 print 'No gold labels for object ' + objectName
 
