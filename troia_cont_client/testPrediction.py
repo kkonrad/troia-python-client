@@ -28,14 +28,14 @@ class TestPrediction(unittest.TestCase):
         self.assertEqual('OK', response['status'])
 
     def test_GetPredictionObjects_WithoutCompute(self):
-        response = self.client.await_completion(self.client.get_prediction_objects())
+        response = self.client.await_completion(self.client.get_objects_prediction())
         self.assertEqual('Internal error: Run compute first!', response['result'])
 
     def test_GetPredictionObjects_WithCompute(self):
         response = self.client.await_completion(self.client.post_compute())
         self.assertEqual('OK', response['status'])
 
-        response = self.client.await_completion(self.client.get_prediction_objects())
+        response = self.client.await_completion(self.client.get_objects_prediction())
         self.assertEqual('OK', response['status'])
         self.assertEqual(len(EXPECTED_PREDICTION_OBJECTS), len(response['result']))
 
@@ -59,15 +59,23 @@ class TestPrediction(unittest.TestCase):
         for expPredictionObject in EXPECTED_PREDICTION_OBJECTS:
             self.assertTrue(expPredictionObject in predictionObjects)
 
+    def test_GetPredictionForOneObject_WithCompute(self):
+        response = self.client.await_completion(self.client.post_compute())
+        self.assertEqual('OK', response['status'])
+
+        response = self.client.await_completion(self.client.get_object_prediction('url1'))
+        self.assertEqual('OK', response['status'])
+        self.assertNotEqual({}, response['result'])
+
     def test_GetPredictionWorkers_WithoutCompute(self):
-        response = self.client.await_completion(self.client.get_prediction_workers())
+        response = self.client.await_completion(self.client.get_workers_prediction())
         self.assertEqual('Internal error: Run compute first!', response['result'])
 
     def test_GetPredictionWorkers_WithCompute(self):
         response = self.client.await_completion(self.client.post_compute())
         self.assertEqual('OK', response['status'])
 
-        response = self.client.await_completion(self.client.get_prediction_workers())
+        response = self.client.await_completion(self.client.get_workers_prediction())
         self.assertEqual('OK', response['status'])
         result = response['result']
         self.assertEqual(5, len(result))
@@ -80,6 +88,14 @@ class TestPrediction(unittest.TestCase):
             estimatedRho = worker['est_rho']
             workerTouple = (workerName, estimatedMu, estimatedSigma, estimatedRho)
             self.assertTrue(workerTouple in EXPECTED_PREDICTION_WORKERS)
+
+    def test_GetPredictionForOneWorker_WithCompute(self):
+        response = self.client.await_completion(self.client.post_compute())
+        self.assertEqual('OK', response['status'])
+
+        response = self.client.await_completion(self.client.get_worker_prediction('worker1'))
+        self.assertEqual('OK', response['status'])
+        self.assertNotEqual({}, response['result'])
 
 if __name__ == '__main__':
     unittest.main()

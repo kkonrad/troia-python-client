@@ -106,10 +106,16 @@ class TroiaContClient(object):
         return self._do_request_get("objects", )
 
     def get_object(self, objectId):
-        return self._do_request_get("objects/%s" % objectId)
+        return self._do_request_get("objects/%s/info" % objectId)
 
     def get_object_assigns(self, objectId):
         return self._do_request_get("objects/%s/assigns" % objectId)
+
+    def get_object_prediction(self, object_id):
+        return self._do_request_get("objects/%s/prediction" % object_id)
+
+    def get_objects_prediction(self):
+        return self._do_request_get("objects/prediction")
 
     def post_assigned_labels(self, labels):
         labels = [{
@@ -126,16 +132,16 @@ class TroiaContClient(object):
         return self._do_request_get("workers")
 
     def get_worker_data(self, workerId):
-        return self._do_request_get("workers/%s" % workerId)
+        return self._do_request_get("workers/%s/info" % workerId)
 
     def get_worker_assigns(self, workerId):
         return self._do_request_get("workers/%s/assigns" % workerId)
 
+    def get_worker_prediction(self, worker_id):
+        return self._do_request_get("workers/%s/quality/estimated" % worker_id)
+
+    def get_workers_prediction(self):
+        return self._do_request_get("workers/quality/estimated")
+
     def post_compute(self):
         return self._do_request_post("compute")
-
-    def get_prediction_objects(self):
-        return self._do_request_get("prediction/objects")
-
-    def get_prediction_workers(self):
-        return self._do_request_get("prediction/workers")
