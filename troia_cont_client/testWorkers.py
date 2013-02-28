@@ -26,10 +26,10 @@ class TestWorkers(unittest.TestCase):
         self.assertEqual(5, len(response['result']))
         self.assertEqual('OK', response['status'])
 
-    def test_GetWorkerData(self):
+    def test_GetWorkerInfo(self):
         self.load_assigns()
         #get the data for the given worker
-        response = self.client.await_completion(self.client.get_worker_data("worker1"))
+        response = self.client.await_completion(self.client.get_worker_info("worker1"))
         self.assertEqual('worker1', response['result']['name'])
         self.assertEqual(5, len(response['result']['assigns']))
         self.assertEqual('OK', response['status'])

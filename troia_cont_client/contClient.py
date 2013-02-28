@@ -99,6 +99,9 @@ class TroiaContClient(object):
     def get_gold_data(self):
         return self._do_request_get("goldObjects")
 
+    def get_gold_object(self, objectId):
+        return self._do_request_get("goldObjects/%s" % objectId)
+
     def post_objects(self, objects):
         return self._do_request_post_json("objects", json.dumps({"objects": objects}))
 
@@ -131,7 +134,7 @@ class TroiaContClient(object):
     def get_workers(self):
         return self._do_request_get("workers")
 
-    def get_worker_data(self, workerId):
+    def get_worker_info(self, workerId):
         return self._do_request_get("workers/%s/info" % workerId)
 
     def get_worker_assigns(self, workerId):

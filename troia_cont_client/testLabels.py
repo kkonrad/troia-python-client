@@ -50,6 +50,20 @@ class TestLabels(unittest.TestCase):
         for label in GOLD_LABELS_CONT:
             self.assertTrue(label in goldLabelsList)
 
+    def test_AddGetGoldLabel(self):
+        #post the gold labels
+        response = self.client.await_completion(self.client.post_gold_data(GOLD_LABELS_CONT))
+        self.assertEqual('OK', response['status'])
+        self.assertEqual('Gold objects added', response['result'])
+
+        #get the gold labels
+        response = self.client.await_completion(self.client.get_gold_object("url1"))
+        self.assertTrue('OK', response['status'])
+        self.assertTrue(1, len(response['result']))
+        self.assertTrue('url1', response['result']['name'])
+        self.assertTrue('0.292643407722905', response['result']['goldLabel']['zeta'])
+        self.assertTrue('10.219077484951955', response['result']['goldLabel']['value'])
+
     def test_AddGetObject(self):
         #add an object
         response = self.client.await_completion(self.client.post_objects(["object1"]))
@@ -76,7 +90,7 @@ class TestLabels(unittest.TestCase):
         for obj in response['result']:
             self.assertTrue(obj['name'] in objects)
 
-    def test_GetObjectData(self):
+    def test_GetObjectInfo(self):
         #add objects
         objects = ["object2", "object3"]
         response = self.client.await_completion(self.client.post_objects(objects))
@@ -102,3 +116,4 @@ class TestLabels(unittest.TestCase):
             self.assertEqual('OK', response['status'])
             for al in response['result']:
                 self.assertEqual(obj, al['object'])
+
