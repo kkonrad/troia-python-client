@@ -219,6 +219,9 @@ class TroiaClient(object):
     def get_evaluation_workers_score(self):
         return self._do_request_get("prediction/workersScore")
 
+    def get_prediction_zip(self):
+        return self._do_request_get("prediction/zip")
+
 
 # **** PROGRESS BARRIER
     def load_costs(self, costs, idd=None):

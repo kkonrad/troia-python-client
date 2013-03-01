@@ -15,5 +15,6 @@ if __name__ == "__main__":
     client.await_completion(client.post_compute())
     client.await_completion(client.get_predictions_objects())
     client.await_completion(client.get_prediction_workers_quality())
+    client.await_completion(client.get_prediction_zip())
     client.delete()
     check_status(client.status())
