@@ -107,6 +107,33 @@ class TestUnassignedLabels(unittest.TestCase):
         for label in ASSIGNED_LABELS:
             self.assertTrue(label in results)
 
+    def test_AddGetData_AllLabels(self):
+        response = self.client.create(CATEGORIES)
+        self.assertEqual('OK', response['status'])
+
+        assignedLabels = [('worker1', 'url1', 'porn'), ('worker1', 'url2', 'porn')]
+        response = self.client.await_completion(self.client.post_assigned_labels(assignedLabels))
+        self.assertEqual('OK', response['status'])
+
+        #post the unassigned label
+        unassignedLabel = ["newUnassignedLabel"]
+        response = self.client.await_completion(self.client.post_data(unassignedLabel))
+        self.assertEqual('OK', response['status'])
+        self.assertEqual('Object without labels added', response['result'])
+
+        #get the unassigned labels
+        response = self.client.await_completion(self.client.get_data("all"))
+        self.assertEqual('OK', response['status'])
+        result = response['result']
+        self.assertEqual(3, len(result))
+        labels = {}
+        for label in result:
+            labels[label['name']] = label['labels']
+            self.assertTrue({u'categoryName': u'porn', u'value': 0.5} in label['categoryProbability'])
+            self.assertTrue({u'categoryName': u'notporn', u'value': 0.5} in label['categoryProbability'])
+        self.assertEqual([{u'workerName': u'worker1', u'objectName': u'url1', u'categoryName': u'porn'}], labels['url1'])
+        self.assertEqual([{u'workerName': u'worker1', u'objectName': u'url2', u'categoryName': u'porn'}], labels['url2'])
+        self.assertEqual([], labels['newUnassignedLabel'])
 
 if __name__ == '__main__':
     unittest.main()

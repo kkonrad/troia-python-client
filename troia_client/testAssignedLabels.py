@@ -22,9 +22,7 @@ class TestAssignedLabels(unittest.TestCase):
             self.assertEqual('OK', response['status'])
             self.assertEqual(len(response['result']), len(assigned_labels))
             results = [tuple(receivedLabel.values()) for receivedLabel in response['result']]
-            print results
             for label in assigned_labels:
-                print label
                 self.assertTrue(label in results)
 
         def test_AddGetEmptyAssignedLabels(self):
