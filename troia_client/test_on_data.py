@@ -67,10 +67,9 @@ def _test_all(tc, gold_labels, cost_matrix, labels, eval_data):
     for cost_alg in COST_ALGORITHM:
         print "WORKER_EVAL_QUALITY ({}):".format(cost_alg), tc.await_completion(tc.get_evaluation_workers_quality(cost_alg))
 
-    print "WORKERS_SCORE", tc.await_completion(tc.get_evaluation_workers_score())
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         jid = sys.argv[1]
-    tc = TroiaClient('http://localhost:8080/troia-server-0.8/')
+    tc = TroiaClient('http://localhost:8080/troia-server-1.0/')
     _test_all(tc, GOLD_SAMPLES, CATEGORIES, ASSIGNED_LABELS, EVALUATION_DATA)
