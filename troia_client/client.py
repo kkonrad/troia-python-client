@@ -175,6 +175,9 @@ class TroiaClient(object):
     def get_workers(self):
         return self._do_request_get("workers")
 
+    def get_worker(self, workerId):
+        return self._do_request_get("workers/%s" % (workerId))
+
     def post_compute(self, iterations=20):
         return self._do_request_post("compute", {'iterations': iterations})
 
