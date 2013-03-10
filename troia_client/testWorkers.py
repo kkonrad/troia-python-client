@@ -3,7 +3,6 @@ import unittest
 from client import TroiaClient
 from testSettings import *
 
-
 class TestWorkers(unittest.TestCase):
 
     def setUp(self):
