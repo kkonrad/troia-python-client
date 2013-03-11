@@ -64,6 +64,12 @@ class TestPrediction(unittest.TestCase):
         for workerQuality in response['result']:
             self.assertTrue(math.isnan(workerQuality['value']))
 
+    def _getCategoryProbability(self, algorithm, expectedProbabilities):
+        for object in set((x[1] for x in ASSIGNED_LABELS)):
+            response = self.client.await_completion(self.client.get_probability_distribution(object, algorithm))
+            self.assertEqual('OK', response['status'])
+            self.assertEqual(expectedProbabilities[object], response['result'])
+
     def testGetPredictionZip(self):
         response = self.client.await_completion(self.client.get_prediction_zip())
         self.assertEqual('OK', response['status'])
@@ -147,3 +153,19 @@ class TestPrediction(unittest.TestCase):
         costAlgorithms = ["ExpectedCost", "MaxLikelihood", "MinCost"] 
         for costAlgorithm in costAlgorithms:
             self._getEvaluatedWorkerQuality(costAlgorithm)
+
+    def test_GetCategoryProbability_DS(self):
+        expectedProbabilities = {'url1': [{u'categoryName': u'porn', u'value': 1.0}, {u'categoryName': u'notporn', u'value': 0.0}],
+                                 'url2': [{u'categoryName': u'porn', u'value': 0.0}, {u'categoryName': u'notporn', u'value': 1.0}],
+                                 'url3': [{u'categoryName': u'porn', u'value': 1.0}, {u'categoryName': u'notporn', u'value': 0.0}],
+                                 'url4': [{u'categoryName': u'porn', u'value': 0.0}, {u'categoryName': u'notporn', u'value': 1.0}],
+                                 'url5': [{u'categoryName': u'porn', u'value': 1.0}, {u'categoryName': u'notporn', u'value': 0.0}]} 
+        self._getCategoryProbability("DS", expectedProbabilities)
+
+    def test_GetCategoryProbability_MV(self):
+        expectedProbabilities = {'url1': [{u'categoryName': u'porn', u'value': 0.4}, {u'categoryName': u'notporn', u'value': 0.6000000000000001}],
+                                 'url2': [{u'categoryName': u'porn', u'value': 0.8}, {u'categoryName': u'notporn', u'value': 0.2}],
+                                 'url3': [{u'categoryName': u'porn', u'value': 0.4}, {u'categoryName': u'notporn', u'value': 0.6000000000000001}],
+                                 'url4': [{u'categoryName': u'porn', u'value': 0.8}, {u'categoryName': u'notporn', u'value': 0.2}],
+                                 'url5': [{u'categoryName': u'porn', u'value': 0.6000000000000001}, {u'categoryName': u'notporn', u'value': 0.4}]} 
+        self._getCategoryProbability("MV", expectedProbabilities)
