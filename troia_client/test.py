@@ -1,6 +1,6 @@
 import unittest
 
-from client import TroiaClient
+from client.gal import TroiaClient
 from testSettings import ADDRESS, CATEGORIES, GOLD_SAMPLES, ASSIGNED_LABELS
 
 
