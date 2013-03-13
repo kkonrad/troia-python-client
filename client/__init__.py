@@ -123,7 +123,9 @@ class AbstractTroiaClient(object):
         return self._do_request_get("evaluationObjects/%s" % objectId)
 
     def post_objects(self, objects):
-        return self._do_request_post_json("objects", json.dumps({"objects": objects}))
+        return self._do_request_post_json(
+            "objects",
+            json.dumps({"objects": [{"name": obj} for obj in objects]}))
 
     def get_objects(self, type="all"):
         return self._do_request_get("objects", )
