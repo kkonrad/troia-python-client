@@ -27,38 +27,38 @@ def _test_all(tc, gold_labels, cost_matrix, labels, eval_data):
     print 'GET_WORKERS', tc.await_completion(tc.get_workers())
     print "COMPUTATION:", tc.await_completion(tc.post_compute())
 
-    # for alg in ALGORITHMS:
-    #     for label_choosing in LABEL_CHOOSING:
-    #         print "DATA_PREDICTIONS ({}, {}):".format(alg, label_choosing), tc.await_completion(tc.get_predictions_objects(alg, label_choosing))
+    for alg in ALGORITHMS:
+        for label_choosing in LABEL_CHOOSING:
+            print "DATA_PREDICTIONS ({}, {}):".format(alg, label_choosing), tc.await_completion(tc.get_objects_prediction(alg, label_choosing))
 
-    # for alg in ALGORITHMS:
-    #     for cost_alg in COST_ALGORITHM:
-    #         print "DATA_COST ({}, {})".format(alg, cost_alg), tc.await_completion(tc.get_prediction_data_cost(alg, cost_alg))
+    for alg in ALGORITHMS:
+        for cost_alg in COST_ALGORITHM:
+            print "DATA_COST ({}, {})".format(alg, cost_alg), tc.await_completion(tc.get_estimated_objects_cost(alg, cost_alg))
 
-    # for alg in ALGORITHMS:
-    #     for cost_alg in COST_ALGORITHM:
-    #         print "DATA_ESTM_QUALITY ({}, {}):".format(alg, cost_alg), tc.await_completion(tc.get_prediction_data_quality(alg, cost_alg))
+    for alg in ALGORITHMS:
+        for cost_alg in COST_ALGORITHM:
+            print "DATA_ESTM_QUALITY ({}, {}):".format(alg, cost_alg), tc.await_completion(tc.get_estimated_objects_quality(alg, cost_alg))
 
-    # for alg in ALGORITHMS:
-    #     for d in OBJECTS:
-    #         print "PROB. DIST. ({}) for {}:".format(alg, d), tc.await_completion(tc.get_probability_distribution(d, alg))
+    for alg in ALGORITHMS:
+        for d in OBJECTS:
+            print "PROB. DIST. ({}) for {}:".format(alg, d), tc.await_completion(tc.get_probability_distribution(d, alg))
 
-    # for cost_alg in COST_ALGORITHM:
-    #     print "WORKER_ESTM_QUALITY ({}):".format(cost_alg), tc.await_completion(tc.get_prediction_workers_quality(cost_alg))
+    for cost_alg in COST_ALGORITHM:
+        print "WORKER_ESTM_QUALITY ({}):".format(cost_alg), tc.await_completion(tc.get_estimated_workers_quality(cost_alg))
 
-    # print "POST_EVALUATION_DATA:", tc.await_completion(tc.post_evaluation_data(eval_data))
-    # print "GET_EVALUATION_DATA:", tc.await_completion(tc.get_evaluation_data())
+    print "POST_EVALUATION_DATA:", tc.await_completion(tc.post_evaluation_objects(eval_data))
+    print "GET_EVALUATION_DATA:", tc.await_completion(tc.get_evaluation_objects())
 
-    # for alg in ALGORITHMS:
-    #     for label_choosing in LABEL_CHOOSING + ['Soft']:
-    #         print "DATA_EV_COST ({}, {}):".format(alg, label_choosing), tc.await_completion(tc.get_evaluation_data_cost(alg, label_choosing))
+    for alg in ALGORITHMS:
+        for label_choosing in LABEL_CHOOSING + ['Soft']:
+            print "DATA_EV_COST ({}, {}):".format(alg, label_choosing), tc.await_completion(tc.get_evaluated_objects_cost(alg, label_choosing))
 
-    # for alg in ALGORITHMS:
-    #     for label_choosing in LABEL_CHOOSING + ["SOFT"]:
-    #         print "DATA_EV_QUALITY ({}, {}):".format(alg, label_choosing), tc.await_completion(tc.get_evaluation_data_quality(alg, label_choosing))
+    for alg in ALGORITHMS:
+        for label_choosing in LABEL_CHOOSING + ["SOFT"]:
+            print "DATA_EV_QUALITY ({}, {}):".format(alg, label_choosing), tc.await_completion(tc.get_evaluated_objects_quality(alg, label_choosing))
 
-    # for cost_alg in COST_ALGORITHM:
-    #     print "WORKER_EVAL_QUALITY ({}):".format(cost_alg), tc.await_completion(tc.get_evaluation_workers_quality(cost_alg))
+    for cost_alg in COST_ALGORITHM:
+        print "WORKER_EVAL_QUALITY ({}):".format(cost_alg), tc.await_completion(tc.get_evaluated_workers_quality(cost_alg))
 
 
 if __name__ == "__main__":

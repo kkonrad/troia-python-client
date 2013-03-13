@@ -1,5 +1,5 @@
 import unittest
-from contClient import TroiaContClient
+from client.galc import TroiaContClient
 from testSettings import *
 
 
@@ -7,7 +7,7 @@ class TestLabels(unittest.TestCase):
 
     def setUp(self):
         self.client = TroiaContClient(ADDRESS)
-        response = self.client.createNewJob()
+        response = self.client.create()
         self.assertEqual('OK', response['status'])
 
     def tearDown(self):

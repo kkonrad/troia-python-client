@@ -50,6 +50,12 @@ class TroiaClient(AbstractTroiaClient):
             "goldLabel": label,
         } for object_id, label in objects]
 
+    def _construct_evaluation_data(self, objects):
+        return [{
+            "name": object_id,
+            "evaluationLabel": label,
+        } for object_id, label in objects]
+
     def _construct_assigned_labels(self, labels):
         return [{
             "worker": worker,
@@ -72,18 +78,6 @@ class TroiaClient(AbstractTroiaClient):
 
     def get_categories(self):
         return self._do_request_get("categories")
-
-    # def get_object_prediction(self, object_id):
-    #     return self._do_request_get("objects/%s/prediction" % object_id)
-
-    # def get_objects_prediction(self):
-    #     return self._do_request_get("objects/prediction")
-
-    # def get_worker_prediction(self, worker_id):
-    #     return self._do_request_get("workers/%s/quality/estimated" % worker_id)
-
-    # def get_workers_prediction(self):
-    #     return self._do_request_get("workers/quality/estimated")
 
     def get_objects_prediction(self, algorithm="DS", labelChoosing="MaxLikelihood"):
         return self._do_request_get("objects/prediction", {
@@ -125,10 +119,10 @@ class TroiaClient(AbstractTroiaClient):
         data = {"type": typ} if typ else None
         return self._do_request_get("objects/{}/categoryProbability".format(datum), data)
 
-    def get_prediction_workers_quality(self, cost_algorithm="ExpectedCost"):
+    def get_estimated_workers_quality(self, cost_algorithm="ExpectedCost"):
         return self._do_request_get("workers/quality/estimated", {
             'costAlgorithm': cost_algorithm})
 
-    def get_evaluation_workers_quality(self, cost_algorithm="ExpectedCost"):
+    def get_evaluated_workers_quality(self, cost_algorithm="ExpectedCost"):
         return self._do_request_get("workers/quality/evaluated", {
             'costAlgorithm': cost_algorithm})

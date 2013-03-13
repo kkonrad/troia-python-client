@@ -11,6 +11,7 @@ class TroiaContClient(AbstractTroiaClient):
     def create(self):
         post_data = "id=" + str(self.jid) if self.jid else None
         w = self._do_raw_request(requests.post, "cjobs", data=post_data)
+        print w
         if 'New job created with ID: RANDOM_' in w['result']:
             self.jid = w['result'].split(':')[1].strip()
         return w
@@ -29,8 +30,14 @@ class TroiaContClient(AbstractTroiaClient):
 
     def _construct_gold_data(self, objects):
         return [{
-            "object": object_id,
-            "label": {"value": float(label), "zeta": float(zeta)},
+            "name": object_id,
+            "goldLabel": {"value": float(label), "zeta": float(zeta)},
+        } for object_id, label, zeta in objects]
+
+    def _construct_evaluation_data(self, objects):
+        return [{
+            "name": object_id,
+            "evaluationLabel": {"value": float(label), "zeta": float(zeta)},
         } for object_id, label, zeta in objects]
 
     def _construct_assigned_labels(self, labels):

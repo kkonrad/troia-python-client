@@ -15,6 +15,10 @@ class AbstractTroiaClient(object):
     def _construct_assigned_labels(self, labels):
         pass
 
+    @abstractmethod
+    def _construct_evaluation_data(self, objects):
+        pass
+
     def __init__(self, base_url, job_id=''):
         '''
         Initializes new client
@@ -50,7 +54,7 @@ class AbstractTroiaClient(object):
         args = self._jsonify(args)
         return self._do_raw_request(
             requests.post,
-            "%S/%s/%s" % (self.job_type, self.jid, path), data=args)
+            "%s/%s/%s" % (self.job_type, self.jid, path), data=args)
 
     def _do_request_post_json(self, path, json):
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
@@ -106,6 +110,17 @@ class AbstractTroiaClient(object):
 
     def get_gold_object(self, objectId):
         return self._do_request_get("goldObjects/%s" % objectId)
+
+    def post_evaluation_objects(self, objects):
+        return self._do_request_post_json(
+            "evaluationObjects",
+            json.dumps({"objects": self._construct_evaluation_data(objects)}))
+
+    def get_evaluation_objects(self):
+        return self._do_request_get("evaluationObjects")
+
+    def get_evaluation_object(self, objectId):
+        return self._do_request_get("evaluationObjects/%s" % objectId)
 
     def post_objects(self, objects):
         return self._do_request_post_json("objects", json.dumps({"objects": objects}))
