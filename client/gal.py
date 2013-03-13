@@ -126,3 +126,6 @@ class TroiaClient(AbstractTroiaClient):
     def get_evaluated_workers_quality(self, cost_algorithm="ExpectedCost"):
         return self._do_request_get("workers/quality/evaluated", {
             'costAlgorithm': cost_algorithm})
+
+    def get_workers_confusion_matrix(self):
+        return self._do_request_get("workers/quality/matrix")
