@@ -44,16 +44,16 @@ class TestWorkers(unittest.TestCase):
         #confusion matrices check
         response = self.client.await_completion(self.client.get_workers_confusion_matrix())
         exp = {
-         u'worker1': [{u'to': u'porn', u'from': u'porn', u'value': 100.0}, {u'to': u'notporn', u'from': u'porn', u'value': 0.0}, 
-                      {u'to': u'porn', u'from': u'notporn', u'value': 100.0}, {u'to': u'notporn', u'from': u'notporn', u'value': 0.0}], 
-         u'worker3': [{u'to': u'porn', u'from': u'porn', u'value': 0.0}, {u'to': u'notporn', u'from': u'porn', u'value': 100.0}, 
-                      {u'to': u'porn', u'from': u'notporn', u'value': 100.0}, {u'to': u'notporn', u'from': u'notporn', u'value': 0.0}], 
-         u'worker2': [{u'to': u'porn', u'from': u'porn', u'value': 33.333}, {u'to': u'notporn', u'from': u'porn', u'value': 66.667}, 
-                      {u'to': u'porn', u'from': u'notporn', u'value': 100.0}, {u'to': u'notporn', u'from': u'notporn', u'value': 0.0}], 
-         u'worker5': [{u'to': u'porn', u'from': u'porn', u'value': 100.0}, {u'to': u'notporn', u'from': u'porn', u'value': 0.0}, 
-                      {u'to': u'porn', u'from': u'notporn', u'value': 0.0}, {u'to': u'notporn', u'from': u'notporn', u'value': 100.0}], 
-         u'worker4': [{u'to': u'porn', u'from': u'porn', u'value': 0.0}, {u'to': u'notporn', u'from': u'porn', u'value': 100.0}, 
-                      {u'to': u'porn', u'from': u'notporn', u'value': 100.0}, {u'to': u'notporn', u'from': u'notporn', u'value': 0.0}]}
+         u'worker1': [{u'to': u'porn', u'from': u'porn', u'value': 1.0}, {u'to': u'notporn', u'from': u'porn', u'value': 0.0}, 
+                      {u'to': u'porn', u'from': u'notporn', u'value': 1.0}, {u'to': u'notporn', u'from': u'notporn', u'value': 0.0}], 
+         u'worker3': [{u'to': u'porn', u'from': u'porn', u'value': 1.0}, {u'to': u'notporn', u'from': u'porn', u'value': 0.0}, 
+                      {u'to': u'porn', u'from': u'notporn', u'value': 0.0}, {u'to': u'notporn', u'from': u'notporn', u'value': 1.0}], 
+         u'worker2': [{u'to': u'porn', u'from': u'porn', u'value': 1.0}, {u'to': u'notporn', u'from': u'porn', u'value': 0.}, 
+                      {u'to': u'porn', u'from': u'notporn', u'value': 0.3333}, {u'to': u'notporn', u'from': u'notporn', u'value': 0.6666}], 
+         u'worker5': [{u'to': u'porn', u'from': u'porn', u'value': 0.0}, {u'to': u'notporn', u'from': u'porn', u'value': 1.0}, 
+                      {u'to': u'porn', u'from': u'notporn', u'value': 1.0}, {u'to': u'notporn', u'from': u'notporn', u'value': 0.0}], 
+         u'worker4': [{u'to': u'porn', u'from': u'porn', u'value': 1.0}, {u'to': u'notporn', u'from': u'porn', u'value': 0.0}, 
+                      {u'to': u'porn', u'from': u'notporn', u'value': 0.0}, {u'to': u'notporn', u'from': u'notporn', u'value': 1.0}]}
 
         for w in response['result']:
             worker_name = w['workerName']

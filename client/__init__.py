@@ -127,7 +127,7 @@ class AbstractTroiaClient(object):
             "objects",
             json.dumps({"objects": [{"name": obj} for obj in objects]}))
 
-    def get_objects(self, type="all"):
+    def get_objects(self):
         return self._do_request_get("objects", )
 
     def get_object(self, objectId):

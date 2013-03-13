@@ -1,5 +1,5 @@
 import unittest
-from client import TroiaClient
+from client.gal import TroiaClient
 from testSettings import *
 
 

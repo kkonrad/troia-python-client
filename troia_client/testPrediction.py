@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import unittest
-from client import TroiaClient
+from client.gal import TroiaClient
 from testSettings import *
 import math
 
@@ -17,15 +17,15 @@ class TestPrediction(unittest.TestCase):
         self.client.delete()
 
     def _getPredictedCategories(self, algorithm, method, expectedResults):
-        response = self.client.await_completion(self.client.get_predictions_objects(algorithm, method))
+        response = self.client.await_completion(self.client.get_objects_prediction(algorithm, method))
         self.assertEqual('OK', response['status'])
         actualCategories = {}
         for categories in response['result']:
             actualCategories[categories['objectName']] = categories['categoryName']
-        self.assertEqual(expectedResults, actualCategories)
+        self.assertEqual(expectedResults, actualCategories, "alg:{}, method:{}".format(algorithm, method))
 
     def _getPredictedDataCost(self, algorithm, costMethod, expectedCosts):
-        response = self.client.await_completion(self.client.get_prediction_data_cost(algorithm, costMethod))
+        response = self.client.await_completion(self.client.get_estimated_objects_cost(algorithm, costMethod))
         self.assertEqual('OK', response['status'])
         actualCosts = {}
         for cost in response['result']:
@@ -33,7 +33,7 @@ class TestPrediction(unittest.TestCase):
         self.assertEqual(expectedCosts, actualCosts)
 
     def _getPredictedDataQuality(self, algorithm, costAlgorithm, expectedDataQuality):
-        response = self.client.await_completion(self.client.get_prediction_data_quality(algorithm, costAlgorithm))
+        response = self.client.await_completion(self.client.get_estimated_objects_quality(algorithm, costAlgorithm))
         self.assertEqual('OK', response['status'])
         actualDataQuality = {}
         for dataQuality in response['result']:
@@ -41,7 +41,7 @@ class TestPrediction(unittest.TestCase):
         self.assertEqual(expectedDataQuality, actualDataQuality)
 
     def _getPredictedWorkerQuality(self, costAlgorithm, expectedWorkerQuality):
-        response = self.client.await_completion(self.client.get_prediction_workers_quality(costAlgorithm))
+        response = self.client.await_completion(self.client.get_estimated_workers_quality(costAlgorithm))
         self.assertEqual('OK', response['status'])
         actualWorkerQuality = {}
         for workerQuality in response['result']:
@@ -49,17 +49,17 @@ class TestPrediction(unittest.TestCase):
         self.assertEqual(expectedWorkerQuality, actualWorkerQuality)
 
     def _getEvaluatedDataCost(self, algorithm, labelChoosingMethod):
-        response = self.client.await_completion(self.client.get_evaluation_data_cost(algorithm, labelChoosingMethod))
+        response = self.client.await_completion(self.client.get_evaluated_objects_cost(algorithm, labelChoosingMethod))
         self.assertEqual('OK', response['status'])
         self.assertEqual([], response['result'])
 
     def _getEvaluatedDataQuality(self, algorithm, labelChoosingMethod):
-        response = self.client.await_completion(self.client.get_evaluation_data_quality(algorithm, labelChoosingMethod))
+        response = self.client.await_completion(self.client.get_evaluated_objects_quality(algorithm, labelChoosingMethod))
         self.assertEqual('OK', response['status'])
         self.assertEqual([], response['result'])
 
     def _getEvaluatedWorkerQuality(self, costAlgorithm):
-        response = self.client.await_completion(self.client.get_evaluation_workers_quality(costAlgorithm))
+        response = self.client.await_completion(self.client.get_evaluated_workers_quality(costAlgorithm))
         self.assertEqual('OK', response['status'])
         for workerQuality in response['result']:
             self.assertTrue(math.isnan(workerQuality['value']))
