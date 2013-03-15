@@ -12,7 +12,7 @@ class TestUnassignedLabels(unittest.TestCase):
         self.client.delete()
 
     def _test_method(self, categories, unassignedLabels, expectedProbabilities):
-        response = self.client.create(categories)
+        response = self.client.create(categories, algorithm="MV")
         self.assertEqual('OK', response['status'])
 
         #post the assigned labels
@@ -111,13 +111,14 @@ class TestUnassignedLabels(unittest.TestCase):
         response = self.client.await_completion(self.client.post_objects(objects_without_assigns))
         self.assertEqual('OK', response['status'])
 
-        #get the unassigned labels
+        #get labels
         response = self.client.await_completion(self.client.get_objects())
         self.assertEqual('OK', response['status'])
         result = response['result']
         self.assertEqual(3, len(result))
+        self.client.await_completion(self.client.post_compute())
         for label in result:
-            response = self.client.await_completion(self.client.get_probability_distribution(label['name'], "MV"))
+            response = self.client.await_completion(self.client.get_probability_distribution(label['name']))
             dist = response['result'][0]
             self.assertEqual(dist['value'], 0.5 if label['name'] in objects_without_assigns else 1.0 if dist['categoryName'] == 'porn' else 0.0)
 

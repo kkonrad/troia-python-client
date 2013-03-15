@@ -60,12 +60,7 @@ class TestJobs(unittest.TestCase):
         def test_createJob_WrongJobType(self):
             response = self.client.create(CATEGORIES, 'test')
             self.assertEqual('ERROR', response['status'])
-            self.assertEqual('Unknown Job type: test', response['result'])
-
-        def test_createJob_NoCategories(self):
-            response = self.client.create()
-            self.assertEqual('ERROR', response['status'])
-            self.assertEqual('You should provide categories list', response['result'])
+            self.assertTrue('Unknown Job' in response['result'])
 
         def test_createJob_EmptyCategories(self):
             response = self.client.create([])
@@ -87,7 +82,6 @@ class TestJobs(unittest.TestCase):
         def test_createJob_SumOfPriorsEqualsOne_NoCostMatrix(self):
             categories = [{"prior":"0.234", "name":"porn"}, {"prior":"0.766", "name":"notporn"}]
             response = self.client.create(categories)
-            print response
             self.assertEqual('OK', response['status'])
 
             response = self.client.get_job_status()

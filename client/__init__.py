@@ -75,6 +75,17 @@ class AbstractTroiaClient(object):
         '''
         return self._do_raw_request(requests.get, "status")
 
+    def create(self, **kwargs):
+        data = {}
+        if self.jid:
+            data['id'] = str(self.jid)
+        data.update(kwargs)
+        headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+        w = self._do_raw_request(requests.post, self.job_type, data=json.dumps(data), headers=headers)
+        if not self.jid:
+            self.jid = w['result'].split(' ')[-1]
+        return w
+    
     def delete(self):
         return self._do_raw_request(
             requests.delete,
