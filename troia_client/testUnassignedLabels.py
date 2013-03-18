@@ -12,7 +12,7 @@ class TestUnassignedLabels(unittest.TestCase):
         self.client.delete()
 
     def _test_method(self, categories, unassignedLabels, expectedProbabilities):
-        response = self.client.create(categories, algorithm="MV")
+        response = self.client.create(categories, algorithm="BMV")
         self.assertEqual('OK', response['status'])
 
         #post the assigned labels

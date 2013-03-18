@@ -32,7 +32,7 @@ class TestJobs(unittest.TestCase):
             self.assertJobData(response, 'class com.datascience.gal.BatchDawidSkene', '0', '0', '0', '0')
 
         def test_createJob_BatchJobType(self):
-            response = self.client.create(CATEGORIES, 'batch')
+            response = self.client.create(CATEGORIES, algorithm='BDS')
             self.assertEqual('OK', response['status'])
             self.assertTrue('New job created with ID: RANDOM_' in response['result'])
 
@@ -48,7 +48,7 @@ class TestJobs(unittest.TestCase):
             self.assertJobData(response, 'class com.datascience.gal.BatchDawidSkene', '0', '0', '0', '0')
 
         def test_createJob_IncrementalJobType(self):
-            response = self.client.create(CATEGORIES, 'incremental')
+            response = self.client.create(CATEGORIES, algorithm='IDS')
             self.assertEqual('OK', response['status'])
             self.assertTrue('New job created with ID: RANDOM_' in response['result'])
 
@@ -58,7 +58,7 @@ class TestJobs(unittest.TestCase):
             self.assertJobData(response, 'class com.datascience.gal.IncrementalDawidSkene', '0', '0', '0', '0')
 
         def test_createJob_WrongJobType(self):
-            response = self.client.create(CATEGORIES, 'test')
+            response = self.client.create(CATEGORIES, algorithm='test')
             self.assertEqual('ERROR', response['status'])
             self.assertTrue('Unknown Job' in response['result'])
 

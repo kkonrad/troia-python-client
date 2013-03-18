@@ -72,7 +72,7 @@ class TestPrediction(unittest.TestCase):
 
 class TestPredictionMV(TestPrediction):
     
-    algorithm = "MV"
+    algorithm = "BMV"
     
     def test_GetCategoryProbability(self):
         expectedProbabilities = {'url1': [{u'categoryName': u'porn', u'value': 0.4}, {u'categoryName': u'notporn', u'value': 0.6000000000000001}],
@@ -109,7 +109,7 @@ class TestPredictionMV(TestPrediction):
 
 class TestPredictionDS(TestPrediction):
     
-    algorithm = "DS"
+    algorithm = "BDS"
     
     def test_GetCategoryProbability(self):
         expectedProbabilities = {'url1': [{u'categoryName': u'porn', u'value': 0.0}, {u'categoryName': u'notporn', u'value': 1.0}],

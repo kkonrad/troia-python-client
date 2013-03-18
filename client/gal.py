@@ -63,12 +63,10 @@ class TroiaClient(AbstractTroiaClient):
             "label": label,
         } for worker, object_id, label in labels]
 
-    def create(self, categories, typee=None, **kwargs):
+    def create(self, categories, **kwargs):
         data = {}
         data.update(kwargs)
         data['categories'] = categories
-        if typee:
-            data['type'] = typee
         return super(TroiaClient, self).create(**data)
 
     def get_categories(self):
