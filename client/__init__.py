@@ -85,7 +85,7 @@ class AbstractTroiaClient(object):
         if not self.jid:
             self.jid = w['result'].split(' ')[-1]
         return w
-    
+
     def delete(self):
         return self._do_raw_request(
             requests.delete,
@@ -143,6 +143,9 @@ class AbstractTroiaClient(object):
 
     def get_object(self, objectId):
         return self._do_request_get("objects/%s/info" % objectId)
+
+    def get_next_object(self):
+        return self._do_request_get("nextObject")
 
     def get_object_assigns(self, objectId):
         return self._do_request_get("objects/%s/assigns" % objectId)
