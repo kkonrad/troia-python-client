@@ -16,13 +16,11 @@ class TestCachedScheduler(unittest.TestCase):
         pass
 
     def test_BMV(self):
-        # TODO add notification on new assign in the Toria-Server
-        # self._test_method('BMV')
+        self._test_method('BMV')
         pass
 
     def test_BDS(self):
-        # TODO add notification on new assign in the Toria-Server
-        # self._test_method('BDS')
+        self._test_method('BDS')
         pass
 
     def _test_method(self, algorithm):
