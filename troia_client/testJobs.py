@@ -1,5 +1,5 @@
 import unittest
-from client import TroiaClient
+from client.gal import TroiaClient
 from testSettings import *
 import time
 
@@ -12,9 +12,9 @@ class TestJobs(unittest.TestCase):
         def tearDown(self):
             self.client.delete()
 
-        def assertJobData(self, response, expDSKind, expNoAssigns, expNoGoldObjects, expNoObjects, expNoWorkers):
+        def assertJobData(self, response, expAlgorithm, expNoAssigns, expNoGoldObjects, expNoObjects, expNoWorkers):
             self.assertEqual('OK', response['status'])
-            self.assertEqual(expDSKind, response['result']['DS kind'])
+            self.assertEqual(expAlgorithm, response['result']['Initialization data']['algorithm'])
             self.assertEqual(expNoAssigns, response['result']['Number of assigns'])
             self.assertEqual(expNoGoldObjects, response['result']['Number of gold objects'])
             self.assertEqual(expNoObjects, response['result']['Number of objects'])
@@ -28,10 +28,10 @@ class TestJobs(unittest.TestCase):
             response = self.client.get_job_status()
             self.assertEqual('OK', response['status'])
             response = self.client.get_status(response['redirect'])
-            self.assertJobData(response, 'class com.datascience.gal.BatchDawidSkene', '0', '0', '0', '0')
+            self.assertJobData(response, 'BDS', 0, 0, 0, 0)
 
-        def test_createJob_BatchJobType(self):
-            response = self.client.create(CATEGORIES, 'batch')
+        def test_createJob_BDSJobType(self):
+            response = self.client.create(CATEGORIES, algorithm='BDS')
             self.assertEqual('OK', response['status'])
             self.assertTrue('New job created with ID: RANDOM_' in response['result'])
 
@@ -44,27 +44,45 @@ class TestJobs(unittest.TestCase):
 
             self.assertEqual('OK', response['status'])
             response = self.client.get_status(response['redirect'])
-            self.assertJobData(response, 'class com.datascience.gal.BatchDawidSkene', '0', '0', '0', '0')
+            self.assertJobData(response, 'BDS', 0, 0, 0, 0)
 
-        def test_createJob_IncrementalJobType(self):
-            response = self.client.create(CATEGORIES, 'incremental')
+        def test_createJob_IDSJobType(self):
+            response = self.client.create(CATEGORIES, algorithm='IDS')
             self.assertEqual('OK', response['status'])
             self.assertTrue('New job created with ID: RANDOM_' in response['result'])
 
             response = self.client.get_job_status()
             self.assertEqual('OK', response['status'])
             response = self.client.get_status(response['redirect'])
-            self.assertJobData(response, 'class com.datascience.gal.IncrementalDawidSkene', '0', '0', '0', '0')
+            print response
+            self.assertJobData(response, 'IDS', 0, 0, 0, 0)
+
+        def test_createJob_BMVJobType(self):
+            response = self.client.create(CATEGORIES, algorithm='BMV')
+            self.assertEqual('OK', response['status'])
+            self.assertTrue('New job created with ID: RANDOM_' in response['result'])
+
+            response = self.client.get_job_status()
+            self.assertEqual('OK', response['status'])
+            response = self.client.get_status(response['redirect'])
+            print response
+            self.assertJobData(response, 'BMV', 0, 0, 0, 0)
+
+        def test_createJob_IMVJobType(self):
+            response = self.client.create(CATEGORIES, algorithm='IMV')
+            self.assertEqual('OK', response['status'])
+            self.assertTrue('New job created with ID: RANDOM_' in response['result'])
+
+            response = self.client.get_job_status()
+            self.assertEqual('OK', response['status'])
+            response = self.client.get_status(response['redirect'])
+            print response
+            self.assertJobData(response, 'IMV', 0, 0, 0, 0)
 
         def test_createJob_WrongJobType(self):
-            response = self.client.create(CATEGORIES, 'test')
+            response = self.client.create(CATEGORIES, algorithm='test')
             self.assertEqual('ERROR', response['status'])
-            self.assertEqual('Unknown Job type: test', response['result'])
-
-        def test_createJob_NoCategories(self):
-            response = self.client.create()
-            self.assertEqual('ERROR', response['status'])
-            self.assertEqual('You should provide categories list', response['result'])
+            self.assertTrue('Unknown Job' in response['result'])
 
         def test_createJob_EmptyCategories(self):
             response = self.client.create([])
@@ -86,13 +104,12 @@ class TestJobs(unittest.TestCase):
         def test_createJob_SumOfPriorsEqualsOne_NoCostMatrix(self):
             categories = [{"prior":"0.234", "name":"porn"}, {"prior":"0.766", "name":"notporn"}]
             response = self.client.create(categories)
-            print response
             self.assertEqual('OK', response['status'])
 
             response = self.client.get_job_status()
             self.assertEqual('OK', response['status'])
             response = self.client.get_status(response['redirect'])
-            self.assertJobData(response, 'class com.datascience.gal.BatchDawidSkene', '0', '0', '0', '0')
+            self.assertJobData(response, 'BDS', 0, 0, 0, 0)
 
         def test_createJob_SumOfPriorsLessThanOne_WithCostMatrix(self):
             categories = [{"prior":"0.3", "name":"porn", "misclassificationCost": [{'categoryName': 'porn', 'value': 0}, {'categoryName': 'notporn', 'value': 1}]}, 
@@ -117,7 +134,7 @@ class TestJobs(unittest.TestCase):
             response = self.client.get_job_status()
             self.assertEqual('OK', response['status'])
             response = self.client.get_status(response['redirect'])
-            self.assertJobData(response, 'class com.datascience.gal.BatchDawidSkene', '0', '0', '0', '0')
+            self.assertJobData(response, 'BDS', 0, 0, 0, 0)
 
         def test_createJob_NoPriors_NoCostMatrix(self):
             categories = [{"name":"porn"}, {"name":"notporn"}]
@@ -128,7 +145,7 @@ class TestJobs(unittest.TestCase):
             response = self.client.get_job_status()
             self.assertEqual('OK', response['status'])
             response = self.client.get_status(response['redirect'])
-            self.assertJobData(response, 'class com.datascience.gal.BatchDawidSkene', '0', '0', '0', '0')
+            self.assertJobData(response, 'BDS', 0, 0, 0, 0)
 
         def test_createJob_NoPriors_WithCostMatrix(self):
             categories = [{"name":"porn", "misclassificationCost": [{'categoryName': 'porn', 'value': 0}, {'categoryName': 'notporn', 'value': 1}]}, 
@@ -139,7 +156,7 @@ class TestJobs(unittest.TestCase):
             response = self.client.get_job_status()
             self.assertEqual('OK', response['status'])
             response = self.client.get_status(response['redirect'])
-            self.assertJobData(response, 'class com.datascience.gal.BatchDawidSkene', '0', '0', '0', '0')
+            self.assertJobData(response, 'BDS', 0, 0, 0, 0)
 
         def test_deleteJob_ExistingJobId(self):
             response = self.client.create(CATEGORIES)

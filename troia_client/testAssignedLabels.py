@@ -1,6 +1,6 @@
 ﻿# -*- coding: utf-8 -*-
 import unittest
-from client import TroiaClient
+from client.gal import TroiaClient
 from testSettings import *
 
 
@@ -15,13 +15,12 @@ class TestAssignedLabels(unittest.TestCase):
             #post the empty assigned labels
             response = self.client.await_completion(self.client.post_assigned_labels(assigned_labels))
             self.assertEqual('OK', response['status'])
-            self.assertEqual('Assigns added', response['result'])
 
             #get the assigned labels
             response = self.client.await_completion(self.client.get_assigned_labels())
             self.assertEqual('OK', response['status'])
             self.assertEqual(len(response['result']), len(assigned_labels))
-            results = [tuple(receivedLabel.values()) for receivedLabel in response['result']]
+            results = [(l['worker'], l['object'], l['label']) for l in response['result']]
             for label in assigned_labels:
                 self.assertTrue(label in results)
 
@@ -39,7 +38,6 @@ class TestAssignedLabels(unittest.TestCase):
             assignedLabels = [('worker1', 'url1', 'category3')]
             response = self.client.await_completion(self.client.post_assigned_labels(assignedLabels))
             self.assertEqual('ERROR', response['status'])
-            self.assertEqual('Internal error: attempting to add invalid category: category3', response['result'])
 
             #get the assigned labels
             response = self.client.await_completion(self.client.get_assigned_labels())

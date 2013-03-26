@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import unittest
-from client import TroiaClient
+from client.gal import TroiaClient
 from testSettings import *
 
 
@@ -15,19 +15,17 @@ class TestEvaluationLabels(unittest.TestCase):
         self.client.delete()
 
     def _test_method(self, eval_data):
-        response = self.client.await_completion(self.client.post_evaluation_data(eval_data))
+        response = self.client.await_completion(self.client.post_evaluation_objects(eval_data))
         self.assertEqual('OK', response['status'])
-        self.assertEqual('Evaluation datums added', response['result'])
 
         #get the unassigned labels
-        response = self.client.await_completion(self.client.get_evaluation_data())
+        response = self.client.await_completion(self.client.get_evaluation_objects())
 
         self.assertEqual('OK', response['status'])
         result = response['result']
         self.assertEqual(len(eval_data), len(result))
 
-        results = [(evaluationLabel['objectName'], evaluationLabel['correctCategory'])
-            for evaluationLabel in response['result']]
+        results = [(evaluationLabel['name'], evaluationLabel['evaluationLabel']) for evaluationLabel in response['result']]
 
         for evalLabel in eval_data:
             self.assertTrue(evalLabel in results)

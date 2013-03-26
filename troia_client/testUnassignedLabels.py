@@ -1,6 +1,6 @@
 ﻿# -*- coding: utf-8 -*-
 import unittest
-from client import TroiaClient
+from client.gal import TroiaClient
 from testSettings import *
 
 
@@ -12,26 +12,20 @@ class TestUnassignedLabels(unittest.TestCase):
         self.client.delete()
 
     def _test_method(self, categories, unassignedLabels, expectedProbabilities):
-        response = self.client.create(categories)
+        response = self.client.create(categories, algorithm="BMV")
         self.assertEqual('OK', response['status'])
 
         #post the assigned labels
-        response = self.client.await_completion(self.client.post_data(unassignedLabels))
+        response = self.client.await_completion(self.client.post_objects(unassignedLabels))
         self.assertEqual('OK', response['status'])
-        self.assertEqual('Object without labels added', response['result'])
 
         #get the unassigned labels
-        response = self.client.await_completion(self.client.get_data("unassigned"))
+        response = self.client.await_completion(self.client.get_objects())
         self.assertEqual('OK', response['status'])
         self.assertEqual(len(unassignedLabels), len(response['result']))
         if (unassignedLabels):
             result = response['result'][0]
-            self.assertFalse(result['labels'])
-            self.assertFalse(result['isGold'])
             self.assertEqual(unassignedLabels[0], result['name'])
-            categoryProbabilies = [tuple(categoryProb.values()) for categoryProb in result['categoryProbability']]
-            for categoryProb in categoryProbabilies:
-                self.assertTrue(categoryProb in expectedProbabilities)
 
     def test_AddGetData_UnassignedLabels_EmptyLabels(self):
         self._test_method(CATEGORIES, [], [])
@@ -89,21 +83,19 @@ class TestUnassignedLabels(unittest.TestCase):
 
         #post the unassigned label
         unassignedLabel = [u"ూഹܬआਖ਼"]
-        response = self.client.await_completion(self.client.post_data(unassignedLabel))
+        response = self.client.await_completion(self.client.post_objects(unassignedLabel))
         self.assertEqual('OK', response['status'])
-        self.assertEqual('Object without labels added', response['result'])
 
-        #get the unassigned labels
-        response = self.client.await_completion(self.client.get_data("assigned"))
+        response = self.client.await_completion(self.client.get_objects())
         self.assertEqual('OK', response['status'])
         result = response['result']
+        self.assertEqual(6, len(result))
         results = []
-        self.assertEqual(5, len(result))
         for object in result:
-            labels = object['labels']
-            for receivedLabel in labels:
-                labelTouple = (receivedLabel['workerName'], receivedLabel['objectName'], receivedLabel['categoryName'])
-                results.append(labelTouple)
+            if object['name'] not in unassignedLabel:
+                assigns = self.client.await_completion(self.client.get_object_assigns(object['name']))['result']
+                for a in assigns:
+                    results.append((a['worker'], a['object'], a['label']))
         for label in ASSIGNED_LABELS:
             self.assertTrue(label in results)
 
@@ -111,29 +103,24 @@ class TestUnassignedLabels(unittest.TestCase):
         response = self.client.create(CATEGORIES)
         self.assertEqual('OK', response['status'])
 
-        assignedLabels = [('worker1', 'url1', 'porn'), ('worker1', 'url2', 'porn')]
-        response = self.client.await_completion(self.client.post_assigned_labels(assignedLabels))
+        response = self.client.await_completion(self.client.post_assigned_labels([('worker1', 'url1', 'porn'), ('worker1', 'url2', 'porn')]))
         self.assertEqual('OK', response['status'])
 
         #post the unassigned label
-        unassignedLabel = ["newUnassignedLabel"]
-        response = self.client.await_completion(self.client.post_data(unassignedLabel))
+        objects_without_assigns = ["newUnassignedLabel"]
+        response = self.client.await_completion(self.client.post_objects(objects_without_assigns))
         self.assertEqual('OK', response['status'])
-        self.assertEqual('Object without labels added', response['result'])
 
-        #get the unassigned labels
-        response = self.client.await_completion(self.client.get_data("all"))
+        #get labels
+        response = self.client.await_completion(self.client.get_objects())
         self.assertEqual('OK', response['status'])
         result = response['result']
         self.assertEqual(3, len(result))
-        labels = {}
+        self.client.await_completion(self.client.post_compute())
         for label in result:
-            labels[label['name']] = label['labels']
-            self.assertTrue({u'categoryName': u'porn', u'value': 0.5} in label['categoryProbability'])
-            self.assertTrue({u'categoryName': u'notporn', u'value': 0.5} in label['categoryProbability'])
-        self.assertEqual([{u'workerName': u'worker1', u'objectName': u'url1', u'categoryName': u'porn'}], labels['url1'])
-        self.assertEqual([{u'workerName': u'worker1', u'objectName': u'url2', u'categoryName': u'porn'}], labels['url2'])
-        self.assertEqual([], labels['newUnassignedLabel'])
+            response = self.client.await_completion(self.client.get_probability_distribution(label['name']))
+            dist = response['result'][0]
+            self.assertEqual(dist['value'], 0.5 if label['name'] in objects_without_assigns else 1.0 if dist['categoryName'] == 'porn' else 0.0)
 
 if __name__ == '__main__':
     unittest.main()

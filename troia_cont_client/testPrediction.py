@@ -1,5 +1,5 @@
 import unittest
-from contClient import TroiaContClient
+from client.galc import TroiaContClient
 from testSettings import *
 
 
@@ -7,18 +7,16 @@ class TestPrediction(unittest.TestCase):
 
     def setUp(self):
         self.client = TroiaContClient(ADDRESS)
-        response = self.client.createNewJob()
+        response = self.client.create()
         self.assertEqual('OK', response['status'])
 
         #post the assigned labels
         response = self.client.await_completion(self.client.post_assigned_labels(ASSIGNED_LABELS_CONT))
         self.assertEqual('OK', response['status'])
-        self.assertEqual('Assigns added', response['result'])
 
         #post golds
         response = self.client.await_completion(self.client.post_gold_data(GOLD_LABELS_CONT))
         self.assertEqual('OK', response['status'])
-        self.assertEqual('Gold objects added', response['result'])
 
     def tearDown(self):
         self.client.delete()
@@ -27,10 +25,6 @@ class TestPrediction(unittest.TestCase):
         response = self.client.await_completion(self.client.post_compute())
         self.assertEqual('OK', response['status'])
 
-    def test_GetPredictionObjects_WithoutCompute(self):
-        response = self.client.await_completion(self.client.get_objects_prediction())
-        self.assertEqual('Internal error: Run compute first!', response['result'])
-
     def test_GetPredictionObjects_WithCompute(self):
         response = self.client.await_completion(self.client.post_compute())
         self.assertEqual('OK', response['status'])
@@ -38,26 +32,12 @@ class TestPrediction(unittest.TestCase):
         response = self.client.await_completion(self.client.get_objects_prediction())
         self.assertEqual('OK', response['status'])
         self.assertEqual(len(EXPECTED_PREDICTION_OBJECTS), len(response['result']))
-
-        predictionObjects = []
         for object in response['result']:
-            objectName = object['object']['name']
-            goldLabel = {}
-            try:
-                goldLabel['value'] = object['object']['goldLabel']['value']
-                goldLabel['zeta'] = object['object']['goldLabel']['zeta']
-            except:
-                print 'No gold labels for object ' + objectName
-
-            estimatedZeta = object['est_zeta']
-            if goldLabel:
-                predictionObject = (estimatedZeta, objectName, goldLabel)
-            else:
-                predictionObject = (estimatedZeta, objectName)
-
-            predictionObjects.append(predictionObject)
-        for expPredictionObject in EXPECTED_PREDICTION_OBJECTS:
-            self.assertTrue(expPredictionObject in predictionObjects)
+            object_name = object['object']['name']
+            self.assertAlmostEqual(EXPECTED_PREDICTION_OBJECTS[object_name][0], object['est_zeta'], 5)
+            if 'goldLabel' in object['object']:
+                self.assertAlmostEqual(EXPECTED_PREDICTION_OBJECTS[object_name][1]['zeta'], object['object']['goldLabel']['zeta'], 5)
+                self.assertAlmostEqual(EXPECTED_PREDICTION_OBJECTS[object_name][1]['value'], object['object']['goldLabel']['value'], 5)
 
     def test_GetPredictionForOneObject_WithCompute(self):
         response = self.client.await_completion(self.client.post_compute())
@@ -66,10 +46,6 @@ class TestPrediction(unittest.TestCase):
         response = self.client.await_completion(self.client.get_object_prediction('url1'))
         self.assertEqual('OK', response['status'])
         self.assertNotEqual({}, response['result'])
-
-    def test_GetPredictionWorkers_WithoutCompute(self):
-        response = self.client.await_completion(self.client.get_workers_prediction())
-        self.assertEqual('Internal error: Run compute first!', response['result'])
 
     def test_GetPredictionWorkers_WithCompute(self):
         response = self.client.await_completion(self.client.post_compute())
@@ -82,12 +58,10 @@ class TestPrediction(unittest.TestCase):
 
         for worker in result:
             #check the assigned labels
-            estimatedMu = worker['est_mu']
-            workerName = worker['worker']
-            estimatedSigma = worker['est_sigma']
-            estimatedRho = worker['est_rho']
-            workerTouple = (workerName, estimatedMu, estimatedSigma, estimatedRho)
-            self.assertTrue(workerTouple in EXPECTED_PREDICTION_WORKERS)
+            worker_name = worker['worker']
+            self.assertAlmostEqual(EXPECTED_PREDICTION_WORKERS[worker_name][0], worker['est_mu'], 5)
+            self.assertAlmostEqual(EXPECTED_PREDICTION_WORKERS[worker_name][1], worker['est_sigma'], 5)
+            self.assertAlmostEqual(EXPECTED_PREDICTION_WORKERS[worker_name][2], worker['est_rho'], 5)
 
     def test_GetPredictionForOneWorker_WithCompute(self):
         response = self.client.await_completion(self.client.post_compute())
