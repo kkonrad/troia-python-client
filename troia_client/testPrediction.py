@@ -107,7 +107,20 @@ class TestPredictionMV(TestPrediction):
         self._getPredictedCategories("MinCost", expectedCategories)
 
 
-class TestPredictionDS(TestPrediction):
+class TestPredictionIDS(TestPrediction):
+    
+    algorithm = "IDS"
+    
+    def test_GetPredictedCategories_MaxLikelihood(self):
+        expectedCategories = {'url1':'notporn', 'url2':'porn', 'url3':'notporn', 'url4':'porn', 'url5':'notporn'}
+        self._getPredictedCategories("MaxLikelihood", expectedCategories)
+
+    def test_GetPredictedCategories_MinCost(self):
+        expectedCategories = {'url1':'notporn', 'url2':'porn', 'url3':'notporn', 'url4':'porn', 'url5':'notporn'}
+        self._getPredictedCategories("MinCost", expectedCategories)
+
+
+class TestPredictionBDS(TestPrediction):
     
     algorithm = "BDS"
     

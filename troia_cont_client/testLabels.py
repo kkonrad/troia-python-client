@@ -17,7 +17,6 @@ class TestLabels(unittest.TestCase):
         #post the assigned labels
         response = self.client.await_completion(self.client.post_assigned_labels(ASSIGNED_LABELS_CONT))
         self.assertEqual('OK', response['status'])
-        self.assertEqual('Assigns added', response['result'])
 
     def test_AddGetAssignedLabels(self):
         self.load_assigns()
@@ -33,7 +32,6 @@ class TestLabels(unittest.TestCase):
         #post the gold labels
         response = self.client.await_completion(self.client.post_gold_data(GOLD_LABELS_CONT))
         self.assertEqual('OK', response['status'])
-        self.assertEqual('Gold objects added', response['result'])
 
         #get the gold labels
         response = self.client.await_completion(self.client.get_gold_data())
@@ -54,7 +52,6 @@ class TestLabels(unittest.TestCase):
         #post the gold labels
         response = self.client.await_completion(self.client.post_gold_data(GOLD_LABELS_CONT))
         self.assertEqual('OK', response['status'])
-        self.assertEqual('Gold objects added', response['result'])
 
         #get the gold labels
         response = self.client.await_completion(self.client.get_gold_object("url1"))
@@ -68,7 +65,6 @@ class TestLabels(unittest.TestCase):
         #add an object
         response = self.client.await_completion(self.client.post_objects(["object1"]))
         self.assertEqual('OK', response['status'])
-        self.assertEqual('Objects without labels added', response['result'])
 
         #get all the objects
         response = self.client.await_completion(self.client.get_objects())
@@ -81,7 +77,6 @@ class TestLabels(unittest.TestCase):
         objects = ["object1", "object2", "object3"]
         response = self.client.await_completion(self.client.post_objects(objects))
         self.assertEqual('OK', response['status'])
-        self.assertEqual('Objects without labels added', response['result'])
 
         #get all the objects
         response = self.client.await_completion(self.client.get_objects())
@@ -95,7 +90,6 @@ class TestLabels(unittest.TestCase):
         objects = ["object2", "object3"]
         response = self.client.await_completion(self.client.post_objects(objects))
         self.assertEqual('OK', response['status'])
-        self.assertEqual('Objects without labels added', response['result'])
 
         #get the data for the given object
         for obj in objects:
@@ -108,7 +102,6 @@ class TestLabels(unittest.TestCase):
         objects = ["object2", "object3"]
         response = self.client.await_completion(self.client.post_objects(objects))
         self.assertEqual('OK', response['status'])
-        self.assertEqual('Objects without labels added', response['result'])
 
         #get the assigned labels for the given object
         for obj in objects:

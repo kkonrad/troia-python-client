@@ -13,12 +13,10 @@ class TestPrediction(unittest.TestCase):
         #post the assigned labels
         response = self.client.await_completion(self.client.post_assigned_labels(ASSIGNED_LABELS_CONT))
         self.assertEqual('OK', response['status'])
-        self.assertEqual('Assigns added', response['result'])
 
         #post golds
         response = self.client.await_completion(self.client.post_gold_data(GOLD_LABELS_CONT))
         self.assertEqual('OK', response['status'])
-        self.assertEqual('Gold objects added', response['result'])
 
     def tearDown(self):
         self.client.delete()
