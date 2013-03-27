@@ -1,5 +1,5 @@
 import csv
-from troia_client.client import TroiaClient
+from client.gal import TroiaClient
 from troia_client.testSettings import *
 import time
 

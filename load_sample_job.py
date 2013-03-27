@@ -1,4 +1,4 @@
-from troia_client import TroiaClient
+from client.gal import TroiaClient
 from troia_client.testSettings import *
 
 
@@ -13,8 +13,8 @@ if __name__ == "__main__":
     client.await_completion(client.post_assigned_labels(ASSIGNED_LABELS))
     client.await_completion(client.post_gold_data(GOLD_SAMPLES))
     client.await_completion(client.post_compute())
-    client.await_completion(client.get_predictions_objects())
-    client.await_completion(client.get_prediction_workers_quality())
+#    client.await_completion(client.get_predictions_objects())
+#    client.await_completion(client.get_prediction_workers_quality())
     client.await_completion(client.get_prediction_zip())
     client.delete()
     check_status(client.status())

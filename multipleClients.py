@@ -1,7 +1,7 @@
-from troia_client.client import TroiaClient
+from client.gal import TroiaClient
 from troia_client.testSettings import *
 from troia_cont_client.testSettings import *
-from troia_cont_client.contClient import TroiaContClient
+from client.galc import TroiaContClient
 from threading import Thread
 from random import randint
 
@@ -11,7 +11,7 @@ def createNominalJob():
     client.create(CATEGORIES)
     jobs.append((client.jid, "NOMINAL"))
     client.await_completion(client.post_assigned_labels(ASSIGNED_LABELS))
-    client.await_completion(client.post_evaluation_data(EVALUATION_DATA))
+    client.await_completion(client.post_evaluation_objects(EVALUATION_DATA))
     client.await_completion(client.post_compute(30))
 
 

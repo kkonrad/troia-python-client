@@ -18,17 +18,14 @@ class TestWorkers(unittest.TestCase):
         self.assertEqual('OK', response['status'])
         self.assertEqual([], response['result'])
 
-#    def test_AddGetWorkers_BeforeCompute(self):
-#        self.client.create(CATEGORIES)
-#        self.client.await_completion(self.client.post_assigned_labels(ASSIGNED_LABELS))
-#        self.client.await_completion(self.client.post_gold_data(GOLD_SAMPLES))
-#        response = self.client.await_completion(self.client.get_workers())
-#        defaultConfusionMatrix = [{u'to': u'porn', u'from': u'porn', u'value': u'90.0'}, {u'to': u'notporn', u'from': u'porn', u'value': u'10.0'}, 
-#                                  {u'to': u'porn', u'from': u'notporn', u'value': u'10.0'}, {u'to': u'notporn', u'from': u'notporn', u'value': u'90.0'}]
-#        for worker, results in response['result'].iteritems():
-#            self.assertEqual(defaultConfusionMatrix, results['Confusion matrix'])
-#            self.assertEqual(5, results['Number of annotations'])
-#            self.assertEqual(2, results['Gold tests'])
+    def test_AddGetWorkers_BeforeCompute(self):
+        self.client.create(CATEGORIES)
+        self.client.await_completion(self.client.post_assigned_labels(ASSIGNED_LABELS))
+        self.client.await_completion(self.client.post_gold_data(GOLD_SAMPLES))
+        response = self.client.await_completion(self.client.get_workers())
+        for w in response['result']:
+            for a in w['assigns']:
+                self.assertTrue((a['worker'], a['object'], a['label']) in ASSIGNED_LABELS)
 
     def test_AddGetWorkers_AfterCompute(self):
         self.client.create(CATEGORIES)
@@ -39,8 +36,8 @@ class TestWorkers(unittest.TestCase):
         response = self.client.await_completion(self.client.get_workers())
         for w in response['result']:
             for a in w['assigns']:
-                self.assertTrue((a['worker'], a['lobject']['name'], a['label']) in ASSIGNED_LABELS)
-        
+                self.assertTrue((a['worker'], a['object'], a['label']) in ASSIGNED_LABELS)
+
         #confusion matrices check
         response = self.client.await_completion(self.client.get_workers_confusion_matrix())
         exp = {
