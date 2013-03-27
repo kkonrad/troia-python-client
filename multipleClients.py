@@ -12,15 +12,15 @@ def createNominalJob():
     jobs.append((client.jid, "NOMINAL"))
     client.await_completion(client.post_assigned_labels(ASSIGNED_LABELS))
     client.await_completion(client.post_evaluation_objects(EVALUATION_DATA))
-    client.await_completion(client.post_compute(30))
+    client.await_completion(client.post_compute())
 
 
 def createContJob():
-    contClient = TroiaContClient(ADDRESS)
-    contClient.createNewJob()
-    jobs.append((contClient.jid, "CONTINUOUS"))
-    contClient.await_completion(contClient.post_assigned_labels(ASSIGNED_LABELS_CONT))
-    contClient.await_completion(contClient.post_gold_data(GOLD_LABELS_CONT))
+    client = TroiaContClient(ADDRESS)
+    client.create()
+    jobs.append((client.jid, "CONTINUOUS"))
+    client.await_completion(client.post_assigned_labels(ASSIGNED_LABELS_CONT))
+    client.await_completion(client.post_gold_data(GOLD_LABELS_CONT))
 
 if __name__ == '__main__':
     NoThreads = 300
