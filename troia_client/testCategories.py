@@ -12,38 +12,23 @@ class TestCategories(unittest.TestCase):
         def tearDown(self):
             self.client.delete()
 
-        def _test_method(self, categories, expected_categories):
+        def _test_method(self, categories):
             response = self.client.create(categories)
             self.assertEqual('OK', response['status'])
 
             response = self.client.await_completion(self.client.get_categories())
             self.assertEqual('OK', response['status'])
-            for category in expected_categories:
+            for category in categories:
                 self.assertTrue(category in response['result'])
 
         def test_AddGetCategories_PrintableASCII_SpecialChars(self):
-            categories = [{"prior":0.5, "name":"!@#$:;,.{}[]"}, {"prior":0.5, "name":"2ndCategory"}]
-            expectedCategories = [u'!@#$:;,.{}[]', u'2ndCategory']
-            self._test_method(categories, expectedCategories)
+            categories = [u'!@#$:;,.{}[]', u'2ndCategory']
+            self._test_method(categories)
 
         def test_AddGetCategories_ExtendedASCIIChars(self):
-            categories = [{"prior":0.5, "name":"œŒ"}, {"prior":0.5, "name":"ÀÆË™ž¤©"}]
-            expectedCategories = [u'œŒ', u'ÀÆË™ž¤©']
-            self._test_method(categories, expectedCategories)
+            categories = [u'œŒ', u'ÀÆË™ž¤©']
+            self._test_method(categories)
 
         def test_AddGetCategories_UnicodeChars(self):
-            categories = [{"prior":0.5, "name":"ૉେஇΨҖӖմ؂څ"}, {"prior":0.5, "name":"ూഹܬआਖ਼"}]
-            expectedCategories = [u'ૉେஇΨҖӖմ؂څ', u'ూഹܬआਖ਼']
-            self._test_method(categories, expectedCategories)
-
-        def test_CostMatrix_01Values(self):
-            categories = [{"name":"porn", "prior":0.3, "misclassificationCost": [{'categoryName': 'porn', 'value': 0.0}, {'categoryName': 'notporn', 'value': 1.0}]},
-                          {"name":"notporn", "prior":0.7, "misclassificationCost":[{'categoryName': 'porn', 'value': 1.0}, {'categoryName': 'notporn', 'value': 0.0}]}]
-            expectedCategories = ['porn', 'notporn']
-            self._test_method(categories, expectedCategories)
-
-        def test_CostMatrix_DoubleValues(self):
-            categories = [{"name":"porn", "prior":0.3, "misclassificationCost": [{'categoryName': 'porn', 'value': 0.4}, {'categoryName': 'notporn', 'value': 0.6}]},
-                          {"name":"notporn", "prior":0.7, "misclassificationCost":[{'categoryName': 'porn', 'value': 0.6}, {'categoryName': 'notporn', 'value': 0.4}]}]
-            expectedCategories = ['porn', 'notporn']
-            self._test_method(categories, expectedCategories)
+            categories = [u'ૉେஇΨҖӖմ؂څ', u'ూഹܬआਖ਼']
+            self._test_method(categories)

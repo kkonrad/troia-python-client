@@ -17,16 +17,16 @@ class TestCachedScheduler(unittest.TestCase):
 
     def test_BMV(self):
         self._test_method('BMV')
-        pass
 
     def test_BDS(self):
         self._test_method('BDS')
-        pass
 
     def _test_method(self, algorithm):
         client = TroiaClient(ADDRESS)
         response = client.create(
             CATEGORIES,
+            categoryPriors=CATEGORY_PRIORS,
+            costMatrix=COST_MATRIX,
             algorithm=algorithm,
             scheduler="cachedscheduler",
             calculator="countassigns"
@@ -39,7 +39,7 @@ class TestCachedScheduler(unittest.TestCase):
                 assigns.append((
                     'worker{}'.format(j),
                     'object{}'.format(i),
-                    CATEGORIES[random.randint(0, len(CATEGORIES) - 1)]['name']
+                    CATEGORIES[random.randint(0, len(CATEGORIES) - 1)]
                 ))
         self.assertEqual(
             'OK',

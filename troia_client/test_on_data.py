@@ -7,14 +7,14 @@ LABEL_CHOOSING = ["MaxLikelihood", "MinCost"]
 COST_ALGORITHM = ["ExpectedCost", "MinCost", "MaxLikelihood"]
 
 
-def _test_all(tc, gold_labels, cost_matrix, labels, eval_data):
+def _test_all(tc, gold_labels, categories, priors, cost_matrix, labels, eval_data):
 
     print "STATUS:", tc.status()
     try:
         print "DELETE", tc.delete()
     except:
         pass
-    print "CREATE:", tc.create(cost_matrix)
+    print "CREATE:", tc.create(categories, costMatrix=cost_matrix, algorithm="IDS")
     print "GET COST MATRIX", tc.await_completion(
             tc.get_cost_matrix())
     print "GET_CATEGORIES:", tc.await_completion(tc.get_categories())
@@ -58,4 +58,4 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         jid = sys.argv[1]
     tc = TroiaClient('http://localhost:8080/troia-server-1.0/')
-    _test_all(tc, GOLD_SAMPLES, CATEGORIES, ASSIGNED_LABELS, EVALUATION_DATA)
+    _test_all(tc, GOLD_SAMPLES, CATEGORIES, CATEGORY_PRIORS, COST_MATRIX, ASSIGNED_LABELS, EVALUATION_DATA)

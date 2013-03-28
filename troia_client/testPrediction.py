@@ -9,7 +9,7 @@ class TestPrediction(unittest.TestCase):
 
     def setUp(self):
         self.client = TroiaClient(ADDRESS)
-        self.client.create(CATEGORIES, algorithm=self.algorithm)
+        self.client.create(CATEGORIES, costMatrix=COST_MATRIX, categoryPriors=CATEGORY_PRIORS, algorithm=self.algorithm)
         self.client.await_completion(self.client.post_assigned_labels(ASSIGNED_LABELS))
         self.client.await_completion(self.client.post_compute())
 

@@ -2,9 +2,11 @@ ADDRESS = 'http://localhost:8080/troia-server-1.0'
 
 ITERATIONS = 5
 
-CATEGORIES = [
-    {"prior":0.5, "name":"porn", "misclassificationCost": [{'categoryName': 'porn', 'value': 0}, {'categoryName': 'notporn', 'value': 1}]},
-    {"prior":0.5, "name":"notporn", "misclassificationCost":[{'categoryName': 'porn', 'value': 1}, {'categoryName': 'notporn', 'value': 0}]}]
+CATEGORIES = ["porn", "notporn"]
+
+CATEGORY_PRIORS = [{"categoryName": "porn", "value": 0.5}, {"categoryName": "notporn", "value": 0.5}]
+
+COST_MATRIX = {"porn": {"porn": 0, "notporn": 1}, "notporn": {"porn": 1, "notporn": 0}}
 
 ASSIGNED_LABELS = [
     ('worker1', 'url1', 'porn'),

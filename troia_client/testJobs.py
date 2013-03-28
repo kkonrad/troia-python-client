@@ -21,7 +21,7 @@ class TestJobs(unittest.TestCase):
             self.assertEqual(expNoWorkers, response['result']['Number of workers'])
 
         def test_createJob_NoJobType(self):
-            response = self.client.create(CATEGORIES)
+            response = self.client.create(CATEGORIES, categoryPriors=CATEGORY_PRIORS)
             self.assertEqual('OK', response['status'])
             self.assertTrue('New job created with ID: RANDOM_' in response['result'])
 
@@ -31,7 +31,7 @@ class TestJobs(unittest.TestCase):
             self.assertJobData(response, 'BDS', 0, 0, 0, 0)
 
         def test_createJob_BDSJobType(self):
-            response = self.client.create(CATEGORIES, algorithm='BDS')
+            response = self.client.create(CATEGORIES, categoryPriors=CATEGORY_PRIORS, algorithm='BDS')
             self.assertEqual('OK', response['status'])
             self.assertTrue('New job created with ID: RANDOM_' in response['result'])
 
@@ -47,40 +47,37 @@ class TestJobs(unittest.TestCase):
             self.assertJobData(response, 'BDS', 0, 0, 0, 0)
 
         def test_createJob_IDSJobType(self):
-            response = self.client.create(CATEGORIES, algorithm='IDS')
+            response = self.client.create(CATEGORIES, categoryPriors=CATEGORY_PRIORS, algorithm='IDS')
             self.assertEqual('OK', response['status'])
             self.assertTrue('New job created with ID: RANDOM_' in response['result'])
 
             response = self.client.get_job_status()
             self.assertEqual('OK', response['status'])
             response = self.client.get_status(response['redirect'])
-            print response
             self.assertJobData(response, 'IDS', 0, 0, 0, 0)
 
         def test_createJob_BMVJobType(self):
-            response = self.client.create(CATEGORIES, algorithm='BMV')
+            response = self.client.create(CATEGORIES, categoryPriors=CATEGORY_PRIORS, algorithm='BMV')
             self.assertEqual('OK', response['status'])
             self.assertTrue('New job created with ID: RANDOM_' in response['result'])
 
             response = self.client.get_job_status()
             self.assertEqual('OK', response['status'])
             response = self.client.get_status(response['redirect'])
-            print response
             self.assertJobData(response, 'BMV', 0, 0, 0, 0)
 
         def test_createJob_IMVJobType(self):
-            response = self.client.create(CATEGORIES, algorithm='IMV')
+            response = self.client.create(CATEGORIES, categoryPriors=CATEGORY_PRIORS, algorithm='IMV')
             self.assertEqual('OK', response['status'])
             self.assertTrue('New job created with ID: RANDOM_' in response['result'])
 
             response = self.client.get_job_status()
             self.assertEqual('OK', response['status'])
             response = self.client.get_status(response['redirect'])
-            print response
             self.assertJobData(response, 'IMV', 0, 0, 0, 0)
 
         def test_createJob_WrongJobType(self):
-            response = self.client.create(CATEGORIES, algorithm='test')
+            response = self.client.create(CATEGORIES, categoryPriors=CATEGORY_PRIORS, algorithm='test')
             self.assertEqual('ERROR', response['status'])
             self.assertTrue('Unknown Job' in response['result'])
 
@@ -89,21 +86,27 @@ class TestJobs(unittest.TestCase):
             self.assertEqual('ERROR', response['status'])
             self.assertEqual('There should be at least two categories', response['result'])
 
+        def get_priors(self, categories, priors):
+            return [{'categoryName': c, "value": p} for c, p in zip(categories, priors)]
+            
         def test_createJob_SumOfPriorsLessThanOne_NoCostMatrix(self):
-            categories = [{"prior":"0.3", "name":"porn"}, {"prior":"0.5", "name":"notporn"}]
-            response = self.client.create(categories)
+            categories = ["porn", "notporn"]
+            priors = [0.3, 0.5]
+            response = self.client.create(categories, categoryPriors=self.get_priors(categories, priors))
             self.assertEqual('ERROR', response['status'])
             self.assertEqual('Priors should sum up to 1. or not to be given (therefore we initialize the priors to be uniform across classes)', response['result'])
 
         def test_createJob_SumOfPriorsGreaterThanOne_NoCostMatrix(self):
-            categories = [{"prior":"0.6", "name":"porn"}, {"prior":"0.5", "name":"notporn"}]
-            response = self.client.create(categories)
+            categories = ["porn", "notporn"]
+            priors = [0.6, 0.5]
+            response = self.client.create(categories, categoryPriors=self.get_priors(categories, priors))
             self.assertEqual('ERROR', response['status'])
             self.assertEqual('Priors should sum up to 1. or not to be given (therefore we initialize the priors to be uniform across classes)', response['result'])
 
         def test_createJob_SumOfPriorsEqualsOne_NoCostMatrix(self):
-            categories = [{"prior":"0.234", "name":"porn"}, {"prior":"0.766", "name":"notporn"}]
-            response = self.client.create(categories)
+            categories = ["porn", "notporn"]
+            priors = [0.234, 0.766]
+            response = self.client.create(categories, categoryPriors=self.get_priors(categories, priors))
             self.assertEqual('OK', response['status'])
 
             response = self.client.get_job_status()
@@ -112,23 +115,23 @@ class TestJobs(unittest.TestCase):
             self.assertJobData(response, 'BDS', 0, 0, 0, 0)
 
         def test_createJob_SumOfPriorsLessThanOne_WithCostMatrix(self):
-            categories = [{"prior":"0.3", "name":"porn", "misclassificationCost": [{'categoryName': 'porn', 'value': 0}, {'categoryName': 'notporn', 'value': 1}]}, 
-                          {"prior":"0.5", "name":"notporn", "misclassificationCost":[{'categoryName': 'porn', 'value': 1}, {'categoryName': 'notporn', 'value': 0}]}]
-            response = self.client.create(categories)
+            categories = ["porn", "notporn"]
+            priors = [0.3, 0.5]
+            response = self.client.create(categories, categoryPriors=self.get_priors(categories, priors), costMatrix=COST_MATRIX)
             self.assertEqual('ERROR', response['status'])
             self.assertEqual('Priors should sum up to 1. or not to be given (therefore we initialize the priors to be uniform across classes)', response['result'])
 
         def test_createJob_SumOfPriorsGreaterThanOne_WithCostMatrix(self):
-            categories = [{"prior":"0.5", "name":"porn", "misclassificationCost": [{'categoryName': 'porn', 'value': 0}, {'categoryName': 'notporn', 'value': 1}]}, 
-                          {"prior":"0.52", "name":"notporn", "misclassificationCost":[{'categoryName': 'porn', 'value': 1}, {'categoryName': 'notporn', 'value': 0}]}]
-            response = self.client.create(categories)
+            categories = ["porn", "notporn"]
+            priors = [0.6, 0.5]
+            response = self.client.create(categories, categoryPriors=self.get_priors(categories, priors), costMatrix=COST_MATRIX)
             self.assertEqual('ERROR', response['status'])
             self.assertEqual('Priors should sum up to 1. or not to be given (therefore we initialize the priors to be uniform across classes)', response['result'])
 
         def test_createJob_SumOfPriorsEqualsOne_WithCostMatrix(self):
-            categories = [{"prior":"0.1234", "name":"porn", "misclassificationCost": [{'categoryName': 'porn', 'value': 0}, {'categoryName': 'notporn', 'value': 1}]}, 
-                          {"prior":"0.8766", "name":"notporn", "misclassificationCost":[{'categoryName': 'porn', 'value': 1}, {'categoryName': 'notporn', 'value': 0}]}]
-            response = self.client.create(categories)
+            categories = ["porn", "notporn"]
+            priors = [0.1234, 0.8766]
+            response = self.client.create(categories, categoryPriors=self.get_priors(categories, priors), costMatrix=COST_MATRIX)
             self.assertEqual('OK', response['status'])
 
             response = self.client.get_job_status()
@@ -137,7 +140,7 @@ class TestJobs(unittest.TestCase):
             self.assertJobData(response, 'BDS', 0, 0, 0, 0)
 
         def test_createJob_NoPriors_NoCostMatrix(self):
-            categories = [{"name":"porn"}, {"name":"notporn"}]
+            categories = ["porn", "notporn"]
 
             response = self.client.create(categories)
             self.assertEqual('OK', response['status'])
@@ -148,9 +151,8 @@ class TestJobs(unittest.TestCase):
             self.assertJobData(response, 'BDS', 0, 0, 0, 0)
 
         def test_createJob_NoPriors_WithCostMatrix(self):
-            categories = [{"name":"porn", "misclassificationCost": [{'categoryName': 'porn', 'value': 0}, {'categoryName': 'notporn', 'value': 1}]}, 
-                          {"name":"notporn", "misclassificationCost":[{'categoryName': 'porn', 'value': 1}, {'categoryName': 'notporn', 'value': 0}]}]
-            response = self.client.create(categories)
+            categories = ['porn', 'notporn']
+            response = self.client.create(categories, costMatrix=COST_MATRIX)
             self.assertEqual('OK', response['status'])
 
             response = self.client.get_job_status()

@@ -12,7 +12,7 @@ class TestWorkers(unittest.TestCase):
         self.client.delete()
 
     def test_AddGetEmptyWorkers(self):
-        self.client.create(CATEGORIES)
+        self.client.create(CATEGORIES, categoryPriors=CATEGORY_PRIORS)
         self.client.await_completion(self.client.post_compute())
         response = self.client.await_completion(self.client.get_workers())
         self.assertEqual('OK', response['status'])
@@ -28,7 +28,7 @@ class TestWorkers(unittest.TestCase):
                 self.assertTrue((a['worker'], a['object'], a['label']) in ASSIGNED_LABELS)
 
     def test_AddGetWorkers_AfterCompute(self):
-        self.client.create(CATEGORIES)
+        self.client.create(CATEGORIES, categoryPriors=CATEGORY_PRIORS, costMatrix=COST_MATRIX)
         self.client.await_completion(self.client.post_assigned_labels(ASSIGNED_LABELS))
         self.client.await_completion(self.client.post_compute())
 
@@ -37,7 +37,6 @@ class TestWorkers(unittest.TestCase):
         for w in response['result']:
             for a in w['assigns']:
                 self.assertTrue((a['worker'], a['object'], a['label']) in ASSIGNED_LABELS)
-
         #confusion matrices check
         response = self.client.await_completion(self.client.get_workers_confusion_matrix())
         exp = {

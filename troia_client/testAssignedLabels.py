@@ -25,12 +25,12 @@ class TestAssignedLabels(unittest.TestCase):
                 self.assertTrue(label in results)
 
         def test_AddGetEmptyAssignedLabels(self):
-            response = self.client.create(CATEGORIES)
+            response = self.client.create(CATEGORIES, categoryPriors=CATEGORY_PRIORS, costMatrix=COST_MATRIX)
             self.assertEqual('OK', response['status'])
             self._test_method([])
 
         def test_AddAssignedLabelsWithInvalidCategory(self):
-            categories = [{"prior":0.3, "name":"category1"}, {"prior":0.7, "name":"category2"}]
+            categories = ["category1", "category2"]
             response = self.client.create(categories)
             self.assertEqual('OK', response['status'])
 
@@ -51,9 +51,7 @@ class TestAssignedLabels(unittest.TestCase):
             self._test_method(ASSIGNED_LABELS)
 
         def test_AddGetAssignedLabels_PrintableASCII_SpecialChars(self):
-            categories = [{"prior":0.4, "name":"category1"},
-                          {"prior":0.239, "name":"category2"},
-                          {"prior":0.361, "name":"category3"}]
+            categories = ['category1', "category2", "category3"]
             response = self.client.create(categories)
             self.assertEqual('OK', response['status'])
 
@@ -62,9 +60,7 @@ class TestAssignedLabels(unittest.TestCase):
                 ('c%%!<>c', '~!@#$^&*[](){}-_+=<>?/.,;:', 'category3')])
 
         def test_AddGetAssignedLabels_ExtendedASCIIChars(self):
-            categories = [{"prior":0.4, "name":"category1"},
-                {"prior":0.239, "name":"category2"},
-                {"prior":0.361, "name":"category3"}]
+            categories = ['category1', "category2", "category3"]
             response = self.client.create(categories)
             self.assertEqual('OK', response['status'])
 
@@ -73,9 +69,7 @@ class TestAssignedLabels(unittest.TestCase):
                 (u'ëñ', u'µ¼Úæ', 'category3')])
 
         def test_AddGetAssignedLabels_UnicodeChars(self):
-            categories = [{"prior":0.4, "name":"category1"},
-                {"prior":0.239, "name":"category2"},
-                {"prior":0.361, "name":"category3"}]
+            categories = ['category1', "category2", "category3"]
             response = self.client.create(categories)
             self.assertEqual('OK', response['status'])
             self._test_method([(u'ૉେஇ', u'ΨҖӖմ؂څ', 'category1'),
