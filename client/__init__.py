@@ -86,7 +86,9 @@ class AbstractTroiaClient(object):
             self.jid = w['result'].split(' ')[-1]
         return w
 
-    def delete(self):
+    def delete(self, jobId=None):
+        if jobId:
+            self.jid = jobId  
         return self._do_raw_request(
             requests.delete,
             self.job_type,

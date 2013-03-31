@@ -81,6 +81,12 @@ class TestJobs(unittest.TestCase):
             self.assertEqual('ERROR', response['status'])
             self.assertTrue('Unknown Job' in response['result'])
 
+        def test_createJob_NoCategories(self):
+            response = self.client.create(None)
+            self.assertEqual('ERROR', response['status'])
+            self.assertEqual('There should be at least two categories', response['result'])
+
+
         def test_createJob_EmptyCategories(self):
             response = self.client.create([])
             self.assertEqual('ERROR', response['status'])
@@ -88,7 +94,7 @@ class TestJobs(unittest.TestCase):
 
         def get_priors(self, categories, priors):
             return [{'categoryName': c, "value": p} for c, p in zip(categories, priors)]
-            
+
         def test_createJob_SumOfPriorsLessThanOne_NoCostMatrix(self):
             categories = ["porn", "notporn"]
             priors = [0.3, 0.5]
@@ -168,3 +174,12 @@ class TestJobs(unittest.TestCase):
             response = self.client.delete()
             self.assertEqual('OK', response['status'])
             self.assertEqual('Removed job with ID: ' + self.client.jid, response['result'])
+
+        def test_deleteJob_NonExistingJobId(self):
+            response = self.client.create(CATEGORIES)
+            self.assertEqual('OK', response['status'])
+            self.assertEqual('New job created with ID: ' + self.client.jid, response['result'])
+
+            response = self.client.delete('NotExistingJob')
+            self.assertEqual('ERROR', response['status'])
+            self.assertEqual('Job with ID NotExistingJob does not exist', response['result'])
