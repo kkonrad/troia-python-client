@@ -23,8 +23,9 @@ class TestWorkers(unittest.TestCase):
         self.load_assigns()
         #get all workers
         response = self.client.await_completion(self.client.get_workers())
-        for w in response['result']['assigns']:
-            self.assertTrue((w['worker'], w['object'], w['label']['value']) in ASSIGNED_LABELS_CONT)
+        for workers in response['result']:
+            for w in workers['assigns']:
+                self.assertTrue((w['worker'], w['object'], w['label']['value']) in ASSIGNED_LABELS_CONT)
         self.assertEqual(5, len(response['result']))
         self.assertEqual('OK', response['status'])
 
