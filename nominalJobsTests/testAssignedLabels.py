@@ -12,7 +12,7 @@ class TestAssignedLabels(unittest.TestCase):
             self.client.delete()
 
         def _test_method(self, assigned_labels):
-            #post the empty assigned labels
+            #post the assigned labels
             response = self.client.await_completion(self.client.post_assigned_labels(assigned_labels))
             self.assertEqual('OK', response['status'])
 
