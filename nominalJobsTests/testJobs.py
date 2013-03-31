@@ -86,7 +86,6 @@ class TestJobs(unittest.TestCase):
             self.assertEqual('ERROR', response['status'])
             self.assertEqual('There should be at least two categories', response['result'])
 
-
         def test_createJob_EmptyCategories(self):
             response = self.client.create([])
             self.assertEqual('ERROR', response['status'])
