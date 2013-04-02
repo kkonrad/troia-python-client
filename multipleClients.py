@@ -1,6 +1,6 @@
 from client.gal import TroiaClient
-from troia_client.testSettings import *
-from troia_cont_client.testSettings import *
+from nominalJobsTests.testSettings import *
+from contJobsTests.testSettings import *
 from client.galc import TroiaContClient
 from threading import Thread
 from random import randint
@@ -28,7 +28,6 @@ def createNominalJob():
     check_status(client, client.post_evaluation_objects(EVALUATION_DATA))
     check_status(client, client.post_compute())
     check_assigns(client, len(ASSIGNED_LABELS))
-
 
 
 def createContJob():

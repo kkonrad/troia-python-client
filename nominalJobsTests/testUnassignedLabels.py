@@ -18,7 +18,7 @@ class TestUnassignedLabels(unittest.TestCase):
         response = self.client.create(categories, categoryPriors=priors, algorithm="BMV")
         self.assertEqual('OK', response['status'])
 
-        #post the assigned labels
+        #post the unassigned labels
         response = self.client.await_completion(self.client.post_objects(unassignedLabels))
         self.assertEqual('OK', response['status'])
 

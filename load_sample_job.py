@@ -1,5 +1,5 @@
 from client.gal import TroiaClient
-from troia_client.testSettings import *
+from nominalJobsTests.testSettings import *
 
 
 def check_status(res):
