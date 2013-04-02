@@ -11,5 +11,5 @@ setup(
       install_requires = [
           'requests',
       ],
-      packages=["troia_client"],
+      packages=["client"],
       )
