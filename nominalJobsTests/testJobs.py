@@ -84,12 +84,24 @@ class TestJobs(unittest.TestCase):
         def test_createJob_NoCategories(self):
             response = self.client.create(None)
             self.assertEqual('ERROR', response['status'])
-            self.assertEqual('There should be at least two categories', response['result'])
+            self.assertEqual('There is no categories collection', response['result'])
 
         def test_createJob_EmptyCategories(self):
             response = self.client.create([])
             self.assertEqual('ERROR', response['status'])
             self.assertEqual('There should be at least two categories', response['result'])
+
+        def test_createJob_2Categories_SameCategoryNames(self):
+            categories = [u'category1', u'category1']
+            response = self.client.create(categories)
+            self.assertEqual('ERROR', response['status'])
+            self.assertEqual('Category names should be different', response['result'])
+
+        def test_createJob_3Categries_SameCategoryNames(self):
+            categories = [u'category1', u'category1', u'category2']
+            response = self.client.create(categories)
+            self.assertEqual('ERROR', response['status'])
+            self.assertEqual('Category names should be different', response['result'])
 
         def get_priors(self, categories, priors):
             return [{'categoryName': c, "value": p} for c, p in zip(categories, priors)]
@@ -164,6 +176,12 @@ class TestJobs(unittest.TestCase):
             self.assertEqual('OK', response['status'])
             response = self.client.get_status(response['redirect'])
             self.assertJobData(response, 'BDS', 0, 0, 0, 0)
+
+        def test_createJob_CostMatrixContainsNotExistingCategories(self):
+            categories = [u'category1', u'category2']
+            response = self.client.create(categories, costMatrix=COST_MATRIX)
+            self.assertEqual('ERROR', response['status'])
+            self.assertEqual('Categories list does not contain category named notporn', response['result'])
 
         def test_deleteJob_ExistingJobId(self):
             response = self.client.create(CATEGORIES)

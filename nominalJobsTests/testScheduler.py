@@ -41,45 +41,22 @@ class TestCachedScheduler(unittest.TestCase):
                     'object{}'.format(i),
                     CATEGORIES[random.randint(0, len(CATEGORIES) - 1)]
                 ))
-        self.assertEqual(
-            'OK',
-            client.await_completion(
-                client.post_assigned_labels(assigns)
-            )['status']
-        )
-        self.assertEqual(
-            'OK',
-            client.await_completion(client.post_compute())['status']
-        )
+        print assigns
+        self.assertEqual('OK', client.await_completion(client.post_assigned_labels(assigns))['status'])
+        self.assertEqual('OK', client.await_completion(client.post_compute())['status'])
+
         # Get created objects.
         objects = client.await_completion(client.get_objects())['result']
+
         # Get all objects from the queue.
         for i in xrange(num_objects):
-            self.assertEqual(
-                objects[i]['name'],
-                client.await_completion(
-                    client.get_next_object()
-                )['result']['name']
-            )
+            print objects[i]['name']
+            self.assertEqual( objects[i]['name'], client.await_completion(client.get_next_object())['result']['name'])
         # This one should be null. That means the 'result' key is not present
         # in the response.
-        self.assertIsNone(
-            client.await_completion(
-                client.get_next_object()
-            ).get('result', None)
-        )
+        self.assertIsNone(client.await_completion(client.get_next_object()).get('result', None))
         # Add assign to the object. The object should be evicted from the
         # cache and returned by subsequent 'nextObject' call.
-        self.assertEqual(
-            'OK',
-            client.await_completion(
-                client.post_assigned_labels(assigns[-1:])
-            )['status']
-        )
-        self.assertEqual(
-            objects[-1]['name'],
-            client.await_completion(
-                client.get_next_object()
-            )['result']['name']
-        )
+        self.assertEqual('OK', client.await_completion(client.post_assigned_labels(assigns[-1:]))['status'])
+        self.assertEqual(objects[-1]['name'], client.await_completion(client.get_next_object())['result']['name'])
         client.delete()
