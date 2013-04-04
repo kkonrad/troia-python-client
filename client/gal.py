@@ -11,34 +11,6 @@ def generate_miss_costs(labels, label):
     return d
 
 
-def prepare_categories_def_prior_cost(categories):
-    ''' Generates default cost matrix
-    for them (1. on error, 0. otherwise)
-
-    :param categories: list of categories ids
-    :param prior: default priority
-    '''
-    return [{
-            'name': c,
-            'prior': 1. / len(categories),
-            'misclassificationCost': generate_miss_costs(categories, c)
-        } for c in categories]
-
-
-def prepare_categories_def_prior(categories):
-    ''' Costs should be iterable with iterables in form:
-    ..
-
-        (name, prior, dict-misclassification_cost { class_ : cost })
-
-    Only default priority is used
-    '''
-    return [{
-            'name': category,
-            'misclassificationCost': mc
-        } for category, mc in categories]
-
-
 class TroiaClient(AbstractTroiaClient):
     ''' Base class providing wrappers for all REST request
     '''
