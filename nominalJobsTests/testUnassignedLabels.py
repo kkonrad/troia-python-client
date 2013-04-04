@@ -82,7 +82,6 @@ class TestUnassignedLabels(unittest.TestCase):
         self.assertEqual('OK', response['status'])
 
         response = self.client.await_completion(self.client.get_objects())
-        print response
         self.assertEqual('OK', response['status'])
         result = response['result']
         self.assertEqual(6, len(result))
@@ -115,8 +114,6 @@ class TestUnassignedLabels(unittest.TestCase):
         self.client.await_completion(self.client.post_compute())
         for label in result:
             response = self.client.await_completion(self.client.get_probability_distribution(label['name']))
-            print label['name'] 
-            print response
             dist = response['result'][0]
             self.assertEqual(dist['value'], 0.5 if label['name'] in objects_without_assigns else 0.9 if dist['categoryName'] == 'porn' else 0.1)
 
