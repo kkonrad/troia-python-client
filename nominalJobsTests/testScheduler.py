@@ -329,7 +329,7 @@ class TestNormalScheduler(unittest.TestCase):
         assignsGenModel = 'sameObjectCosts'
         noObjects = 3
         categories = ["category1", "category2", "category3"]
-        categoryPriors = [{"categoryName": "category1", "value": 0.1}, {"categoryName": "category2", "value": 0.3}, {"categoryName": "category2", "value": 0.6}]
+        categoryPriors = [{"categoryName": "category1", "value": 0.1}, {"categoryName": "category2", "value": 0.3}, {"categoryName": "category3", "value": 0.6}]
         assigns = self.utils.generateAssigns(assignsGenModel, noObjects, categories)
         self._createTestPrereq(algorithm, self.scheduler, calculator, assigns, categories, categoryPriors)
         sortedList = self.getObjectCostsList()
@@ -350,7 +350,7 @@ class TestNormalScheduler(unittest.TestCase):
         assignsGenModel = 'differentObjectCosts'
         noObjects = 3
         categories = ["category1", "category2", "category3"]
-        categoryPriors = [{"categoryName": "category1", "value": 0.1}, {"categoryName": "category2", "value": 0.3}, {"categoryName": "category2", "value": 0.6}]
+        categoryPriors = [{"categoryName": "category1", "value": 0.1}, {"categoryName": "category2", "value": 0.3}, {"categoryName": "category3", "value": 0.6}]
         assigns = self.utils.generateAssigns(assignsGenModel, noObjects, categories)
         self._createTestPrereq(algorithm, self.scheduler, calculator, assigns, categories, categoryPriors)
         sortedList = self.getObjectCostsList()
