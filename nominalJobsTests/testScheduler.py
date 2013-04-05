@@ -247,7 +247,6 @@ class TestNormalScheduler(unittest.TestCase):
     def _check_results(self, expectedObjectList, newAssign):
         for i in xrange(len (expectedObjectList) + 1):
             response = self.client.await_completion(self.client.get_next_object())
-            print response['result']['name']
             self.assertTrue(response['result']['name'] in expectedObjectList)
 
         # Add assign to the object. The object should be returned by subsequent 'nextObject' call.
@@ -264,7 +263,6 @@ class TestNormalScheduler(unittest.TestCase):
         assigns = self.utils.generateAssigns(assignsGenModel, noObjects)
         expectedObjectsList = self.sortedObjectsByLabels(assigns, False)
 
-        print expectedObjectsList
         newAssign = [('worker3', 'object0', CATEGORIES[0])]
         self._createTestPrereq(algorithm, self.scheduler, calculator, assigns)
         self._check_results(expectedObjectsList[0][0], newAssign)
