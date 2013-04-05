@@ -136,8 +136,10 @@ class TestCachedScheduler(unittest.TestCase):
         calculator = 'countassigns'
         assigns = [('worker1', 'object1', 'porn'), 
                    ('worker2', 'object1', 'porn'),
-                   ('worker2', 'object2', 'porn'),
                    ('worker3', 'object1', 'notporn'),
+                   ('worker4', 'object1', 'notporn'),
+                   ('worker1', 'object2', 'porn'),
+                   ('worker2', 'object2', 'porn'),
                    ('worker3', 'object2', 'porn'),
                    ('worker3', 'object3', 'notporn'),
                    ]
@@ -146,11 +148,14 @@ class TestCachedScheduler(unittest.TestCase):
         response = self.client.await_completion(self.client.get_next_object())
         self.assertEqual('object3', response['result']['name'])
 
-        newAssigns = [('worker4', 'object2', 'porn'), ('worker5', 'object2', 'notporn')]
+        response = self.client.await_completion(self.client.get_next_object())
+        self.assertEqual('object2', response['result']['name'])
+
+        newAssigns = [('worker4', 'object3', 'porn')]
         self.assertEqual('OK', self.client.await_completion(self.client.post_assigned_labels(newAssigns))['status'])
         self.assertEqual('OK', self.client.await_completion(self.client.post_compute())['status'])
         response = self.client.await_completion(self.client.get_next_object())
-        self.assertEqual('object1', response['result']['name'])
+        self.assertEqual('object3', response['result']['name'])
 
     @data('BDS', 'IDS', 'BMV', 'IMV')
     def test_CachedScheduler_CountAssignsCalculator_SameLabelCounts_AddEmptyAssign(self, algorithm):
@@ -294,16 +299,16 @@ class TestNormalScheduler(unittest.TestCase):
         calculator = 'countassigns'
         assigns = [('worker1', 'object1', 'porn'), 
                    ('worker2', 'object1', 'porn'),
-                   ('worker3', 'object2', 'porn'),
                    ('worker1', 'object2', 'porn'),
-                   ('worker2', 'object2', 'notporn')
+                   ('worker2', 'object2', 'notporn'),
+                   ('worker3', 'object2', 'porn'),
                    ]
 
         self._createTestPrereq(algorithm, self.scheduler, calculator, assigns)
         response = self.client.await_completion(self.client.get_next_object())
         self.assertEqual('object1', response['result']['name'])
 
-        newAssigns = [('worker4', 'object3', 'porn')]
+        newAssigns = [('worker1', 'object3', 'porn')]
         self.assertEqual('OK', self.client.await_completion(self.client.post_assigned_labels(newAssigns))['status'])
         self.assertEqual('OK', self.client.await_completion(self.client.post_compute())['status'])
         response = self.client.await_completion(self.client.get_next_object())
