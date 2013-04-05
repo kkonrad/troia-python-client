@@ -181,7 +181,6 @@ class TestJobs(unittest.TestCase):
             categories = [u'category1', u'category2']
             response = self.client.create(categories, costMatrix=COST_MATRIX)
             self.assertEqual('ERROR', response['status'])
-            self.assertEqual('Categories list does not contain category named notporn', response['result'])
 
         def test_deleteJob_ExistingJobId(self):
             response = self.client.create(CATEGORIES)

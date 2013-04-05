@@ -6,7 +6,8 @@ CATEGORIES = ["porn", "notporn"]
 
 CATEGORY_PRIORS = [{"categoryName": "porn", "value": 0.5}, {"categoryName": "notporn", "value": 0.5}]
 
-COST_MATRIX = {"porn": {"porn": 0, "notporn": 1}, "notporn": {"porn": 1, "notporn": 0}}
+COST_MATRIX = [{"from": "porn", "to": "notporn", "value": 1.0}, {"from": "porn", "to": "porn", "value": 0.0}, 
+               {"from": "notporn", "to": "porn", "value": 1.0}, {"from": "notporn", "to": "notporn", "value": 0.0}]
 
 ASSIGNED_LABELS = [
     ('worker1', 'url1', 'porn'),

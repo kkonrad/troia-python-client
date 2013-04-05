@@ -70,12 +70,8 @@ class TestCategories(unittest.TestCase):
             self.assertEqual('OK', response['status'])
 
             #check that the default 0-1 cost matrix is created
-            for cat1 in categories:
-                for cat2 in categories:
-                        if cat1 != cat2:
-                            self.assertEqual(1.0, response['result'][cat1][cat2])
-                        else:
-                            self.assertEqual(0.0, response['result'][cat1][cat2])
+            for matrix_value in response['result']:
+                self.assertEqual(0.0 if matrix_value['from'] == matrix_value['to'] else 1.0, matrix_value['value'])
 
         def test_CreateJobWithoutCostMatrix_3Categories_GetCostMatrix(self):
             categories = [u'category1', u'category2', u'category3']
@@ -86,32 +82,18 @@ class TestCategories(unittest.TestCase):
             self.assertEqual('OK', response['status'])
 
             #check that the default 0-1 cost matrix is created
-            for cat1 in categories:
-                for cat2 in categories:
-                    for cat3 in categories:
-                        if ((cat1 != cat2) and (cat2 != cat3) and (cat1 != cat3)):
-                            self.assertEqual(1.0, response['result'][cat1][cat2])
-                            self.assertEqual(1.0, response['result'][cat1][cat3])
-                        else:
-                            self.assertEqual(0.0,response['result'][cat1][cat1])
+            for matrix_value in response['result']:
+                self.assertEqual(0.0 if matrix_value['from'] == matrix_value['to'] else 1.0, matrix_value['value'])
 
         def test_CreateJobWithCostMatrix_GetCostMatrix(self):
             categories = [u'category1', u'category2', u'category3']
-            cMatrix = {"category1":{"category1":0.0, "category2":0.5, "category3":0.5},
-                       "category2":{"category1":0.5, "category2":0.0, "category3":0.5},
-                       "category3":{"category1":0.5, "category2":0.5, "category3":0.0}} 
-            response = self.client.create(categories, cMatrix=cMatrix)
+            cMatrix = [{"from": "category1", "to": "category1", "value": 0.0}, {"from": "category1", "to": "category2", "value": 0.5}, {"from": "category1", "to": "category3", "value": 0.5},
+                       {"from": "category2", "to": "category1", "value": 0.5}, {"from": "category2", "to": "category2", "value": 0.0}, {"from": "category2", "to": "category3", "value": 0.5},
+                       {"from": "category3", "to": "category1", "value": 0.5}, {"from": "category3", "to": "category2", "value": 0.5}, {"from": "category3", "to": "category3", "value": 0.0}]
+            response = self.client.create(categories, costMatrix=cMatrix)
             self.assertEqual('OK', response['status'])
 
             response = self.client.await_completion(self.client.get_cost_matrix())
             self.assertEqual('OK', response['status'])
-            for cat1 in categories:
-                for cat2 in categories:
-                    for cat3 in categories:
-                        if ((cat1 != cat2) and (cat2 != cat3) and (cat1 != cat3)):
-                            self.assertEqual(0.5, response['result'][cat1][cat2])
-                            self.assertEqual(0.5, response['result'][cat1][cat3])
-                        else:
-                            self.assertEqual(0.0, response['result'][cat1][cat1])
-
-
+            for matrix_value in response['result']:
+                self.assertEqual(0.0 if matrix_value['from'] == matrix_value['to'] else 0.5, matrix_value['value'])
