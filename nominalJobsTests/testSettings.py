@@ -1,4 +1,4 @@
-ADDRESS = 'http://localhost:8080/troia-server-1.0'
+ADDRESS = 'http://localhost:8080/troia-server-1.1'
 
 ITERATIONS = 5
 
