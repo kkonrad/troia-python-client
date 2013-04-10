@@ -39,6 +39,7 @@ class TestWorkers(unittest.TestCase):
                 self.assertTrue((a['worker'], a['object'], a['label']) in ASSIGNED_LABELS)
         #confusion matrices check
         response = self.client.await_completion(self.client.get_workers_confusion_matrix())
+
         exp = {
          u'worker1': [{u'to': u'porn', u'from': u'porn', u'value': 1.0}, {u'to': u'notporn', u'from': u'porn', u'value': 0.0}, 
                       {u'to': u'porn', u'from': u'notporn', u'value': 1.0}, {u'to': u'notporn', u'from': u'notporn', u'value': 0.0}], 
@@ -53,7 +54,7 @@ class TestWorkers(unittest.TestCase):
 
         for w in response['result']:
             worker_name = w['workerName']
-            for e1 in w['value']['matrix']:
+            for e1 in w['value']:
                 exists = False
                 for e2 in exp[worker_name]:
                     if e2['to'] == e1['to'] and e2['from'] == e1['from']:
