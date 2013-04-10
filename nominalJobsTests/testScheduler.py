@@ -198,9 +198,30 @@ class TestCachedScheduler(unittest.TestCase):
     @data('BDS', 'IDS', 'BMV', 'IMV')
     def test_CachedScheduler_CostBasedCalculator_SameCosts(self, algorithm):
         calculator = 'costbased'
-        assignsGenerationModel = 'sameObjectCosts'
-        noObjects = 3
-        assigns = self.utils.generateAssigns(assignsGenerationModel, noObjects)
+        categories = ["cat1", "cat2"] 
+        categoryPriors = [{"categoryName": "cat1", "value": 0.5}, {"categoryName": "cat2", "value": 0.5}]
+        assigns = [('worker1', 'object1', 'cat1'), 
+                   ('worker2', 'object1', 'cat1'),
+                   ('worker3', 'object2', 'cat1'),
+                   ('worker4', 'object2', 'cat1')]
+        self._createTestPrereq(algorithm, self.scheduler, calculator, assigns, categories, categoryPriors)
+        objectCostList = self.getObjectCostsList()
+        newAssign = [('worker3', 'object0', categories[0])]
+        expectedObject = 'object0'
+        self._check_results(objectCostList, newAssign, expectedObject)
+
+    @data('BDS', 'IDS', 'BMV', 'IMV')
+    def test_CachedScheduler_CostBasedCalculator_DifferentObjectCosts_AssignsInOneCategory(self, algorithm):
+        calculator = 'costbased'
+        assigns = [('worker0', 'object0', 'notporn'), 
+                   ('worker1', 'object0', 'notporn'), 
+                   ('worker2', 'object0', 'notporn'),
+                   ('worker0', 'object1', 'notporn'), 
+                   ('worker1', 'object1', 'notporn'),
+                   ('worker2', 'object1', 'notporn'),
+                   ('worker0', 'object2', 'notporn'), 
+                   ('worker1', 'object2', 'notporn'), 
+                   ('worker2', 'object2', 'notporn')]
         self._createTestPrereq(algorithm, self.scheduler, calculator, assigns)
         objectCostList = self.getObjectCostsList()
         newAssign = [('worker3', 'object0', CATEGORIES[0])]
@@ -334,7 +355,7 @@ class TestNormalScheduler(unittest.TestCase):
         assignsGenModel = 'sameObjectCosts'
         noObjects = 3
         categories = ["category1", "category2", "category3"]
-        categoryPriors = [{"categoryName": "category1", "value": 0.1}, {"categoryName": "category2", "value": 0.3}, {"categoryName": "category3", "value": 0.6}]
+        categoryPriors = [{"categoryName": "category1", "value": 0.1}, {"categoryName": "category2", "value": 0.3}, {"categoryName": "category2", "value": 0.6}]
         assigns = self.utils.generateAssigns(assignsGenModel, noObjects, categories)
         self._createTestPrereq(algorithm, self.scheduler, calculator, assigns, categories, categoryPriors)
         sortedList = self.getObjectCostsList()
@@ -355,7 +376,7 @@ class TestNormalScheduler(unittest.TestCase):
         assignsGenModel = 'differentObjectCosts'
         noObjects = 3
         categories = ["category1", "category2", "category3"]
-        categoryPriors = [{"categoryName": "category1", "value": 0.1}, {"categoryName": "category2", "value": 0.3}, {"categoryName": "category3", "value": 0.6}]
+        categoryPriors = [{"categoryName": "category1", "value": 0.1}, {"categoryName": "category2", "value": 0.3}, {"categoryName": "category2", "value": 0.6}]
         assigns = self.utils.generateAssigns(assignsGenModel, noObjects, categories)
         self._createTestPrereq(algorithm, self.scheduler, calculator, assigns, categories, categoryPriors)
         sortedList = self.getObjectCostsList()
