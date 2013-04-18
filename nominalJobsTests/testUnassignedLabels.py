@@ -33,14 +33,14 @@ class TestUnassignedLabels(unittest.TestCase):
     def test_AddGetObjects_EmptyLabels(self):
         self._test_method(CATEGORIES, CATEGORY_PRIORS, [], [])
 
-    def test_AddGetObjects_LongLabelName(self):
+    def test_AddGetUnassignedLabels_LongLabelNames(self):
         categories = ["category1", "category2"]
         priors = [{"categoryName": "category1", "value": 0.0000000001}, {"categoryName": "category2", "value": 0.9999999999}]
         unassignedLabels = ["hjkdhfhdfgjkshfghdsfkgjldkgjfdkgjdflgjfkdljajdghafdhjkdhfhdfgjkshfghdsfkgjldkgjfdkgjdflgjfkdljajdghafdhjkdhfhdfgjkshfghdsfkgjldkgjfdkgjdflgjfkdljajdghafdhjkdhfhdfgjkshfghdsfkgjldkgjfdkgjdflgjfkdljajdghafdhjkdhfhdfgjkshfghdsfkgjldkgjfdkgjdflgjfkdljajdghafdhjkdhfhdfgjkshfghdsfkgjldkgjfdkgjdflgjfkdljajdghafdhjkdhfhdfgjkshfghdsfkgjldkgjfdkgjdflgjfkdljajdghafdhjkdhfhdfgjkshfghdsfkgjldkgjfdkgjdflgjfkdljajdghafdhjkdhfhdfgjkshfghdsfkgjldkgjfdkgjdflgjfkdljajdghafdhjkdhfhdfgjkshfghdsfkgjldkgjfdkgjdflgjfkdljajdghafdhjkdhfhdfgjkshfghdsfkgjldkgjfdkgjdflgjfkdljajdghafdhjkdhfhdfgjkshfghdsfkgjldkgjfdkgjdflgjfkdljajdghafdhjkdhfhdfgjkshfghdsfkgjldkgjfdkgjdflgjfkdljajdghafdhjkdhfhdfgjkshfghdsfkgjldkgjfdkgjdflgjfkdljajdghafdhjkdhfhdfgjkshfghdsfkgjldkgjfdkgjdflgjfkdljajdghafdhjkdhfhdfgjkshfghdsfkgjldkgjfdkgjdflgjfkdljajdghafdhjkdhfhdfgjkshfghdsfkgjldkgjfdkgjdflgjfkdljajdghafdhjkdhfhdfgjkshfghdsfkgjldkgjfdkgjdflgjfkdljajdghafdhjkdhfhdfgjkshfghdsfkgjldkgjfdkgjdflgjfkdljajdghafdhjkdhfhdfgjkshfghdsfkgjldkgjfdkgjdflgjfkdljajdghafdhjkdh"]
         expectedProbabilities = [('category1', 0.5), ('category2', 0.5)]
         self._test_method(categories, priors, unassignedLabels, expectedProbabilities)
 
-    def test_AddGetObjects_PrintableASCII_RegularChars(self):
+    def test_AddGetUnassignedLabels_PrintableASCII_RegularChars(self):
         categories = ["category1", "category2", "category3", "category4"]
         unassignedLabels = ["testObject1"]
         expectedProbabilities = [('category1', 0.25),
@@ -49,7 +49,7 @@ class TestUnassignedLabels(unittest.TestCase):
                                  ('category4', 0.25)]
         self._test_method(categories, self.get_priors(categories), unassignedLabels, expectedProbabilities)
 
-    def test_AddGetObjects_PrintableASCII_SpecialChars(self):
+    def test_AddGetUnassignedLabels_PrintableASCII_SpecialChars(self):
         categories = ["category1", "category2", "category3"]
         unassignedLabels = ["~!@#$%^&*()_+=-[]{}|:;<> ,./"]
         expectedProbabilities = [('category1', 0.3333333333333333),
@@ -57,13 +57,13 @@ class TestUnassignedLabels(unittest.TestCase):
                                  ('category3', 0.3333333333333333)]
         self._test_method(categories, self.get_priors(categories), unassignedLabels, expectedProbabilities)
 
-    def test_AddGetObjects_ExtendedASCIIChars(self):
+    def test_AddGetUnassignedLabels_ExtendedASCIIChars(self):
         categories = ["category1", "category2"]
         unassignedLabels = [u"ëñµ¼Úæ"]
         expectedProbabilities = [('category1', 0.5), ('category2', 0.5)]
         self._test_method(categories, self.get_priors(categories), unassignedLabels, expectedProbabilities)
 
-    def test_AddGetObjects_UnicodeChars(self):
+    def test_AddGetUnassignedLabels_UnicodeChars(self):
         categories = ["category1", "category2"]
         unassignedLabels = [u"ూഹܬआਖ਼"]
         expectedProbabilities = [('category1', 0.5), ('category2', 0.5)]
