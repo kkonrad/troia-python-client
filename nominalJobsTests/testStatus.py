@@ -16,4 +16,3 @@ class TestStatus(unittest.TestCase):
         self.assertEqual('OK', response['status'])
         self.assertEqual('OK', response['result']['status'])
         self.assertEqual('OK', response['result']['job_storage_status'])
-        self.assertTrue('DataBase' in response['result']['job_storage'])
