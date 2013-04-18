@@ -356,7 +356,6 @@ class TestNormalScheduler(unittest.TestCase):
     @data('BDS', 'IDS', 'BMV', 'IMV')
     def test_NormalScheduler_CostBasedCalculator_SameCosts(self, algorithm):
         calculator = 'costbased'
-        assignsGenModel = 'sameObjectCosts'
         categories = ["cat1", "cat2"] 
         categoryPriors = [{"categoryName": "cat1", "value": 0.5}, {"categoryName": "cat2", "value": 0.5}]
         assigns = [('worker1', 'object1', 'cat1'), 
