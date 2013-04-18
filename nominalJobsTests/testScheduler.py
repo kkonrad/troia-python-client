@@ -350,7 +350,7 @@ class TestNormalScheduler(unittest.TestCase):
             expectedObjectsList.append(o[0])
 
         newAssign = [('worker3', 'object3', 'cat1')]
-        self._createTestPrereq(algorithm, self.scheduler, calculator, assigns)
+        self._createTestPrereq(algorithm, self.scheduler, calculator, assigns, categories, categoryPriors)
         self._check_results(expectedObjectsList, newAssign)
 
     @data('BDS', 'IDS', 'BMV', 'IMV')
