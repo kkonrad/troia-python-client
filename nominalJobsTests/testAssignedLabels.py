@@ -49,7 +49,7 @@ class TestAssignedLabels(unittest.TestCase):
             categories = ['category1', "category2"]
             response = self.client.create(categories)
             self.assertEqual('OK', response['status'])
-            self._test_method([('hjkdhfhdfgjkshfghdsfkgjldkgjfdkgjd', 'category1')])
+            self._test_method([('hjkdhfhdfgjkshfghdsfkgjldkgjfdkgjd', 'object_dsjfklsdjfkljsdfjkljkl', 'category1')])
 
         def test_AddGetAssignedLabels_PrintableASCII_RegularChars(self):
             response = self.client.create(CATEGORIES)
