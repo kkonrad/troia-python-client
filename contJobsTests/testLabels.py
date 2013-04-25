@@ -23,7 +23,6 @@ class TestLabels(unittest.TestCase):
         self.assertEqual('OK', response['status'])
         response = self.client.get_status(response['redirect'])
         self.assertEqual('OK', response['status'])
-        self.assertEqual({}, response['result']['Initialization data'])
         self.assertEqual(0, response['result']['Number of assigns'])
         self.assertEqual(0, response['result']['Number of gold objects'])
         self.assertEqual(0, response['result']['Number of objects'])

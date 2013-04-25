@@ -6,7 +6,12 @@ class TroiaContClient(AbstractTroiaClient):
     ''' Base class providing wrappers for all GALC REST request
     '''
 
-    job_type = "cjobs"
+    job_type = "jobs"
+    
+    def create(self, **kwargs):
+        data = {'algorithm': "GALC"}
+        data.update(kwargs)
+        return super(TroiaContClient, self).create(**data)
 
     def get_object_prediction(self, object_id):
         return self._do_request_get("objects/%s/prediction" % object_id)
