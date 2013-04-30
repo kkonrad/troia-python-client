@@ -57,5 +57,5 @@ def _test_all(tc, gold_labels, categories, priors, cost_matrix, labels, eval_dat
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         jid = sys.argv[1]
-    tc = TroiaClient('http://localhost:8080/troia-server-1.1/')
+    tc = TroiaClient('http://localhost:8080/service-1.1/')
     _test_all(tc, GOLD_SAMPLES, CATEGORIES, CATEGORY_PRIORS, COST_MATRIX, ASSIGNED_LABELS, EVALUATION_DATA)

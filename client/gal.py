@@ -39,6 +39,8 @@ class TroiaClient(AbstractTroiaClient):
         data = {}
         data.update(kwargs)
         data['categories'] = categories
+        if 'algorithm' not in data:
+            data['algorithm'] = "BDS"
         return super(TroiaClient, self).create(**data)
 
     def get_categories(self):
