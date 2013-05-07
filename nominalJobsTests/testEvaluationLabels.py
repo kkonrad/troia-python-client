@@ -46,7 +46,10 @@ class TestEvaluationLabels(unittest.TestCase):
         self._test_method([(u'ૉେஇ', 'notporn')])
 
     def test_AddGetEvaluationLabel_LongLabelNames(self):
-        self._test_method([('hjkdhfhdfgjkshfghdsfkgjldkgjfdkgjdflgjfkd', 'notporn')])
+        response = self.client.await_completion(self.client.post_evaluation_objects([('sdgfdgfgfhdsjgfhgfhgfhhjhgjhjjghghkgkhjkfklsdjfkljs', 'notporn')]))
+        self.assertEqual('ERROR', response['status'])
+        self.assertEqual('Internal error: Object name should be shorter than 50 chars', response['result'])
+
 
 if __name__ == '__main__':
     unittest.main()

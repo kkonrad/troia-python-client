@@ -32,7 +32,9 @@ class TestGoldLabels(unittest.TestCase):
         self._test_method([])
 
     def test_AddGetGoldLabel_LongLabelName(self):
-        self._test_method([("hjkdhfhdfgjkshfghdsfkgjldkgjfdkgjdflgjfkdl", "notporn")])
+        response = self.client.await_completion(self.client.post_gold_data([("sdgfdgfgfhdsjgfhgfhgfhhjhgjhjjghghkgkhjkfklsdjfkljs", "notporn")]))
+        self.assertEqual('ERROR', response['status'])
+        self.assertEqual('Internal error: Object name should be shorter than 50 chars', response['result'])
 
     def test_AddGetGoldLabel_PrintableASCII_RegularChars(self):
         self._test_method([("url1", "notporn")])

@@ -49,7 +49,9 @@ class TestAssignedLabels(unittest.TestCase):
             categories = ['category1', "category2"]
             response = self.client.create(categories)
             self.assertEqual('OK', response['status'])
-            self._test_method([('hjkdhfhdfgjkshfghdsfkgjldkgjfdkgjd', 'object_dsjfklsdjfkljsdfjkljkl', 'category1')])
+            response = self.client.await_completion(self.client.post_assigned_labels([('hjkdhfhdfgjkshfghdsgffgfhfghgjhghjgjgjgjgjgjgjldkgj', 'object_dsjgfhgfhgfhhjdfhgjghghkgkhjkfklsdjfkljsdfj', 'category1')]))
+            self.assertEqual('ERROR', response['status'])
+            self.assertEqual('Internal error: Worker name should be shorter than 50 chars', response['result'])
 
         def test_AddGetAssignedLabels_PrintableASCII_RegularChars(self):
             response = self.client.create(CATEGORIES)
