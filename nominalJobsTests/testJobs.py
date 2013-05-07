@@ -3,6 +3,7 @@ from client.gal import TroiaClient
 from ddt import ddt, data
 from testSettings import *
 import time
+import pprint
 
 @ddt
 class TestJobs(unittest.TestCase):
@@ -23,8 +24,8 @@ class TestJobs(unittest.TestCase):
 
         def test_createJob_NoJobType(self):
             response = self.client.create(CATEGORIES, categoryPriors=CATEGORY_PRIORS)
-            self.assertEqual('ERROR', response['status'])
-            print response
+            response = self.client.await_completion(self.client.get_job_status())
+            self.assertEqual('BDS', response['result']['Initialization data']['algorithm'])
 
         @data('BDS', 'IDS', 'BMV', 'IMV')
         def test_createJob(self, algorithm):
@@ -45,8 +46,8 @@ class TestJobs(unittest.TestCase):
 
         def test_createJob_WrongJobType(self):
             response = self.client.create(CATEGORIES, categoryPriors=CATEGORY_PRIORS, algorithm='test')
-            self.assertEqual('ERROR', response['status'])
-            self.assertTrue('Unknown Job' in response['result'])
+            self.assertEqual('ERROR', response['status'])        
+            self.assertTrue('Unknown Job Type' in response['result'])
 
         @data('BDS', 'IDS', 'BMV', 'IMV')
         def test_createJob_NoCategories(self, algorithm):
