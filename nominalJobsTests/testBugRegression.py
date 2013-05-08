@@ -2,7 +2,7 @@ import unittest
 from client.gal import TroiaClient
 from testSettings import *
 
-class Test(unittest.TestCase):
+class BugRegressionTests(unittest.TestCase):
 
     def setUp(self):
         self.client = TroiaClient(ADDRESS)
@@ -115,3 +115,4 @@ class Test(unittest.TestCase):
 
         response = self.client.await_completion(self.client.get_estimated_workers_quality())
         print response
+        self.assertEqual('OK', response['status'])
