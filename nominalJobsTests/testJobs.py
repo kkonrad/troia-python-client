@@ -47,7 +47,7 @@ class TestJobs(unittest.TestCase):
         def test_createJob_WrongJobType(self):
             response = self.client.create(CATEGORIES, categoryPriors=CATEGORY_PRIORS, algorithm='test')
             self.assertEqual('ERROR', response['status'])        
-            self.assertTrue('Unknown Job Type' in response['result'])
+            self.assertTrue('Unknown algorithm type' in response['result'])
 
         @data('BDS', 'IDS', 'BMV', 'IMV')
         def test_createJob_NoCategories(self, algorithm):
