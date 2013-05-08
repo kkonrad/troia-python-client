@@ -6,14 +6,14 @@ class Test(unittest.TestCase):
 
     def setUp(self):
         self.client = TroiaClient(ADDRESS)
-      
+
     def tearDown(self):
         self.client.delete()
-        
+
     def testPeccatorImpius(self):
         categories= ['yes', 'no', 'blank'] 
         response = self.client.create(categories,
-                                      calculator="CostBaes", 
+                                      calculator="CostBased",
                                       costMatrix= [{"value":5.0,"to":"blank","from":"blank"},
                                                    {"value":5.0,"to":"no","from":"blank"},
                                                    {"value":5.0,"to":"yes","from":"blank"},
@@ -109,13 +109,9 @@ class Test(unittest.TestCase):
             ('A224TK7J4KA1LV','2A79RA7S5WM1P0GN0TY0RMHLI0JZUA','yes'),
             ('A224TK7J4KA1LV','2AOYTWX4H3H282M8LN7IEIJRJNY4ZV','yes'),
             ('A2ZUENR4ZLC3MN','2K5AB6BFMFFOHP0OD7AFLGESKIHJW8','yes')]
-        
+
         response = self.client.await_completion(self.client.post_assigned_labels(assignedLabels))
         self.assertEqual('OK', response['status'])
-        
+
         response = self.client.await_completion(self.client.get_estimated_workers_quality())
         print response
-        
-        
-           
-           
