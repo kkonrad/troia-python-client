@@ -10,7 +10,11 @@ class BugRegressionTests(unittest.TestCase):
     def tearDown(self):
         self.client.delete()
 
-    def testPeccatorImpius(self):
+    def test_GH_83(self):
+        """ 
+            Test for github issue https://github.com/ipeirotis/Troia-Server/issues/83
+            Thanks to PeccatorImpius for reporting
+        """
         categories= ['yes', 'no', 'blank'] 
         response = self.client.create(categories,
                                       calculator="CostBased",
@@ -114,5 +118,4 @@ class BugRegressionTests(unittest.TestCase):
         self.assertEqual('OK', response['status'])
 
         response = self.client.await_completion(self.client.get_estimated_workers_quality())
-        print response
         self.assertEqual('OK', response['status'])

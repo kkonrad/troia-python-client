@@ -93,12 +93,15 @@ class TestCachedScheduler(unittest.TestCase):
         objectCostList = sorted(objectCosts.items(), key=itemgetter(1), reverse=True)
         return objectCostList
 
-    def _check_results(self, expectedObjectList, newAssign, expectedObject, getWorkerObjects=False, workerId="worker1"):
+    def _runScheduler(self, workerId=None):
+        if (workerId):
+            return self.client.get_next_worker_object(workerId)
+        else:
+            return self.client.get_next_object()
+
+    def _check_results(self, expectedObjectList, newAssign, expectedObject, workerId=None):
         for (_, objectCost) in expectedObjectList:
-            if getWorkerObjects:
-                response = self.client.await_completion(self.client.get_next_worker_object(workerId))
-            else:
-                response = self.client.await_completion(self.client.get_next_object())
+            response = self.client.await_completion(self._runScheduler(workerId))
             objectName = response['result']['name']
 
             #get the objects with equal costs
@@ -107,17 +110,11 @@ class TestCachedScheduler(unittest.TestCase):
             self.assertTrue(objectName in equalCostObjects)
 
         # This one should be null. That means the 'result' key is not present in the response.
-        if getWorkerObjects:
-            self.assertIsNone(self.client.await_completion(self.client.get_next_worker_object(workerId)).get('result', None))
-        else:
-            self.assertIsNone(self.client.await_completion(self.client.get_next_object()).get('result', None))
+        self.assertIsNone(self.client.await_completion(self._runScheduler(workerId)).get('result', None))
 
         # Add assign to the object. The object should be returned by subsequent 'nextObject' call.
         self.assertEqual('OK', self.client.await_completion(self.client.post_assigned_labels(newAssign))['status'])
-        if getWorkerObjects:
-            response = self.client.await_completion(self.client.get_next_worker_object(workerId))
-        else:
-            response = self.client.await_completion(self.client.get_next_object())
+        response = self.client.await_completion(self._runScheduler(workerId))
         self.assertEqual('OK',response['status'])
 
         if response.get('result') == None:
@@ -266,7 +263,7 @@ class TestCachedScheduler(unittest.TestCase):
         expectedObject = 'object2'
 
         self._createTestPrereq(algorithm, self.scheduler, calculator, assigns)
-        self._check_results(expectedObjectsList, newAssign, expectedObject, True, 'worker1')
+        self._check_results(expectedObjectsList, newAssign, expectedObject, 'worker1')
 
     @data('BDS', 'IDS', 'BMV', 'IMV')
     def test_CachedScheduler_CountAssignsCalculator_GetNextWorkerObject_DifferentLabelCounts(self, algorithm):
@@ -282,7 +279,7 @@ class TestCachedScheduler(unittest.TestCase):
         expectedObject = 'object2'
 
         self._createTestPrereq(algorithm, self.scheduler, calculator, assigns)
-        self._check_results(expectedObjectsList, newAssign, expectedObject, True, 'worker1')
+        self._check_results(expectedObjectsList, newAssign, expectedObject, 'worker1')
 
 @ddt
 class TestNormalScheduler(unittest.TestCase):
@@ -430,4 +427,3 @@ class TestNormalScheduler(unittest.TestCase):
         expectedObjectList = [o[0] for o in sortedList if o[1] == minValue]
         newAssign = [('worker4', 'object0', 'cat3')]
         self._check_results(expectedObjectList, newAssign)
-
