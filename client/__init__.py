@@ -148,6 +148,9 @@ class AbstractTroiaClient(object):
 
     def get_next_object(self):
         return self._do_request_get("nextObject")
+    
+    def get_next_worker_object(self, workerId):
+        return self._do_request_get("nextObject/%s" %workerId)
 
     def get_object_assigns(self, objectId):
         return self._do_request_get("objects/%s/assigns" % objectId)
@@ -162,7 +165,7 @@ class AbstractTroiaClient(object):
 
     def get_workers(self):
         return self._do_request_get("workers")
-
+    
     def get_worker_info(self, workerId):
         return self._do_request_get("workers/%s/info" % workerId)
 
