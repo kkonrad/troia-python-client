@@ -65,3 +65,25 @@ class TestWorkers(unittest.TestCase):
                            2, 
                            "{}, from: {}, to: {}. expected:{}, was: {}".format(worker_name, e1['from'], e1['to'], e2['value'], e1['value']))
                 self.assertTrue(exists)
+
+    def test_GetWorkerInfo(self):
+        self.client.create(CATEGORIES, categoryPriors=CATEGORY_PRIORS, costMatrix=COST_MATRIX)
+        self.client.await_completion(self.client.post_assigned_labels(ASSIGNED_LABELS))
+        self.client.await_completion(self.client.post_compute())
+
+        response = self.client.await_completion(self.client.get_worker_info('worker1'))
+        self.assertTrue(5, len(response['result']['assigns']))
+        for a in response['result']['assigns']:
+                self.assertTrue((a['worker'], a['object'], a['label']) in ASSIGNED_LABELS)
+        self.assertTrue('worker1', response['result']['name'])
+
+    def test_GetWorkerAssigns(self):
+        self.client.create(CATEGORIES, categoryPriors=CATEGORY_PRIORS, costMatrix=COST_MATRIX)
+        self.client.await_completion(self.client.post_assigned_labels(ASSIGNED_LABELS))
+        self.client.await_completion(self.client.post_compute())
+
+        response = self.client.await_completion(self.client.get_worker_assigns('worker1'))
+        print response
+        self.assertTrue(5, len(response['result']))
+        for a in response['result']:
+            self.assertTrue((a['worker'], a['object'], a['label']) in ASSIGNED_LABELS)
