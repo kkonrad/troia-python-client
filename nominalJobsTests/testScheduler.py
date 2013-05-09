@@ -5,6 +5,7 @@ from ddt import ddt, data
 from client.gal import TroiaClient
 from operator import itemgetter
 from testSettings import *
+import pprint
 
 class TestUtils:
 
@@ -92,9 +93,12 @@ class TestCachedScheduler(unittest.TestCase):
         objectCostList = sorted(objectCosts.items(), key=itemgetter(1), reverse=True)
         return objectCostList
 
-    def _check_results(self, expectedObjectList, newAssign, expectedObject):
+    def _check_results(self, expectedObjectList, newAssign, expectedObject, getWorkerObjects=False, workerId="worker1"):
         for i in xrange(len(expectedObjectList)):
-            response = self.client.await_completion(self.client.get_next_object())
+            if getWorkerObjects:
+                response = self.client.await_completion(self.client.get_next_worker_object(workerId))
+            else:
+                response = self.client.await_completion(self.client.get_next_object())
             objectName = response['result']['name']
             objectCost = expectedObjectList[i][1]
 
@@ -106,11 +110,17 @@ class TestCachedScheduler(unittest.TestCase):
             self.assertTrue(objectName in equalCostObjects)
 
         # This one should be null. That means the 'result' key is not present in the response.
-        self.assertIsNone(self.client.await_completion(self.client.get_next_object()).get('result', None))
+        if getWorkerObjects:
+            self.assertIsNone(self.client.await_completion(self.client.get_next_worker_object(workerId)).get('result', None))
+        else:
+            self.assertIsNone(self.client.await_completion(self.client.get_next_object()).get('result', None))
 
         # Add assign to the object. The object should be returned by subsequent 'nextObject' call.
         self.assertEqual('OK', self.client.await_completion(self.client.post_assigned_labels(newAssign))['status'])
-        response = self.client.await_completion(self.client.get_next_object())
+        if getWorkerObjects:
+            response = self.client.await_completion(self.client.get_next_worker_object(workerId))
+        else:
+            response = self.client.await_completion(self.client.get_next_object())
         self.assertEqual('OK',response['status'])
 
         if response.get('result') == None:
@@ -119,7 +129,7 @@ class TestCachedScheduler(unittest.TestCase):
             self.assertEqual(expectedObject, response['result']['name'])
 
     @data('BDS', 'IDS', 'BMV', 'IMV')
-    def test_CachedScheduler_CountAssignsCalculator_DifferentLabelCounts_AddNewAssign(self, algorithm):
+    def test_CachedScheduler_CountAssignsCalculator_GetNextObject_DifferentLabelCounts_AddNewAssign(self, algorithm):
         calculator = 'countassigns'
         assignsGenerationModel = 'differentObjectCounts'
         noObjects = 3
@@ -132,7 +142,7 @@ class TestCachedScheduler(unittest.TestCase):
         self._check_results(expectedObjectsList, newAssign, expectedObject)
 
     @data('BDS', 'IDS', 'BMV', 'IMV')
-    def test_CachedScheduler_CountAssignsCalculator_DifferentLabelCounts_AddEmptyAssign(self, algorithm):
+    def test_CachedScheduler_CountAssignsCalculator_GetNextObject_DifferentLabelCounts_AddEmptyAssign(self, algorithm):
         calculator = 'countassigns'
         assignsGenerationModel = 'differentObjectCounts'
         noObjects = 3
@@ -145,7 +155,7 @@ class TestCachedScheduler(unittest.TestCase):
         self._check_results(expectedObjectsList, newAssign, expectedObject)
 
     @data('BDS', 'IDS', 'BMV', 'IMV')
-    def test_CachedScheduler_CountAssignsCalculator_SameLabelCounts_AddNewAssign(self, algorithm):
+    def test_CachedScheduler_CountAssignsCalculator_GetNextObject_SameLabelCounts_AddNewAssign(self, algorithm):
         calculator = 'countassigns'
         assignsGenerationModel = 'sameObjectCounts'
         noObjects = 2
@@ -158,7 +168,7 @@ class TestCachedScheduler(unittest.TestCase):
         self._check_results(expectedObjectsList, newAssign, expectedObject)
 
     @data('BDS', 'IDS', 'BMV', 'IMV')
-    def test_CachedScheduler_CountAssignsCalculator_DifferentLabelCounts_AddNewAssigns(self, algorithm):
+    def test_CachedScheduler_CountAssignsCalculator_GetNextObject_DifferentLabelCounts_AddNewAssigns(self, algorithm):
         calculator = 'countassigns'
         assigns = [('worker1', 'object1', 'porn'), 
                    ('worker2', 'object1', 'porn'),
@@ -184,7 +194,7 @@ class TestCachedScheduler(unittest.TestCase):
         self.assertEqual('object3', response['result']['name'])
 
     @data('BDS', 'IDS', 'BMV', 'IMV')
-    def test_CachedScheduler_CountAssignsCalculator_SameLabelCounts_AddEmptyAssign(self, algorithm):
+    def test_CachedScheduler_CountAssignsCalculator_GetNextObject_SameLabelCounts_AddEmptyAssign(self, algorithm):
         calculator = 'countassigns'
         assignsGenerationModel = 'sameObjectCounts'
         noObjects = 2
@@ -196,7 +206,7 @@ class TestCachedScheduler(unittest.TestCase):
         self._check_results(expectedObjectsList, newAssign, expectedObject)
 
     @data('BDS', 'IDS', 'BMV', 'IMV')
-    def test_CachedScheduler_CostBasedCalculator_SameCosts(self, algorithm):
+    def test_CachedScheduler_CostBasedCalculator_GetNextObject_SameCosts(self, algorithm):
         calculator = 'costbased'
         categories = ["cat1", "cat2"] 
         categoryPriors = [{"categoryName": "cat1", "value": 0.5}, {"categoryName": "cat2", "value": 0.5}]
@@ -211,7 +221,7 @@ class TestCachedScheduler(unittest.TestCase):
         self._check_results(objectCostList, newAssign, expectedObject)
 
     @data('BDS', 'IDS', 'BMV', 'IMV')
-    def test_CachedScheduler_CostBasedCalculator_DifferentObjectCosts_AssignsInOneCategory(self, algorithm):
+    def test_CachedScheduler_CostBasedCalculator_GetNextObject_DifferentObjectCosts_AssignsInOneCategory(self, algorithm):
         calculator = 'costbased'
         assigns = [('worker0', 'object0', 'notporn'), 
                    ('worker1', 'object0', 'notporn'), 
@@ -229,7 +239,7 @@ class TestCachedScheduler(unittest.TestCase):
         self._check_results(objectCostList, newAssign, expectedObject)
 
     @data('BDS', 'IDS', 'BMV', 'IMV')
-    def test_CachedScheduler_CostBasedCalculator_DifferentCosts(self, algorithm):
+    def test_CachedScheduler_CostBasedCalculator_GetNextObject_DifferentCosts(self, algorithm):
         calculator = 'costbased'
         assignsGenerationModel = 'differentObjectCosts'
         noObjects = 3
@@ -243,6 +253,39 @@ class TestCachedScheduler(unittest.TestCase):
         newAssign = []
         expectedObject = None
         self._check_results(objectCostList, newAssign, expectedObject)
+
+    @data('BDS', 'IDS', 'BMV', 'IMV')
+    def test_CachedScheduler_CountAssignsCalculator_GetNextWorkerObject_SameLabelCounts(self, algorithm):
+        calculator = 'countassigns'
+        assigns = [('worker1', 'object1', 'porn'),
+                   ('worker2', 'object2', 'notporn'),
+                   ('worker2', 'object3', 'notporn'),
+                   ('worker3', 'object2', 'notporn'),
+                   ('worker3', 'object3', 'notporn')
+                   ]
+
+        expectedObjectsList = [('object2', 2), ('object3', 2)]
+        newAssign = [('worker4', 'object2', CATEGORIES[1])]
+        expectedObject = 'object2'
+
+        self._createTestPrereq(algorithm, self.scheduler, calculator, assigns)
+        self._check_results(expectedObjectsList, newAssign, expectedObject, True, 'worker1')
+
+    @data('BDS', 'IDS', 'BMV', 'IMV')
+    def test_CachedScheduler_CountAssignsCalculator_GetNextWorkerObject_DifferentLabelCounts(self, algorithm):
+        calculator = 'countassigns'
+        assigns = [('worker1', 'object1', 'porn'),
+                   ('worker2', 'object1', 'porn'),
+                   ('worker2', 'object2', 'notporn'),
+                   ('worker3', 'object2', 'notporn'),
+                   ('worker3', 'object3', 'porn')]
+
+        expectedObjectsList = [('object3', 1), ('object2', 2)]
+        newAssign = [('worker4', 'object2', CATEGORIES[1])]
+        expectedObject = 'object2'
+
+        self._createTestPrereq(algorithm, self.scheduler, calculator, assigns)
+        self._check_results(expectedObjectsList, newAssign, expectedObject, True, 'worker1')
 
 @ddt
 class TestNormalScheduler(unittest.TestCase):
@@ -304,7 +347,7 @@ class TestNormalScheduler(unittest.TestCase):
         self.assertEquals(newAssign[0][1], response['result']['name'])
 
     @data('BDS', 'IDS', 'BMV', 'IMV')
-    def test_NormalScheduler_CountAssignsCalculator_DifferentLabelCounts(self, algorithm):
+    def test_NormalScheduler_CountAssignsCalculator_GetNextObject_DifferentLabelCounts(self, algorithm):
         calculator = 'countassigns'
         assignsGenModel = 'differentObjectCounts'
         noObjects = 3
@@ -316,7 +359,7 @@ class TestNormalScheduler(unittest.TestCase):
         self._check_results(expectedObjectsList[0][0], newAssign)
 
     @data('BDS', 'IDS', 'BMV', 'IMV')
-    def test_NormalScheduler_CountAssignsCalculator_DifferentLabelCounts_AddNewAssigns(self, algorithm):
+    def test_NormalScheduler_CountAssignsCalculator_GetNextObject_DifferentLabelCounts_AddNewAssigns(self, algorithm):
         calculator = 'countassigns'
         assigns = [('worker1', 'object1', 'porn'), 
                    ('worker2', 'object1', 'porn'),
@@ -336,7 +379,7 @@ class TestNormalScheduler(unittest.TestCase):
         self.assertEqual('object3', response['result']['name'])
 
     @data('BDS', 'IDS', 'BMV', 'IMV')
-    def test_NormalScheduler_CountAssignsCalculator_SameLabelCounts(self, algorithm):
+    def test_NormalScheduler_CountAssignsCalculator_GetNextObject_SameLabelCounts(self, algorithm):
         calculator = 'countassigns'
         categories = ["cat1", "cat2"] 
         categoryPriors = [{"categoryName": "cat1", "value": 0.5}, {"categoryName": "cat2", "value": 0.5}]
@@ -354,7 +397,7 @@ class TestNormalScheduler(unittest.TestCase):
         self._check_results(expectedObjectsList, newAssign)
 
     @data('BDS', 'IDS', 'BMV', 'IMV')
-    def test_NormalScheduler_CostBasedCalculator_SameCosts(self, algorithm):
+    def test_NormalScheduler_CostBasedCalculator_GetNextObject_SameCosts(self, algorithm):
         calculator = 'costbased'
         categories = ["cat1", "cat2"] 
         categoryPriors = [{"categoryName": "cat1", "value": 0.5}, {"categoryName": "cat2", "value": 0.5}]
@@ -375,7 +418,7 @@ class TestNormalScheduler(unittest.TestCase):
         self._check_results(expectedObjectList, newAssign)
 
     @data('BDS', 'IDS', 'BMV', 'IMV')
-    def test_NormalScheduler_CostBasedCalculator_DifferentCosts(self, algorithm):
+    def test_NormalScheduler_CostBasedCalculator_GetNextObject_DifferentCosts(self, algorithm):
         calculator = 'costbased'
         categories = ["cat1", "cat2", "cat3"] 
         categoryPriors = [{"categoryName": "cat1", "value": 0.1}, {"categoryName": "cat2", "value": 0.3},  {"categoryName": "cat3", "value": 0.6}]
