@@ -62,7 +62,7 @@ class TestCachedScheduler(unittest.TestCase):
             categoryPriors=categoryPriors,
             algorithm=algorithm,
             scheduler=scheduler,
-            calculator=calculator
+            prioritycalculator=calculator
         )
 
         self.assertEqual('OK', response['status'])
@@ -298,7 +298,7 @@ class TestNormalScheduler(unittest.TestCase):
             categoryPriors=categoryPriors,
             algorithm=algorithm,
             scheduler=scheduler,
-            calculator=calculator
+            prioritycalculator=calculator
         )
 
         self.assertEqual('OK', response['status'])
