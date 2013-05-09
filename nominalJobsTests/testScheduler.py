@@ -94,19 +94,16 @@ class TestCachedScheduler(unittest.TestCase):
         return objectCostList
 
     def _check_results(self, expectedObjectList, newAssign, expectedObject, getWorkerObjects=False, workerId="worker1"):
-        for i in xrange(len(expectedObjectList)):
+        for (_, objectCost) in expectedObjectList:
             if getWorkerObjects:
                 response = self.client.await_completion(self.client.get_next_worker_object(workerId))
             else:
                 response = self.client.await_completion(self.client.get_next_object())
             objectName = response['result']['name']
-            objectCost = expectedObjectList[i][1]
 
             #get the objects with equal costs
-            equalCostObjects = []
-            for item in expectedObjectList:
-                if item[1] == objectCost:
-                    equalCostObjects.append(item[0])
+            equalCostObjects = [item[0] for item in expectedObjectList
+                    if item[1] == objectCost]
             self.assertTrue(objectName in equalCostObjects)
 
         # This one should be null. That means the 'result' key is not present in the response.
@@ -429,12 +426,8 @@ class TestNormalScheduler(unittest.TestCase):
                    ('worker3', 'object2', 'cat2')]
         self._createTestPrereq(algorithm, self.scheduler, calculator, assigns, categories, categoryPriors)
         sortedList = self.getObjectCostsList()
-
-        expectedObjectList = []
         minValue = sortedList[0][1]
-        for o in sortedList:
-            if o[1] == minValue:
-                expectedObjectList.append(o[0])
-
+        expectedObjectList = [o[0] for o in sortedList if o[1] == minValue]
         newAssign = [('worker4', 'object0', 'cat3')]
         self._check_results(expectedObjectList, newAssign)
+
