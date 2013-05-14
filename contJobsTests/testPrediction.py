@@ -33,11 +33,8 @@ class TestPrediction(unittest.TestCase):
         self.assertEqual('OK', response['status'])
         self.assertEqual(len(EXPECTED_PREDICTION_OBJECTS), len(response['result']))
         for object in response['result']:
-            object_name = object['object']['name']
-            self.assertAlmostEqual(EXPECTED_PREDICTION_OBJECTS[object_name][0], object['est_zeta'], 5)
-            if 'goldLabel' in object['object']:
-                self.assertAlmostEqual(EXPECTED_PREDICTION_OBJECTS[object_name][1]['zeta'], object['object']['goldLabel']['zeta'], 5)
-                self.assertAlmostEqual(EXPECTED_PREDICTION_OBJECTS[object_name][1]['value'], object['object']['goldLabel']['value'], 5)
+            object_name = object['object']
+            self.assertAlmostEqual(EXPECTED_PREDICTION_OBJECTS[object_name][0], object['prediction']['est_zeta'], 5)
 
     def test_GetPredictionForOneObject_WithCompute(self):
         response = self.client.await_completion(self.client.post_compute())
@@ -59,9 +56,9 @@ class TestPrediction(unittest.TestCase):
         for worker in result:
             #check the assigned labels
             worker_name = worker['worker']
-            self.assertAlmostEqual(EXPECTED_PREDICTION_WORKERS[worker_name][0], worker['est_mu'], 5)
-            self.assertAlmostEqual(EXPECTED_PREDICTION_WORKERS[worker_name][1], worker['est_sigma'], 5)
-            self.assertAlmostEqual(EXPECTED_PREDICTION_WORKERS[worker_name][2], worker['est_rho'], 5)
+            self.assertAlmostEqual(EXPECTED_PREDICTION_WORKERS[worker_name][0], worker['quality']['est_mu'], 5)
+            self.assertAlmostEqual(EXPECTED_PREDICTION_WORKERS[worker_name][1], worker['quality']['est_sigma'], 5)
+            self.assertAlmostEqual(EXPECTED_PREDICTION_WORKERS[worker_name][2], worker['quality']['est_rho'], 5)
 
     def test_GetPredictionForOneWorker_WithCompute(self):
         response = self.client.await_completion(self.client.post_compute())
