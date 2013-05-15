@@ -1,4 +1,4 @@
-ADDRESS = 'http://localhost:8080/service-1.1'
+ADDRESS = 'http://localhost:8080/service'
 
 ASSIGNED_LABELS_CONT = [
     ('worker1', 'url1', 4.399898705211159),
