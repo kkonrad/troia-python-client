@@ -27,15 +27,17 @@ class TestJobs(unittest.TestCase):
             response = self.client.await_completion(self.client.get_job_status())
             self.assertEqual('BDS', response['result']['Initialization data']['algorithm'])
 
-        @data('BDS', 'IDS', 'BMV', 'IMV')
+        @data('BDS', 'bdS', 'IDS', 'iDS', 'BMV', ' BMV', 'IMV ', 'ImV')
         def test_createJob(self, algorithm):
             response = self.client.create(CATEGORIES, categoryPriors=CATEGORY_PRIORS, algorithm=algorithm)
+            if response['status'] != 'OK':
+                print response
             self.assertEqual('OK', response['status'])
             self.assertTrue('New job created with ID: RANDOM_' in response['result'])
 
             response = self.client.get_job_status()
             jobStatus = response['status']
-            if (jobStatus == 'NOT_READY'):
+            if (jobStatus == u'NOT_READY'):
                 time.sleep(5)
                 response = self.client.get_job_status()
                 jobStatus = response['status']
@@ -46,7 +48,7 @@ class TestJobs(unittest.TestCase):
 
         def test_createJob_WrongJobType(self):
             response = self.client.create(CATEGORIES, categoryPriors=CATEGORY_PRIORS, algorithm='test')
-            self.assertEqual('ERROR', response['status'])        
+            self.assertEqual('ERROR', response['status'])
             self.assertTrue('Unknown algorithm type' in response['result'])
 
         @data('BDS', 'IDS', 'BMV', 'IMV')

@@ -50,7 +50,7 @@ class TestCachedScheduler(unittest.TestCase):
 
     def setUp(self):
         self.client = TroiaClient(ADDRESS)
-        self.scheduler = 'cachedscheduler'
+        self.scheduler = 'CachedScheduler'
         self.utils = TestUtils()
 
     def tearDown(self):
@@ -97,7 +97,7 @@ class TestCachedScheduler(unittest.TestCase):
         #sort the objects descending, based on cost 
         objectCostList = sorted(objectCosts.items(), key=itemgetter(1), reverse=True)
         return objectCostList
-    
+
     def getAssignedLabels(self):
         response = self.client.await_completion(self.client.get_assigned_labels())
         self.assertEqual('OK', response['status'])
@@ -121,21 +121,25 @@ class TestCachedScheduler(unittest.TestCase):
             self.assertTrue(objectName in equalCostObjects)
 
         # This one should be null. That means the 'result' key is not present in the response.
-        self.assertIsNone(self.client.await_completion(self._runScheduler(workerId)).get('result', None))
+        response = self.client.await_completion(self._runScheduler(workerId))
+        if response['status'] != 'OK':
+            pprint.pprint(response)
+        self.assertIsNone(response.get('result', None))
 
         # Add assign to the object. The object should be returned by subsequent 'nextObject' call.
         self.assertEqual('OK', self.client.await_completion(self.client.post_assigned_labels(newAssign))['status'])
-        self.assertEqual('OK', self.client.await_completion(self.client.post_compute())['status'])
         if calculator == 'countassigns':
             newObjectsList = self.getObjectCountsList(self.getAssignedLabels(), False, excludedObjectsList)
         else:
+            self.assertEqual('OK', self.client.await_completion(self.client.post_compute())['status'])
             newObjectsList = self.getObjectCostsList()
-       
+
         #get the objects having the maximum priority
         maxPriorityObjects = [item[0] for item in newObjectsList
                     if item[1] == newObjectsList[0][1]]
 
         response = self.client.await_completion(self._runScheduler(workerId))
+
         self.assertEqual('OK',response['status'])
 
         if response.get('result') == None:
@@ -147,12 +151,14 @@ class TestCachedScheduler(unittest.TestCase):
     def test_CountAssignsCalculator_GetNextObject_DifferentLabelCounts_AddNewAssigns(self, algorithm):
         calculator = 'countassigns'
         assigns = [('worker1', 'object1', 'porn'), 
+                   ('worker2', 'object1', 'notporn'),
                    ('worker1', 'object2', 'porn'),
-                   ('worker2', 'object2', 'porn')]
-        
+                   ('worker2', 'object2', 'notporn'),
+                   ('worker3', 'object2', 'porn')]
+
         expectedObjectsList = self.getObjectCountsList(assigns, False)
 
-        newAssigns = [('worker2', 'object1', 'porn'), ('worker3', 'object1', 'notporn')]
+        newAssigns = [('worker1', 'object3', 'porn')]
         self._createTestPrereq(algorithm, self.scheduler, calculator, assigns)
         self._runTestMethod(calculator, expectedObjectsList, newAssigns)
 
@@ -162,7 +168,7 @@ class TestCachedScheduler(unittest.TestCase):
         assigns = [('worker1', 'object1', 'porn'), 
                    ('worker1', 'object2', 'porn'),
                    ('worker2', 'object2', 'porn')]
-        
+
         expectedObjectsList = self.getObjectCountsList(assigns, False)
         newAssign = []
         self._createTestPrereq(algorithm, self.scheduler, calculator, assigns)
@@ -175,12 +181,12 @@ class TestCachedScheduler(unittest.TestCase):
                    ('worker2', 'object1', 'porn'),
                    ('worker1', 'object2', 'porn'),
                    ('worker2', 'object2', 'porn')]
-        
+
         expectedObjectsList = self.getObjectCountsList(assigns, False)
         newAssign = [('worker3', 'object0', 'notporn')]
         self._createTestPrereq(algorithm, self.scheduler, calculator, assigns)
         self._runTestMethod(calculator, expectedObjectsList, newAssign)
-   
+
     @data('BDS', 'IDS', 'BMV', 'IMV')
     def test_CountAssignsCalculator_GetNextObject_SameLabelCounts_AddEmptyAssign(self, algorithm):
         calculator = 'countassigns'
@@ -192,7 +198,7 @@ class TestCachedScheduler(unittest.TestCase):
         newAssign = []
         self._createTestPrereq(algorithm, self.scheduler, calculator, assigns)
         self._runTestMethod(calculator, expectedObjectsList, newAssign)
-    
+
     @data('BDS', 'IDS', 'BMV', 'IMV')
     def test_CostBasedCalculator_GetNextObject_SameObjectCosts(self, algorithm):
         calculator = 'costbased'
@@ -257,7 +263,7 @@ class TestCachedScheduler(unittest.TestCase):
         self._createTestPrereq(algorithm, self.scheduler, calculator, assigns)
         self._runTestMethod(calculator, expectedObjectsList, newAssign, 'worker1', excludedObjectsList)
 
-    @data('BDS', 'IDS', 'BMV', 'IMV')
+    @data('BDS')
     def test_CountAssignsCalculator_GetNextWorkerObject_DifferentLabelCounts(self, algorithm):
         calculator = 'countassigns'
         assigns = [('worker1', 'object1', 'porn'),
@@ -308,7 +314,7 @@ class TestNormalScheduler(unittest.TestCase):
 
         #sort the objects ascending, based on the no of labels 
         sortedList = sorted(labelsDict.items(), key=itemgetter(1), reverse=reverse)
-        
+
         if (excludedObjectsList):
             for value in sortedList:
                 if value[0] in excludedObjectsList:
@@ -325,13 +331,13 @@ class TestNormalScheduler(unittest.TestCase):
         #sort the objects descending, based on cost 
         objectCostList = sorted(objectCosts.items(), key=itemgetter(1), reverse=True)
         return objectCostList
-    
+
     def getAssignedLabels(self):
         response = self.client.await_completion(self.client.get_assigned_labels())
         self.assertEqual('OK', response['status'])
         assignedLabels = [(l['worker'], l['object'], l['label']) for l in response['result']]
         return assignedLabels
-    
+
     def _runScheduler(self, workerId=None):
         if (workerId):
             return self.client.get_next_worker_object(workerId)
@@ -347,12 +353,12 @@ class TestNormalScheduler(unittest.TestCase):
         self.assertEqual('OK', self.client.await_completion(self.client.post_assigned_labels(newAssign))['status'])
         response = self.client.await_completion(self._runScheduler(workerId))
         self.assertEqual('OK',response['status'])
-        
+
         if calculator == 'countassigns':
             newObjectsList = self.getObjectCountsList(self.getAssignedLabels(), False, excludedObjectsList)
         else:
             newObjectsList = self.getObjectCostsList()
-       
+
         #get the objects having the maximum priority
         maxPriorityObjects = [item[0] for item in newObjectsList
                     if item[1] == newObjectsList[0][1]]
@@ -370,7 +376,7 @@ class TestNormalScheduler(unittest.TestCase):
         sortedList = self.getObjectCountsList(assigns, False)
         minValue = sortedList[0][1]
         expectedObjectsList = [o[0] for o in sortedList if o[1] == minValue]
-        
+
         self._createTestPrereq(algorithm, self.scheduler, calculator, assigns)
         self._runTestMethod(calculator, expectedObjectsList, [])
 
@@ -383,7 +389,7 @@ class TestNormalScheduler(unittest.TestCase):
                    ('worker2', 'object2', 'notporn'),
                    ('worker3', 'object2', 'porn'),
                    ]
-        
+
         sortedList = self.getObjectCountsList(assigns, False)
         minValue = sortedList[0][1]
         expectedObjectsList = [o[0] for o in sortedList if o[1] == minValue]
@@ -391,7 +397,7 @@ class TestNormalScheduler(unittest.TestCase):
         newAssign = [('worker1', 'object3', 'porn')]
         self._createTestPrereq(algorithm, self.scheduler, calculator, assigns)
         self._runTestMethod(calculator, expectedObjectsList, newAssign)
-    
+
     @data('BDS', 'IDS', 'BMV', 'IMV')
     def test_CountAssignsCalculator_GetNextObject_SameLabelCounts(self, algorithm):
         calculator = 'countassigns'
@@ -402,7 +408,7 @@ class TestNormalScheduler(unittest.TestCase):
                    ('worker2', 'object1', 'cat2'),
                    ('worker2', 'object2', 'cat2')]
         self._createTestPrereq(algorithm, self.scheduler, calculator, assigns, categories, categoryPriors)
-       
+
         sortedList = self.getObjectCountsList(assigns, False)
         minValue = sortedList[0][1]
         expectedObjectList = [o[0] for o in sortedList if o[1] == minValue]
@@ -420,7 +426,7 @@ class TestNormalScheduler(unittest.TestCase):
                    ('worker4', 'object2', 'cat1')]
         self._createTestPrereq(algorithm, self.scheduler, calculator, assigns, categories, categoryPriors)
         sortedList = self.getObjectCostsList()
-        
+
         minValue = sortedList[0][1]
         expectedObjectList = [o[0] for o in sortedList if o[1] == minValue]
 
@@ -460,7 +466,7 @@ class TestNormalScheduler(unittest.TestCase):
 
         self._createTestPrereq(algorithm, self.scheduler, calculator, assigns)
         self._runTestMethod(calculator, expectedObjectsList, newAssigns, 'worker1')
-    
+
     @data('BDS', 'IDS', 'BMV', 'IMV')
     def test_CountAssignsCalculator_GetNextWorkerObject_SameLabelCounts(self, algorithm):
         calculator = 'countassigns'
