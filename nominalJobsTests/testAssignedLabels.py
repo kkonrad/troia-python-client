@@ -49,17 +49,17 @@ class TestAssignedLabels(unittest.TestCase):
             categories = ['category1', "category2"]
             response = self.client.create(categories)
             self.assertEqual('OK', response['status'])
-            response = self.client.await_completion(self.client.post_assigned_labels([('hjkdhfhdfgjkshfghdsgffgfhfghgjhghjgjgjgjgjgjgjldkgj', 'object_dsjgfhgfhgfhhjdfhgkgkhjkfklsdjfkljsdfj', 'category1')]))
+            response = self.client.await_completion(self.client.post_assigned_labels([('hjkdhfhdfgjkshfghdsgffgfhfghgjhghjgjgjgjgjgjgjldkgjhjkdhfhdfgjkshfghdsgffgfhfghgjhghjgjgjgjgjgjgjldkg', 'object_dsjgfhgfhgfhhjdfhgkgkhjkfklsdjfkljsdfj', 'category1')]))
             self.assertEqual('ERROR', response['status'])
-            self.assertEqual('Internal error: Worker name should be shorter than 50 chars', response['result'])
-     
+            self.assertEqual('Internal error: Worker name should be shorter than 100 chars', response['result'])
+
         def test_AddGetAssignedLabels_LongObjectNames(self):
             categories = ['category1', "category2"]
             response = self.client.create(categories)
             self.assertEqual('OK', response['status'])
-            response = self.client.await_completion(self.client.post_assigned_labels([('hjkdhfhdfgjkshfghdsgffgfhfghgjhghjgkgj', 'object_dsjgfhgfhgfhhjdfhgjghghkgkhjkfklsdjfkljsdfj', 'category1')]))
+            response = self.client.await_completion(self.client.post_assigned_labels([('hjkdhfhdfgjkshfghdsgffgfhfghgjhghjgkgj', 'object_dsjgfhgfhgfhhjdfhgjghghkgkhjkfklsdjfkljsdfjobjectdsjgfhgfhgfhhjdfhgjghghkgkhjkfklsdjfkljsdfjwd', 'category1')]))
             self.assertEqual('ERROR', response['status'])
-            self.assertEqual('Internal error: Object name should be shorter than 50 chars', response['result'])
+            self.assertEqual('Internal error: Object name should be shorter than 100 chars', response['result'])
 
 
         def test_AddGetAssignedLabels_PrintableASCII_RegularChars(self):
