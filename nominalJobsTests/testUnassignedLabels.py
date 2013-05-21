@@ -37,14 +37,14 @@ class TestUnassignedLabels(unittest.TestCase):
     def test_AddGetUnassignedLabels_LongLabelNames(self):
         categories = ["category1", "category2"]
         priors = [{"categoryName": "category1", "value": 0.0000000001}, {"categoryName": "category2", "value": 0.9999999999}]
-        unassignedLabels = ["sdgfdgfgfhdsjgfhgfhgfhhjhgjhjjghghkgkhjkfklsdjfkljs"]
+        unassignedLabels = ["sdgfdgfgfhdsjgfhgfhgfhhjhgjhjjghghkgkhjkfklsdjfkljssdgfdgfgfhdsjgfhgfhgfhhjhgjhjjghghkgkhjkfklsdjfkljs"]
         expectedProbabilities = [('category1', 0.5), ('category2', 0.5)]
         response = self.client.create(categories, categoryPriors=priors, algorithm="BMV")
         self.assertEqual('OK', response['status'])
-        
+
         response = self.client.await_completion(self.client.post_objects(unassignedLabels))
         self.assertEqual('ERROR', response['status'])
-        self.assertEqual('Internal error: Object name should be shorter than 50 chars', response['result'])
+        self.assertEqual('Internal error: Object name should be shorter than 100 chars', response['result'])
 
 
     def test_AddGetUnassignedLabels_PrintableASCII_RegularChars(self):
