@@ -122,8 +122,6 @@ class TestCachedScheduler(unittest.TestCase):
 
         # This one should be null. That means the 'result' key is not present in the response.
         response = self.client.await_completion(self._runScheduler(workerId))
-        if response['status'] != 'OK':
-            pprint.pprint(response)
         self.assertIsNone(response.get('result', None))
 
         # Add assign to the object. The object should be returned by subsequent 'nextObject' call.
@@ -322,10 +320,12 @@ class TestNormalScheduler(unittest.TestCase):
         return sortedList
 
     def getObjectCostsList(self):
-        response = self.client.await_completion(self.client.get_estimated_objects_cost("ExpectedCost"))
-        if response['status'] != 'Ok':
-            pprint.pprint(response)
+        response = self.client.await_completion(self.client.post_compute())
         self.assertEquals("OK", response['status'])
+
+        response = self.client.await_completion(self.client.get_estimated_objects_cost("ExpectedCost"))
+        self.assertEquals("OK", response['status'])
+
         objectCosts = {}
         for result in response['result']:
             objectCosts[result['objectName']] = result['value']
