@@ -27,7 +27,8 @@ class TestJobs(unittest.TestCase):
             response = self.client.await_completion(self.client.get_job_status())
             self.assertEqual('BDS', response['result']['Initialization data']['algorithm'])
 
-        @data('BDS', 'bdS', 'IDS', 'iDS', 'BMV', ' BMV', 'IMV ', 'ImV')
+#        @data('BDS', 'bdS', 'IDS', 'iDS', 'BMV', ' BMV', 'IMV ', 'ImV') let's wait for Panos decision here: https://project-troia.atlassian.net/browse/TROIA-379
+        @data('BDS', 'bdS', 'IDS', 'iDS', 'BMV', 'ImV')
         def test_createJob(self, algorithm):
             response = self.client.create(CATEGORIES, categoryPriors=CATEGORY_PRIORS, algorithm=algorithm)
             if response['status'] != 'OK':

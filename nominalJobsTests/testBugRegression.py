@@ -127,6 +127,7 @@ class BugRegressionTests(unittest.TestCase):
             Thanks to PeccatorImpius for reporting
         """
         categories = ['blank', 'confirm_closed', 'confirm_no', 'confirm_nonrestaurant', 'confirm_yes']
+        algorithm = "BDS" # TODO XXX FIXME currently it won't work on IDS
         response = self.client.create(categories,
                                       prioritycalculator="CostBased",
                                       costMatrix=[ {"value":5.0,  "to":"blank", "from":"blank"},
@@ -156,7 +157,7 @@ class BugRegressionTests(unittest.TestCase):
                                                    {"value":0.0, "to":"confirm_yes", "from":"confirm_yes"}],
                                       epsilon=0.0001,
                                       iterations=10,
-                                      algorithm='BDS',  # TODO XXX FIXME currently it won't work on IDS
+                                      algorithm=algorithm,
                                       scheduler='NormalScheduler')
         self.assertEqual('OK', response['status'])
 
@@ -264,6 +265,9 @@ class BugRegressionTests(unittest.TestCase):
 
         response = self.client.await_completion(self.client.post_assigned_labels(assignedLabels))
         self.assertEqual('OK', response['status'])
+        
+        if algorithm == "BDS":
+            self.client.await_completion(self.client.post_compute())
 
         response = self.client.await_completion(self.client.get_estimated_workers_quality())
         self.assertEqual('OK', response['status'])
