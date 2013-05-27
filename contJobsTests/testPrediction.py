@@ -7,7 +7,7 @@ class TestPrediction(unittest.TestCase):
 
     def setUp(self):
         self.client = TroiaContClient(ADDRESS)
-        response = self.client.create()
+        response = self.client.create(iterations=20)
         self.assertEqual('OK', response['status'])
 
         #post the assigned labels
