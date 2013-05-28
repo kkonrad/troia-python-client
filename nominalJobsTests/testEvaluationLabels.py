@@ -37,7 +37,7 @@ class TestEvaluationLabels(unittest.TestCase):
         self._test_method(EVALUATION_DATA)
 
     def test_AddGetEvaluationLabel_PrintableASCII_SpecialChars(self):
-        self._test_method([('~!@%#$^&*()_+=-[]{}|:;<> ,./', 'notporn')])
+        self._test_method([('~!@%#^&*()_+=-[]{}:<>,./', 'notporn')])
 
     def test_AddGetEvaluationLabel_ExtendedASCIIChars(self):
         self._test_method([(u'™ž¤©', 'notporn')])

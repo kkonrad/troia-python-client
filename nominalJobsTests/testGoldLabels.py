@@ -40,7 +40,7 @@ class TestGoldLabels(unittest.TestCase):
         self._test_method([("url1", "notporn")])
 
     def test_AddGetGoldLabel_PrintableASCII_SpecialChars(self):
-        self._test_method([("~!@#$^&*()_+=-[]{}|:;<> ,./", "notporn")])
+        self._test_method([("~!@#^&*()_+=-[]{}:<>,./", "notporn")])
 
     def test_AddGetGoldLabel_ExtendedASCIIChars(self):
         self._test_method([(u"™ž¤©", "notporn")])

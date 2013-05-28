@@ -72,9 +72,9 @@ class TestAssignedLabels(unittest.TestCase):
             response = self.client.create(categories)
             self.assertEqual('OK', response['status'])
 
-            self._test_method([('a%a', '~!@#$%^&*()_+=-[]{}|:;<> ,./', 'category1'),
+            self._test_method([('a%a', '~!@#%^&*()_+=-[]{}:<>,./', 'category1'),
                 ('b%%b', '%%%', 'category2'),
-                ('c%%!<>c', '~!@#$^&*[](){}-_+=<>?/.,;:', 'category3')])
+                ('c%%!<>c', '~!@#^&*[](){}-_+=<>?/.,:', 'category3')])
 
         def test_AddGetAssignedLabels_ExtendedASCIIChars(self):
             categories = ['category1', "category2", "category3"]

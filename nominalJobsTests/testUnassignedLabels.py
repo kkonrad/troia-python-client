@@ -21,7 +21,6 @@ class TestUnassignedLabels(unittest.TestCase):
         #post the unassigned labels
         response = self.client.await_completion(self.client.post_objects(unassignedLabels))
         self.assertEqual('OK', response['status'])
-        self.assertEqual('OK', response['status'])
 
         #get the unassigned labels
         response = self.client.await_completion(self.client.get_objects())
@@ -58,7 +57,7 @@ class TestUnassignedLabels(unittest.TestCase):
 
     def test_AddGetUnassignedLabels_PrintableASCII_SpecialChars(self):
         categories = ["category1", "category2", "category3"]
-        unassignedLabels = ["~!@#$%^&*()_+=-[]{}|:;<> ,./"]
+        unassignedLabels = ["~!@#%^&*()_+=-[]{}:<>,./"]
         expectedProbabilities = [('category1', 0.3333333333333333),
                                  ('category2', 0.3333333333333333),
                                  ('category3', 0.3333333333333333)]

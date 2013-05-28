@@ -36,15 +36,7 @@ class TestJobs(unittest.TestCase):
             self.assertEqual('OK', response['status'])
             self.assertTrue('New job created with ID: RANDOM_' in response['result'])
 
-            response = self.client.get_job_status()
-            jobStatus = response['status']
-            if (jobStatus == u'NOT_READY'):
-                time.sleep(5)
-                response = self.client.get_job_status()
-                jobStatus = response['status']
-
-            self.assertEqual('OK', response['status'])
-            response = self.client.get_status(response['redirect'])
+            response = self.client.await_completion(self.client.get_job_status())
             self.assertJobData(response, algorithm, 0, 0, 0, 0)
 
         def test_createJob_WrongJobType(self):
@@ -104,9 +96,7 @@ class TestJobs(unittest.TestCase):
             response = self.client.create(categories, categoryPriors=self.get_priors(categories, priors), algorithm=algorithm)
             self.assertEqual('OK', response['status'])
 
-            response = self.client.get_job_status()
-            self.assertEqual('OK', response['status'])
-            response = self.client.get_status(response['redirect'])
+            response = self.client.await_completion(self.client.get_job_status())
             self.assertJobData(response, algorithm, 0, 0, 0, 0)
 
         @data('BDS', 'IDS', 'BMV', 'IMV')
@@ -132,9 +122,7 @@ class TestJobs(unittest.TestCase):
             response = self.client.create(categories, categoryPriors=self.get_priors(categories, priors), costMatrix=COST_MATRIX, algorithm=algorithm)
             self.assertEqual('OK', response['status'])
 
-            response = self.client.get_job_status()
-            self.assertEqual('OK', response['status'])
-            response = self.client.get_status(response['redirect'])
+            response = self.client.await_completion(self.client.get_job_status())
             self.assertJobData(response, algorithm, 0, 0, 0, 0)
 
         @data('BDS', 'IDS', 'BMV', 'IMV')
@@ -144,9 +132,7 @@ class TestJobs(unittest.TestCase):
             response = self.client.create(categories, algorithm=algorithm)
             self.assertEqual('OK', response['status'])
 
-            response = self.client.get_job_status()
-            self.assertEqual('OK', response['status'])
-            response = self.client.get_status(response['redirect'])
+            response = self.client.await_completion(self.client.get_job_status())
             self.assertJobData(response, algorithm, 0, 0, 0, 0)
 
         @data('BDS', 'IDS', 'BMV', 'IMV')
@@ -155,9 +141,7 @@ class TestJobs(unittest.TestCase):
             response = self.client.create(categories, costMatrix=COST_MATRIX, algorithm=algorithm)
             self.assertEqual('OK', response['status'])
 
-            response = self.client.get_job_status()
-            self.assertEqual('OK', response['status'])
-            response = self.client.get_status(response['redirect'])
+            response = self.client.await_completion(self.client.get_job_status())
             self.assertJobData(response, algorithm, 0, 0, 0, 0)
 
         @data('BDS', 'IDS', 'BMV', 'IMV')
