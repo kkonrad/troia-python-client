@@ -31,8 +31,6 @@ class TestJobs(unittest.TestCase):
         @data('BDS', 'bdS', 'IDS', 'iDS', 'BMV', 'ImV')
         def test_createJob(self, algorithm):
             response = self.client.create(CATEGORIES, categoryPriors=CATEGORY_PRIORS, algorithm=algorithm)
-            if response['status'] != 'OK':
-                print response
             self.assertEqual('OK', response['status'])
             self.assertTrue('New job created with ID: RANDOM_' in response['result'])
 

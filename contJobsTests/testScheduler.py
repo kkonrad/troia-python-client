@@ -104,13 +104,13 @@ class TestCachedScheduler(unittest.TestCase):
             self.assertTrue(response['result']['name'] in maxPriorityObjects)
 
     @data('GALC')
-    def test_CountAssignsCalculator_GetNextObject_DifferentLabelCounts(self, algorithm):
+    def test_CountAssignsCalculator_GetNextObject_SameLabelCounts(self, algorithm):
         calculator = 'countassigns'
         assigns = [('worker1', 'object1', 4.399898705211159),
                    ('worker2', 'object1', 2.399898705211159),
                    ('worker1', 'object2', -4.399898705211159),
                    ('worker2', 'object2', -0.700100702612725),
-                   ('worker3', 'object2', 2.645722067195676)]
+                   ('worker3', 'object3', 2.645722067195676)]
 
         expectedObjectsList = self.getObjectCountsList(assigns, False)
 
@@ -119,29 +119,13 @@ class TestCachedScheduler(unittest.TestCase):
         self._runTestMethod(calculator, expectedObjectsList, newAssigns)
 
     @data('GALC')
-    def test_CountAssignsCalculator_GetNextWorkerObject_DifferentLabelCounts(self, algorithm):
-        calculator = 'countassigns'
-        assigns = [('worker1', 'object1', 4.399898705211159),
-                   ('worker2', 'object1', 2.399898705211159),
-                   ('worker2', 'object2', -4.399898705211159),
-                   ('worker3', 'object2', -0.700100702612725),
-                   ('worker3', 'object3',  2.645722067195676)]
-
-        expectedObjectsList = [('object3', 1), ('object2', 2)]
-        newAssign = [('worker4', 'object2', 3.54674687574)]
-        excludedObjectsList = ['object1']
-
-        self._createTestPrereq(algorithm, self.scheduler, calculator, assigns)
-        self._runTestMethod(calculator, expectedObjectsList, newAssign, 'worker1', excludedObjectsList)
-
-    @data('GALC')
-    def test_CountAssignsCalculator_GetNextObject_SameLabelCounts(self, algorithm):
+    def test_CountAssignsCalculator_GetNextObject_DifferentLabelCounts(self, algorithm):
         calculator = 'countassigns'
         assigns = [('worker1', 'object1', 4.399898705211159),
                    ('worker2', 'object1', 2.399898705211159),
                    ('worker1', 'object2', -4.399898705211159),
                    ('worker2', 'object2', -0.700100702612725),
-                   ('worker3', 'object3', 2.645722067195676)]
+                   ('worker3', 'object2', 2.645722067195676)]
 
         expectedObjectsList = self.getObjectCountsList(assigns, False)
 
@@ -167,13 +151,29 @@ class TestCachedScheduler(unittest.TestCase):
         self._runTestMethod(calculator, expectedObjectsList, newAssign, 'worker1', excludedObjectsList)
 
     @data('GALC')
-    def test_CostBasedCalculator_GetNextObject_SameLabelCounts(self, algorithm):
-        calculator = 'costbased'
+    def test_CountAssignsCalculator_GetNextWorkerObject_DifferentLabelCounts(self, algorithm):
+        calculator = 'countassigns'
         assigns = [('worker1', 'object1', 4.399898705211159),
                    ('worker2', 'object1', 2.399898705211159),
-                   ('worker1', 'object2', -4.399898705211159),
-                   ('worker2', 'object2', -0.700100702612725),
-                   ('worker3', 'object3', 2.645722067195676)]
+                   ('worker2', 'object2', -4.399898705211159),
+                   ('worker3', 'object2', -0.700100702612725),
+                   ('worker3', 'object3',  2.645722067195676)]
+
+        expectedObjectsList = [('object3', 1), ('object2', 2)]
+        newAssign = [('worker4', 'object2', 3.54674687574)]
+        excludedObjectsList = ['object1']
+
+        self._createTestPrereq(algorithm, self.scheduler, calculator, assigns)
+        self._runTestMethod(calculator, expectedObjectsList, newAssign, 'worker1', excludedObjectsList)
+
+    @data('GALC')
+    def test_CostBasedCalculator_GetNextObject_SameLabelCounts(self, algorithm):
+        calculator = 'costbased'
+        assigns = [('worker1', 'object1', 10.000000434),
+                   ('worker2', 'object1', 20.00000121),
+                   ('worker2', 'object2', 30.00001133),
+                   ('worker3', 'object2', 140.0405070807049)
+                   ]
 
         self._createTestPrereq(algorithm, self.scheduler, calculator, assigns)
 
@@ -259,6 +259,22 @@ class TestNormalScheduler(unittest.TestCase):
         self.assertTrue(response['result']['name'] in maxPriorityObjects)
 
     @data('GALC')
+    def test_CountAssignsCalculator_GetNextObject_SameLabelCounts(self, algorithm):
+        calculator = 'countassigns'
+        assigns = [('worker1', 'object1', 4.399898705211159),
+                   ('worker1', 'object2', 1.455345344678543),
+                   ('worker2', 'object1', -2.232434324324),
+                   ('worker2', 'object2', 3.21413241341)]
+
+        self._createTestPrereq(algorithm, self.scheduler, calculator, assigns)
+        sortedList = self.getObjectCountsList(assigns, False)
+        minValue = sortedList[0][1]
+        expectedObjectList = [o[0] for o in sortedList if o[1] == minValue]
+
+        newAssign = [('worker3', 'object3', 2.343432532534)]
+        self._runTestMethod(calculator, expectedObjectList, newAssign)
+
+    @data('GALC')
     def test_CountAssignsCalculator_GetNextObject_DifferentLabelCounts(self, algorithm):
         calculator = 'countassigns'
         assigns = [('worker1', 'object1', 4.399898705211159),
@@ -276,20 +292,21 @@ class TestNormalScheduler(unittest.TestCase):
         self._runTestMethod(calculator, expectedObjectsList, newAssign)
 
     @data('GALC')
-    def test_CountAssignsCalculator_GetNextObject_SameLabelCounts(self, algorithm):
+    def test_CountAssignsCalculator_GetNextWorkerObject_SameLabelCounts(self, algorithm):
         calculator = 'countassigns'
-        assigns = [('worker1', 'object1', 4.399898705211159),
-                   ('worker1', 'object2', 1.455345344678543),
-                   ('worker2', 'object1', -2.232434324324),
-                   ('worker2', 'object2', 3.21413241341)]
+        assigns = [('worker1', 'object1', 10.000000434),
+                   ('worker2', 'object1', 20.00000121),
+                   ('worker2', 'object2', 30.00001133),
+                   ('worker3', 'object2', 140.0405070807049),
+                   ('worker3', 'object3', 1018375.248483994),
+                   ('worker4', 'object3', 10384746.364646522)
+                   ]
+
+        expectedObjectsList = ['object3', 'object2']
+        newAssigns = [('worker4', 'object4', 343573.434353452)]
 
         self._createTestPrereq(algorithm, self.scheduler, calculator, assigns)
-        sortedList = self.getObjectCountsList(assigns, False)
-        minValue = sortedList[0][1]
-        expectedObjectList = [o[0] for o in sortedList if o[1] == minValue]
-
-        newAssign = [('worker3', 'object3', 2.343432532534)]
-        self._runTestMethod(calculator, expectedObjectList, newAssign)
+        self._runTestMethod(calculator, expectedObjectsList, newAssigns, 'worker1')
 
     @data('GALC')
     def test_CountAssignsCalculator_GetNextWorkerObject_DifferentLabelCounts(self, algorithm):
@@ -304,23 +321,6 @@ class TestNormalScheduler(unittest.TestCase):
 
         expectedObjectsList = ['object3']
         newAssigns = [('worker4', 'object3', 100.3733435)]
-
-        self._createTestPrereq(algorithm, self.scheduler, calculator, assigns)
-        self._runTestMethod(calculator, expectedObjectsList, newAssigns, 'worker1')
-
-    @data('GALC')
-    def test_CountAssignsCalculator_GetNextWorkerObject_SameLabelCounts(self, algorithm):
-        calculator = 'countassigns'
-        assigns = [('worker1', 'object1', 10.000000434),
-                   ('worker2', 'object1', 20.00000121),
-                   ('worker2', 'object2', 30.00001133),
-                   ('worker3', 'object2', 140.0405070807049),
-                   ('worker3', 'object3', 1018375.248483994),
-                   ('worker4', 'object3', 10384746.364646522)
-                   ]
-
-        expectedObjectsList = ['object3', 'object2']
-        newAssigns = [('worker4', 'object4', 343573.434353452)]
 
         self._createTestPrereq(algorithm, self.scheduler, calculator, assigns)
         self._runTestMethod(calculator, expectedObjectsList, newAssigns, 'worker1')

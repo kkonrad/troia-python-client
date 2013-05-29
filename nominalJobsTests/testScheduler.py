@@ -175,7 +175,7 @@ class TestCachedScheduler(unittest.TestCase):
     @data('BDS', 'IDS', 'BMV', 'IMV')
     def test_CountAssignsCalculator_GetNextObject_SameLabelCounts_AddNewAssign(self, algorithm):
         calculator = 'countassigns'
-        assigns = [('worker1', 'object1', 'porn'), 
+        assigns = [('worker1', 'object1', 'porn'),
                    ('worker2', 'object1', 'porn'),
                    ('worker1', 'object2', 'porn'),
                    ('worker2', 'object2', 'porn')]
@@ -188,7 +188,7 @@ class TestCachedScheduler(unittest.TestCase):
     @data('BDS', 'IDS', 'BMV', 'IMV')
     def test_CountAssignsCalculator_GetNextObject_SameLabelCounts_AddEmptyAssign(self, algorithm):
         calculator = 'countassigns'
-        assigns = [('worker1', 'object1', 'porn'), 
+        assigns = [('worker1', 'object1', 'porn'),
                    ('worker2', 'object1', 'porn'),
                    ('worker1', 'object2', 'porn'),
                    ('worker2', 'object2', 'porn')]
@@ -200,7 +200,7 @@ class TestCachedScheduler(unittest.TestCase):
     @data('BDS', 'IDS', 'BMV', 'IMV')
     def test_CostBasedCalculator_GetNextObject_SameObjectCosts(self, algorithm):
         calculator = 'costbased'
-        categories = ["cat1", "cat2"] 
+        categories = ["cat1", "cat2"]
         categoryPriors = [{"categoryName": "cat1", "value": 0.5}, {"categoryName": "cat2", "value": 0.5}]
         costMatrix =  [{"from": "cat1", "to": "cat2", "value": 1.0}, {"from": "cat1", "to": "cat1", "value": 0.0}, 
                        {"from": "cat2", "to": "cat1", "value": 1.0}, {"from": "cat2", "to": "cat2", "value": 0.0}]
@@ -231,9 +231,9 @@ class TestCachedScheduler(unittest.TestCase):
     @data('BDS', 'IDS', 'BMV', 'IMV')
     def test_CostBasedCalculator_GetNextObject_DifferentObjectCosts_AddEmptyLabel(self, algorithm):
         calculator = 'costbased'
-        categories = ["porn", "notporn"] 
+        categories = ["porn", "notporn"]
         categoryPriors = [{"categoryName": "porn", "value": 0.1}, {"categoryName": "notporn", "value": 0.9}]
-        costMatrix =  [{"from": "porn", "to": "notporn", "value": 1.0}, {"from": "porn", "to": "porn", "value": 0.0}, 
+        costMatrix =  [{"from": "porn", "to": "notporn", "value": 1.0}, {"from": "porn", "to": "porn", "value": 0.0},
                        {"from": "notporn", "to": "porn", "value": 1.0}, {"from": "notporn", "to": "notporn", "value": 0.0}]
         assigns = [('worker0', 'object0', 'notporn'),
                    ('worker1', 'object1', 'porn'),
@@ -405,7 +405,7 @@ class TestNormalScheduler(unittest.TestCase):
         calculator = 'countassigns'
         categories = ["cat1", "cat2"] 
         categoryPriors = [{"categoryName": "cat1", "value": 0.5}, {"categoryName": "cat2", "value": 0.5}]
-        assigns = [('worker1', 'object1', 'cat1'), 
+        assigns = [('worker1', 'object1', 'cat1'),
                    ('worker1', 'object2', 'cat1'),
                    ('worker2', 'object1', 'cat2'),
                    ('worker2', 'object2', 'cat2')]
@@ -420,7 +420,7 @@ class TestNormalScheduler(unittest.TestCase):
     @data('BDS', 'IDS', 'BMV', 'IMV')
     def test_CostBasedCalculator_GetNextObject_SameCosts(self, algorithm):
         calculator = 'costbased'
-        categories = ["cat1", "cat2"] 
+        categories = ["cat1", "cat2"]
         categoryPriors = [{"categoryName": "cat1", "value": 0.5}, {"categoryName": "cat2", "value": 0.5}]
         assigns = [('worker1', 'object1', 'cat1'), 
                    ('worker2', 'object1', 'cat1'),
@@ -438,9 +438,9 @@ class TestNormalScheduler(unittest.TestCase):
     @data('BDS', 'IDS', 'BMV', 'IMV')
     def test_CostBasedCalculator_GetNextObject_DifferentCosts(self, algorithm):
         calculator = 'costbased'
-        categories = ["cat1", "cat2", "cat3"] 
+        categories = ["cat1", "cat2", "cat3"]
         categoryPriors = [{"categoryName": "cat1", "value": 0.1}, {"categoryName": "cat2", "value": 0.3},  {"categoryName": "cat3", "value": 0.6}]
-        assigns = [('worker1', 'object1', 'cat1'), 
+        assigns = [('worker1', 'object1', 'cat1'),
                    ('worker2', 'object1', 'cat2'),
                    ('worker2', 'object2', 'cat1'),
                    ('worker3', 'object1', 'cat1'),

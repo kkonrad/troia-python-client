@@ -86,9 +86,13 @@ class TroiaClient(AbstractTroiaClient):
 
     def get_workers_confusion_matrix(self):
         return self._do_request_get("workers/quality/matrix")
-    
+
     def get_workers_quality_summary(self):
         return self._do_request_get("workers/quality/summary")
-    
+
     def get_objects_quality_summary(self):
         return self._do_request_get("objects/quality/summary")
+
+    def get_workers_quality_payment(self):
+        return self._do_request_get("workers/quality/payment")
+
