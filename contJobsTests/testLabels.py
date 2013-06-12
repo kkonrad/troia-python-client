@@ -19,9 +19,7 @@ class TestLabels(unittest.TestCase):
         self.assertEqual('OK', response['status'])
 
     def test_getJobStatus(self):
-        response = self.client.get_job_status()
-        self.assertEqual('OK', response['status'])
-        response = self.client.get_status(response['redirect'])
+        response = self.client.await_completion(self.client.get_job_status())
         self.assertEqual('OK', response['status'])
         self.assertEqual(0, response['result']['Number of assigns'])
         self.assertEqual(0, response['result']['Number of gold objects'])

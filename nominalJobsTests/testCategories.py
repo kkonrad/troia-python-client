@@ -31,7 +31,7 @@ class TestCategories(unittest.TestCase):
             self.assertEqual('Category names should be shorter than 50 chars', response['result'])
 
         def test_AddGetCategories_PrintableASCII_SpecialChars(self):
-            categories = [u'!@#$:;,.{}[]', u'2ndCategory']
+            categories = [u'!@#$,.{}[]', u'2ndCategory']
             self._test_method(categories)
 
         def test_AddGetCategories_ExtendedASCIIChars(self):
