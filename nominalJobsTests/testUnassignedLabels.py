@@ -121,7 +121,7 @@ class TestUnassignedLabels(unittest.TestCase):
         for label in result:
             response = self.client.await_completion(self.client.get_probability_distribution(label['name']))
             dist = response['result'][0]
-            self.assertEqual(dist['value'], 0.5 if label['name'] in objects_without_assigns else 0.9 if dist['categoryName'] == 'porn' else 0.1)
+            self.assertAlmostEqual(dist['value'], 0.5 if label['name'] in objects_without_assigns else 0.9 if dist['categoryName'] == 'porn' else 0.1)
 
 if __name__ == '__main__':
     unittest.main()
