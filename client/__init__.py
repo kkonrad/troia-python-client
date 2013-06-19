@@ -1,6 +1,7 @@
 import json
 import time
 import requests
+import pprint
 from abc import ABCMeta, abstractmethod
 
 
@@ -75,6 +76,23 @@ class AbstractTroiaClient(object):
         '''
         return self._do_raw_request(requests.get, "status")
 
+    def get_config(self):
+        '''Retrieve the config setings
+
+        :return: current config settings
+        '''
+        return requests.get("{}config".format(self.url))
+
+    def post_config(self, data):
+        '''Set up the config parameters
+
+        :return: current config settings
+        '''
+        return requests.post("{}config".format(self.url), data=data)
+
+    def resetDB(self):
+        return requests.post("{}config/resetDB".format(self.url))
+
     def create(self, **kwargs):
         data = {}
         if self.jid:
@@ -99,6 +117,7 @@ class AbstractTroiaClient(object):
 
     def await_completion(self, request_response, timeout=0.5):
         if request_response['status'] == 'ERROR':
+            pprint.pprint(request_response)
             raise Exception(request_response)
         redirect_url = request_response['redirect']
         resp = self.get_status(redirect_url)
@@ -148,7 +167,7 @@ class AbstractTroiaClient(object):
 
     def get_next_object(self):
         return self._do_request_get("nextObject")
-    
+
     def get_next_worker_object(self, workerId):
         return self._do_request_get("nextObject/%s" %workerId)
 
@@ -165,7 +184,7 @@ class AbstractTroiaClient(object):
 
     def get_workers(self):
         return self._do_request_get("workers")
-    
+
     def get_worker_info(self, workerId):
         return self._do_request_get("workers/%s/info" % workerId)
 

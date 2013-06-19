@@ -27,7 +27,6 @@ class TestJobs(unittest.TestCase):
             response = self.client.await_completion(self.client.get_job_status())
             self.assertEqual('BDS', response['result']['Initialization data']['algorithm'])
 
-#        @data('BDS', 'bdS', 'IDS', 'iDS', 'BMV', ' BMV', 'IMV ', 'ImV') let's wait for Panos decision here: https://project-troia.atlassian.net/browse/TROIA-379
         @data('BDS', 'bdS', 'IDS', 'iDS', 'BMV', 'ImV')
         def test_createJob(self, algorithm):
             response = self.client.create(CATEGORIES, categoryPriors=CATEGORY_PRIORS, algorithm=algorithm)
@@ -36,6 +35,12 @@ class TestJobs(unittest.TestCase):
 
             response = self.client.await_completion(self.client.get_job_status())
             self.assertJobData(response, algorithm, 0, 0, 0, 0)
+
+        @data(' bDS', 'BdS ', '  BDS  ')
+        def test_createJob_TrimParams(self, algorithm):
+            response = self.client.create(CATEGORIES, categoryPriors=CATEGORY_PRIORS, algorithm=algorithm)
+            self.assertEqual('ERROR', response['status'])
+            self.assertEqual('Unknown algorithm type: [%s]. Did you mean: [bds]' %(algorithm), response['result'])
 
         def test_createJob_WrongJobType(self):
             response = self.client.create(CATEGORIES, categoryPriors=CATEGORY_PRIORS, algorithm='test')
