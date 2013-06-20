@@ -145,6 +145,7 @@ class TestCachedScheduler(unittest.TestCase):
         else:
             self.assertTrue(response['result']['name'] in maxPriorityObjects)
 
+    @unittest.skip('Skipping test')
     @data('BDS', 'IDS', 'BMV', 'IMV')
     def test_CountAssignsCalculator_GetNextObject_DifferentLabelCounts_AddNewAssigns(self, algorithm):
         calculator = 'countassigns'
@@ -160,6 +161,7 @@ class TestCachedScheduler(unittest.TestCase):
         self._createTestPrereq(algorithm, self.scheduler, calculator, assigns)
         self._runTestMethod(calculator, expectedObjectsList, newAssigns)
 
+    @unittest.skip('Skipping test')
     @data('BDS', 'IDS', 'BMV', 'IMV')
     def test_CountAssignsCalculator_GetNextObject_DifferentLabelCounts_AddEmptyAssign(self, algorithm):
         calculator = 'countassigns'
@@ -172,6 +174,7 @@ class TestCachedScheduler(unittest.TestCase):
         self._createTestPrereq(algorithm, self.scheduler, calculator, assigns)
         self._runTestMethod(calculator, expectedObjectsList, newAssign)
 
+    @unittest.skip('Skipping test')
     @data('BDS', 'IDS', 'BMV', 'IMV')
     def test_CountAssignsCalculator_GetNextObject_SameLabelCounts_AddNewAssign(self, algorithm):
         calculator = 'countassigns'
@@ -185,6 +188,7 @@ class TestCachedScheduler(unittest.TestCase):
         self._createTestPrereq(algorithm, self.scheduler, calculator, assigns)
         self._runTestMethod(calculator, expectedObjectsList, newAssign)
 
+    @unittest.skip('Skipping test')
     @data('BDS', 'IDS', 'BMV', 'IMV')
     def test_CountAssignsCalculator_GetNextObject_SameLabelCounts_AddEmptyAssign(self, algorithm):
         calculator = 'countassigns'
@@ -197,6 +201,7 @@ class TestCachedScheduler(unittest.TestCase):
         self._createTestPrereq(algorithm, self.scheduler, calculator, assigns)
         self._runTestMethod(calculator, expectedObjectsList, newAssign)
 
+    @unittest.skip('Skipping test')
     @data('BDS', 'IDS', 'BMV', 'IMV')
     def test_CostBasedCalculator_GetNextObject_SameObjectCosts(self, algorithm):
         calculator = 'costbased'
@@ -213,6 +218,7 @@ class TestCachedScheduler(unittest.TestCase):
         newAssign = [('worker3', 'object0', 'cat1')]
         self._runTestMethod(calculator, objectCostList, newAssign)
 
+    @unittest.skip('Skipping test')
     @data('BDS', 'IDS', 'BMV', 'IMV')
     def test_CostBasedCalculator_GetNextObject_DifferentObjectCosts(self, algorithm):
         calculator = 'costbased'
@@ -228,6 +234,7 @@ class TestCachedScheduler(unittest.TestCase):
         newAssign = [('worker3', 'object2', 'porn')]
         self._runTestMethod(calculator, objectCostList, newAssign)
 
+    @unittest.skip('Skipping test')
     @data('BDS', 'IDS', 'BMV', 'IMV')
     def test_CostBasedCalculator_GetNextObject_DifferentObjectCosts_AddEmptyLabel(self, algorithm):
         calculator = 'costbased'
@@ -244,6 +251,7 @@ class TestCachedScheduler(unittest.TestCase):
         newAssign = []
         self._runTestMethod(calculator, objectCostList, newAssign)
 
+    @unittest.skip('Skipping test')
     @data('BDS', 'IDS', 'BMV', 'IMV')
     def test_CountAssignsCalculator_GetNextWorkerObject_SameLabelCounts(self, algorithm):
         calculator = 'countassigns'
@@ -261,6 +269,7 @@ class TestCachedScheduler(unittest.TestCase):
         self._createTestPrereq(algorithm, self.scheduler, calculator, assigns)
         self._runTestMethod(calculator, expectedObjectsList, newAssign, 'worker1', excludedObjectsList)
 
+    @unittest.skip('Skipping test')
     @data('BDS', 'IDS', 'BMV', 'IMV')
     def test_CountAssignsCalculator_GetNextWorkerObject_DifferentLabelCounts(self, algorithm):
         calculator = 'countassigns'
