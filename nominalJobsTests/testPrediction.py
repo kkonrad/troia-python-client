@@ -50,10 +50,11 @@ class TestPrediction(unittest.TestCase):
         self.assertEqual('OK', response['status'])
         self.assertEqual([], response['result'])
 
-    def _getDataQualitySummary(self):
+    def _getDataQualitySummary(self, expectedDataQuality):
         response = self.client.await_completion(self.client.get_objects_quality_summary())
         self.assertEqual('OK', response['status'])
-        print response
+        for k, v in expectedDataQuality.items():
+            self.assertEqual(expectedDataQuality[k], response['result'][k])
 
     def _getPredictedWorkerQuality(self, costAlgorithm, expectedWorkerQuality):
         response = self.client.await_completion(self.client.get_estimated_workers_quality(costAlgorithm))
@@ -69,10 +70,11 @@ class TestPrediction(unittest.TestCase):
         for workerQuality in response['result']:
             self.assertTrue(math.isnan(workerQuality['value']))
 
-    def _getWorkersQualitySummary(self):
+    def _getWorkersQualitySummary(self, expectedWorkerQuality):
         response = self.client.await_completion(self.client.get_workers_quality_summary())
         self.assertEqual('OK', response['status'])
-        print response
+        for k, v in expectedWorkerQuality.items():
+            self.assertEqual(expectedWorkerQuality[k], response['result'][k])
 
     def _getCategoryProbability(self, expectedProbabilities):
         for object in set((x[1] for x in ASSIGNED_LABELS)):
@@ -197,12 +199,14 @@ class TestPredictionBDS(TestPrediction):
             self._getEvaluatedObjectsCost(labelChoosingMethod)
 
     def test_GetDataQualitySummary(self):
-        self._getDataQualitySummary()
+        expectedWorkerQuality = {'MaxLikelihood':1.0, 'ExpectedCost':1.0, 'MinCost':1.0 }
+        self._getDataQualitySummary(expectedWorkerQuality)
 
     def test_GetEvaluatedWorkersQuality_NoEvaluationData(self):
-        costAlgorithms = ["ExpectedCost", "MaxLikelihood", "MinCost"]
+        costAlgorithms = ['ExpectedCost', 'MaxLikelihood', 'MinCost']
         for costAlgorithm in costAlgorithms:
             self._getEvaluatedWorkerQuality(costAlgorithm)
 
     def test_GetWorkersQualitySummary(self):
-        self._getWorkersQualitySummary()
+        expectedWorkerQuality = {'MaxLikelihood':0.7333333333333334, 'ExpectedCost':0.6888888888888889, 'MinCost':0.7333333333333334}
+        self._getWorkersQualitySummary(expectedWorkerQuality)
