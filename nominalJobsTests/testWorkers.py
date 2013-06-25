@@ -23,9 +23,9 @@ class TestWorkers(unittest.TestCase):
         self.client.await_completion(self.client.post_assigned_labels(ASSIGNED_LABELS))
         self.client.await_completion(self.client.post_gold_data(GOLD_SAMPLES))
         response = self.client.await_completion(self.client.get_workers())
+        self.assertEqual(5, len(response['result']))
         for w in response['result']:
-            for a in w['assigns']:
-                self.assertTrue((a['worker'], a['object'], a['label']) in ASSIGNED_LABELS)
+            self.assertEqual(5, w['value']['assigns'])
 
     def test_AddGetWorkers_AfterCompute(self):
         self.client.create(CATEGORIES, categoryPriors=CATEGORY_PRIORS, costMatrix=COST_MATRIX)
@@ -34,9 +34,9 @@ class TestWorkers(unittest.TestCase):
 
         #assigns check
         response = self.client.await_completion(self.client.get_workers())
+        self.assertEqual(5, len(response['result']))
         for w in response['result']:
-            for a in w['assigns']:
-                self.assertTrue((a['worker'], a['object'], a['label']) in ASSIGNED_LABELS)
+            self.assertEqual(5, w['value']['assigns'])
         #confusion matrices check
         response = self.client.await_completion(self.client.get_workers_confusion_matrix())
 
@@ -69,13 +69,14 @@ class TestWorkers(unittest.TestCase):
     def test_GetWorkerInfo(self):
         self.client.create(CATEGORIES, categoryPriors=CATEGORY_PRIORS, costMatrix=COST_MATRIX)
         self.client.await_completion(self.client.post_assigned_labels(ASSIGNED_LABELS))
+        self.client.await_completion(self.client.post_gold_data(GOLD_SAMPLES))
         self.client.await_completion(self.client.post_compute())
 
         response = self.client.await_completion(self.client.get_worker_info('worker1'))
-        self.assertTrue(5, len(response['result']['assigns']))
-        for a in response['result']['assigns']:
-                self.assertTrue((a['worker'], a['object'], a['label']) in ASSIGNED_LABELS)
-        self.assertTrue('worker1', response['result']['name'])
+        self.assertTrue(5, response['result']['value']['assigns'])
+        self.assertEqual(2, response['result']['value']['goldTests'])
+        self.assertEqual(1, response['result']['value']['correctGoldTests'])
+        self.assertTrue('worker1', response['result']['workerName'])
 
     def test_GetWorkerAssigns(self):
         self.client.create(CATEGORIES, categoryPriors=CATEGORY_PRIORS, costMatrix=COST_MATRIX)
