@@ -16,16 +16,16 @@ class TestJobs(unittest.TestCase):
 
         def assertJobData(self, response, expAlgorithm, expNoAssigns, expNoGoldObjects, expNoObjects, expNoWorkers):
             self.assertEqual('OK', response['status'])
-            self.assertEqual(expAlgorithm, response['result']['Initialization data']['algorithm'])
-            self.assertEqual(expNoAssigns, response['result']['Number of assigns'])
-            self.assertEqual(expNoGoldObjects, response['result']['Number of gold objects'])
-            self.assertEqual(expNoObjects, response['result']['Number of objects'])
-            self.assertEqual(expNoWorkers, response['result']['Number of workers'])
+            self.assertEqual(expAlgorithm, response['result']['initializationData']['algorithm'])
+            self.assertEqual(expNoAssigns, response['result']['assigns'])
+            self.assertEqual(expNoGoldObjects, response['result']['goldObjects'])
+            self.assertEqual(expNoObjects, response['result']['objects'])
+            self.assertEqual(expNoWorkers, response['result']['workers'])
 
         def test_createJob_NoJobType(self):
             response = self.client.create(CATEGORIES, categoryPriors=CATEGORY_PRIORS)
             response = self.client.await_completion(self.client.get_job_status())
-            self.assertEqual('BDS', response['result']['Initialization data']['algorithm'])
+            self.assertJobData(response, 'BDS', 0, 0, 0, 0)
 
         @data('BDS', 'bdS', 'IDS', 'iDS', 'BMV', 'ImV')
         def test_createJob(self, algorithm):
