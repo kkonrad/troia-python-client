@@ -21,10 +21,10 @@ class TestLabels(unittest.TestCase):
     def test_getJobStatus(self):
         response = self.client.await_completion(self.client.get_job_status())
         self.assertEqual('OK', response['status'])
-        self.assertEqual(0, response['result']['Number of assigns'])
-        self.assertEqual(0, response['result']['Number of gold objects'])
-        self.assertEqual(0, response['result']['Number of objects'])
-        self.assertEqual(0, response['result']['Number of workers'])
+        self.assertEqual(0, response['result']['assigns'])
+        self.assertEqual(0, response['result']['goldObjects'])
+        self.assertEqual(0, response['result']['objects'])
+        self.assertEqual(0, response['result']['workers'])
 
     def test_AddGetAssignedLabels(self):
         self.load_assigns()
