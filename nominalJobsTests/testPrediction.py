@@ -51,7 +51,7 @@ class TestPrediction(unittest.TestCase):
         self.assertEqual([], response['result'])
 
     def _getDataQualitySummary(self, expectedDataQuality):
-        response = self.client.await_completion(self.client.get_objects_quality_summary())
+        response = self.client.await_completion(self.client.get_objects_quality_estimated_summary())
         self.assertEqual('OK', response['status'])
         for k, v in expectedDataQuality.items():
             self.assertEqual(expectedDataQuality[k], response['result'][k])
@@ -71,7 +71,7 @@ class TestPrediction(unittest.TestCase):
             self.assertTrue(math.isnan(workerQuality['value']))
 
     def _getWorkersQualitySummary(self, expectedWorkerQuality):
-        response = self.client.await_completion(self.client.get_workers_quality_summary())
+        response = self.client.await_completion(self.client.get_workers_quality_estimated_summary())
         self.assertEqual('OK', response['status'])
         for k, v in expectedWorkerQuality.items():
             self.assertEqual(expectedWorkerQuality[k], response['result'][k])

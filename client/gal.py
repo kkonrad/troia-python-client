@@ -87,11 +87,17 @@ class TroiaClient(AbstractTroiaClient):
     def get_workers_confusion_matrix(self):
         return self._do_request_get("workers/quality/matrix")
 
-    def get_workers_quality_summary(self):
-        return self._do_request_get("workers/quality/summary")
+    def get_workers_quality_estimated_summary(self):
+        return self._do_request_get("workers/quality/estimated/summary")
 
-    def get_objects_quality_summary(self):
-        return self._do_request_get("objects/quality/summary")
+    def get_workers_quality_evaluated_summary(self):
+        return self._do_request_get("workers/quality/evaluated/summary")
+    
+    def get_objects_quality_estimated_summary(self):
+        return self._do_request_get("objects/quality/estimated/summary")
+
+    def get_objects_quality_evaluted_summary(self):
+        return self._do_request_get("objects/quality/evaluated/summary")
 
     def get_workers_quality_payment(self, qualifiedWage="1.0", costThreshold="0.01"):
         return self._do_request_get("workers/quality/payment", {'qualifiedWage':qualifiedWage, 'costThreshold':costThreshold})
