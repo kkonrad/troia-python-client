@@ -84,6 +84,10 @@ class TroiaClient(AbstractTroiaClient):
         return self._do_request_get("workers/quality/evaluated", {
             'costAlgorithm': cost_algorithm})
 
+    def get_estimated_workers_cost(self, cost_algorithm="ExpectedCost"):
+        return self._do_request_get("workers/cost/estimated", {
+            'costAlgorithm': cost_algorithm})
+
     def get_workers_confusion_matrix(self):
         return self._do_request_get("workers/quality/matrix")
 
@@ -92,12 +96,18 @@ class TroiaClient(AbstractTroiaClient):
 
     def get_workers_quality_evaluated_summary(self):
         return self._do_request_get("workers/quality/evaluated/summary")
-    
+
     def get_objects_quality_estimated_summary(self):
         return self._do_request_get("objects/quality/estimated/summary")
 
-    def get_objects_quality_evaluted_summary(self):
+    def get_objects_quality_evaluated_summary(self):
         return self._do_request_get("objects/quality/evaluated/summary")
+
+    def get_objects_cost_estimated_summary(self):
+        return self._do_request_get("objects/cost/estimated/summary")
+
+    def get_objects_cost_evaluated_summary(self):
+        return self._do_request_get("objects/cost/evaluated/summary")
 
     def get_workers_quality_payment(self, qualifiedWage="1.0", costThreshold="0.01"):
         return self._do_request_get("workers/quality/payment", {'qualifiedWage':qualifiedWage, 'costThreshold':costThreshold})
