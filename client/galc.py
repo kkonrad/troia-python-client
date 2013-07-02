@@ -7,7 +7,7 @@ class TroiaContClient(AbstractTroiaClient):
     '''
 
     job_type = "jobs"
-    
+
     def create(self, **kwargs):
         data = {'algorithm': "GALC"}
         data.update(kwargs)
