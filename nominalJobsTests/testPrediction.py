@@ -68,7 +68,7 @@ class TestPrediction(unittest.TestCase):
         response = self.client.await_completion(self.client.get_evaluated_workers_quality(costAlgorithm))
         self.assertEqual('OK', response['status'])
         for workerQuality in response['result']:
-            self.assertTrue(math.isnan(workerQuality['value']))
+            self.assertTrue(math.isnan(float(workerQuality['value'])))
 
     def _getWorkersQualitySummary(self, expectedWorkerQuality):
         response = self.client.await_completion(self.client.get_workers_quality_estimated_summary())
