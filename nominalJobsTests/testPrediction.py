@@ -23,85 +23,85 @@ class TestPrediction(unittest.TestCase):
         response = self.client.await_completion(self.client.get_objects_prediction(method))
         self.assertEqual('OK', response['status'])
         for categories in response['result']:
-            self.assertAlmostEqual(expectedResults[categories['objectName']], categories['categoryName'])
+            self.assertEqual(expectedResults[categories['objectName']], categories['categoryName'])
 
     def _getEstimatedObjectsCost(self, costMethod, expectedCosts):
         response = self.client.await_completion(self.client.get_estimated_objects_cost(costMethod))
         self.assertEqual('OK', response['status'])
         for cost in response['result']:
-            self.assertAlmostEqual(expectedCosts[cost['objectName']], cost['value'])
+            self.assertTrue(abs(expectedCosts[cost['objectName']] - cost['value']) / 100 < TOLERANCE)
 
     def _getEvaluatedObjectsCost(self, labelChoosingMethod, expectedResults):
         response = self.client.await_completion(self.client.get_evaluated_objects_cost(labelChoosingMethod))
         self.assertEqual('OK', response['status'])
         for item in response['result']:
-            self.assertEqual(expectedResults[item['objectName']], item['value'])
+            self.assertTrue(abs(expectedResults[item['objectName']] - item['value']) / 100 < TOLERANCE)
 
     def _getEstimatedObjectsQuality(self, costAlgorithm, expectedDataQuality):
         response = self.client.await_completion(self.client.get_estimated_objects_quality(costAlgorithm))
         self.assertEqual('OK', response['status'])
         for dataQuality in response['result']:
-            self.assertEqual(expectedDataQuality[dataQuality['objectName']], dataQuality['value'])
+            self.assertTrue(abs(expectedDataQuality[dataQuality['objectName']] - dataQuality['value']) / 100 < TOLERANCE)
 
     def _getEvaluatedObjectsQuality(self, labelChoosingMethod, expectedResults):
         response = self.client.await_completion(self.client.get_evaluated_objects_quality(labelChoosingMethod))
         self.assertEqual('OK', response['status'])
         for item in response['result']:
-            self.assertEqual(expectedResults[item['objectName']], item['value'])
+            self.assertTrue(abs(expectedResults[item['objectName']] - item['value']) / 100 < TOLERANCE)
 
     def _getEstimatedObjectsCostSummary (self, expectedObjectsCosts):
         response = self.client.await_completion(self.client.get_objects_cost_estimated_summary())
         self.assertEqual('OK', response['status'])
         for k, v in expectedObjectsCosts.items():
-            self.assertAlmostEqual(expectedObjectsCosts[k], response['result'][k])
+            self.assertTrue(abs(expectedObjectsCosts[k] - response['result'][k]) / 100 < TOLERANCE)
 
     def _getEvaluatedObjectsCostSummary (self, expectedObjectsCosts):
         response = self.client.await_completion(self.client.get_objects_cost_evaluated_summary())
         self.assertEqual('OK', response['status'])
         for k, v in expectedObjectsCosts.items():
-            self.assertEqual(expectedObjectsCosts[k], response['result'][k])
+            self.assertTrue(abs(expectedObjectsCosts[k] - response['result'][k]) / 100 < TOLERANCE)
 
     def _getEstimatedObjectsQualitySummary(self, expectedDataQuality):
         response = self.client.await_completion(self.client.get_objects_quality_estimated_summary())
         self.assertEqual('OK', response['status'])
         for k, v in expectedDataQuality.items():
-            self.assertAlmostEqual(expectedDataQuality[k], response['result'][k])
+            self.assertTrue(abs(expectedDataQuality[k] - response['result'][k]) / 100 < TOLERANCE)
 
     def _getEvaluatedObjectsQualitySummary(self, expectedDataQuality):
         response = self.client.await_completion(self.client.get_objects_quality_evaluated_summary())
         self.assertEqual('OK', response['status'])
         for k, v in expectedDataQuality.items():
-            self.assertAlmostEqual(expectedDataQuality[k], response['result'][k])
+            self.assertTrue(abs(expectedDataQuality[k] - response['result'][k]) / 100 < TOLERANCE)
 
     def _getEstimatedWorkerCost(self, costAlgorithm, expectedWorkerCost):
         response = self.client.await_completion(self.client.get_estimated_workers_cost(costAlgorithm))
         self.assertEqual('OK', response['status'])
         for workerCost in response['result']:
-            self.assertAlmostEqual(expectedWorkerCost[workerCost['workerName']], workerCost['value'])
+            self.assertTrue(abs(expectedWorkerCost[workerCost['workerName']] - workerCost['value']) / 100 < TOLERANCE)
 
     def _getEstimatedWorkerQuality(self, costAlgorithm, expectedWorkerQuality):
         response = self.client.await_completion(self.client.get_estimated_workers_quality(costAlgorithm))
         self.assertEqual('OK', response['status'])
         for workerQuality in response['result']:
-            self.assertAlmostEqual(expectedWorkerQuality[workerQuality['workerName']], workerQuality['value'])
+            self.assertTrue(abs(expectedWorkerQuality[workerQuality['workerName']] - workerQuality['value']) / 100 < TOLERANCE)
 
     def _getEvaluatedWorkerQuality(self, costAlgorithm, expectedResults):
         response = self.client.await_completion(self.client.get_evaluated_workers_quality(costAlgorithm))
         self.assertEqual('OK', response['status'])
         for item in response['result']:
-            self.assertEqual(expectedResults[item['workerName']], item['value'])
+            self.assertTrue(abs(expectedResults[item['workerName']] - item['value']) / 100 < TOLERANCE)
 
     def _getWorkersQualityEstimatedSummary(self, expectedWorkerQuality):
         response = self.client.await_completion(self.client.get_workers_quality_estimated_summary())
         self.assertEqual('OK', response['status'])
         for k, v in expectedWorkerQuality.items():
-            self.assertEqual(expectedWorkerQuality[k], response['result'][k])
+            self.assertTrue(abs(expectedWorkerQuality[k] - response['result'][k]) / 100 < TOLERANCE)
 
     def _getWorkersQualityEvaluatedSummary(self, expectedWorkerQuality):
         response = self.client.await_completion(self.client.get_workers_quality_evaluated_summary())
         self.assertEqual('OK', response['status'])
         for k, v in expectedWorkerQuality.items():
-            self.assertEqual(expectedWorkerQuality[k], response['result'][k])
+            self.assertTrue(abs(expectedWorkerQuality[k] - response['result'][k]) / 100 < TOLERANCE)
 
     def _getCategoryProbability(self, expectedProbabilities):
         for object in set((x[1] for x in ASSIGNED_LABELS)):
@@ -151,7 +151,7 @@ class TestPredictionIDS(TestPrediction):
         self._getObjectsPrediction(costAlgorithm, expectedCategories)
 
     def test_GetEstimatedObjectsCostSummary(self):
-        expectedObjectsCosts = {'MaxLikelihood':0.13045135272274802, 'ExpectedCost':0.18053434133112525, 'MinCost':0.13045135272274802, 'Spammer':0.5 }
+        expectedObjectsCosts = {'MaxLikelihood':0.07310900628720637, 'ExpectedCost': 0.12222272685135464, 'MinCost':0.07310900628720637, 'Spammer':0.5 }
         self._getEstimatedObjectsCostSummary(expectedObjectsCosts)
 
     def test_GetEvaluatedObjectsCostSummary(self):
@@ -159,7 +159,7 @@ class TestPredictionIDS(TestPrediction):
         self._getEvaluatedObjectsCostSummary(expectedObjectsCosts)
 
     def test_GetEstimatedObjectsQualitySummary(self):
-        expectedObjectsQuality = {'MaxLikelihood':0.739097294554504, 'ExpectedCost':0.6389313173377495, 'MinCost':0.739097294554504 }
+        expectedObjectsQuality = {'MaxLikelihood':0.8537819874255872, 'ExpectedCost':0.7555545462972907, 'MinCost':0.8537819874255872 }
         self._getEstimatedObjectsQualitySummary(expectedObjectsQuality)
 
     def test_GetEvaluatedObjectsQualitySummary(self):
@@ -168,13 +168,13 @@ class TestPredictionIDS(TestPrediction):
 
     @data('ExpectedCost', 'MaxLikelihood', 'MinCost')
     def test_GetEstimatedWorkersCost(self, costAlgorithm):
-        expectedWorkersCost = {'ExpectedCost':  {'worker1':0.4623062156843241, 'worker2':0.4293514558166182, 'worker3':0.34760515356531635, 'worker4':0.24473477143048578, 'worker5':0.42542373936210476},
-                               'MaxLikelihood': {'worker1':0.46565701665845577, 'worker2':0.3151766751397192, 'worker3':0.2294316591298916, 'worker4':0.14920267770148643, 'worker5':0.3061659701843492},
-                               'MinCost':       {'worker1':0.46565701665845577, 'worker2':0.3151766751397192, 'worker3':0.2294316591298916, 'worker4':0.14920267770148643, 'worker5':0.3061659701843492}}
+        expectedWorkersCost = {'ExpectedCost':  {'worker1':0.4623062156843241, 'worker2':0.4197832738474573, 'worker3': 0.2916474195812677, 'worker4':0.24473477143048578, 'worker5':0.42542373936210476},
+                               'MaxLikelihood': {'worker1':0.46565701665845577, 'worker2':0.3036897051721378, 'worker3':0.2294316591298916, 'worker4':0.14920267770148643, 'worker5':0.3061659701843492},
+                               'MinCost':       {'worker1':0.46565701665845577, 'worker2':0.3036897051721378, 'worker3':0.2294316591298916, 'worker4':0.14920267770148643, 'worker5':0.3061659701843492}}
         self._getEstimatedWorkerCost(costAlgorithm, expectedWorkersCost[costAlgorithm])
 
     def test_GetEstimatedWorkersQualitySummary(self):
-        expectedWorkerQuality = {'MaxLikelihood':0.4137464004744391, 'ExpectedCost':0.23623146565646036, 'MinCost':0.4137464004744391}
+        expectedWorkerQuality = {'MaxLikelihood':0.4343467677781081, 'ExpectedCost':0.2559168766995432, 'MinCost':0.4343467677781081}
         self._getWorkersQualityEstimatedSummary(expectedWorkerQuality)
 
     def test_GetEvaluatedWorkersQualitySummary(self):
