@@ -19,7 +19,7 @@ def main(args):
     for js in JOB_STORAGES:
         post_request("{}/config".format(ADDRESS), {'JOBS_STORAGE': js})
         post_request("{}/config/resetDB".format(ADDRESS))
-        noseargs = ['testStorages', '--ignore-files=.*testConfig.*' '--with-xunit', '--xunit-file=%s_Results.xml' %js]
+        noseargs = ['testStorages', '--ignore-files=.*testConfig.*', '--with-xunit', '--xunit-file=%s_Results.xml' %js]
         nose.run(argv=noseargs)
 
 if __name__ == '__main__':
