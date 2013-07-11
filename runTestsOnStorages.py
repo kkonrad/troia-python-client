@@ -14,9 +14,12 @@ def post_request(url, data={}):
             break
         else:
             print "{}: {}".format(response.reason, response.content)
+    if not response.ok:
+        assert False, "Failed changing backend"
 
 def main(args):
     for js in JOB_STORAGES:
+        print "Working on backend: " + js
         post_request("{}/config".format(ADDRESS), {'JOBS_STORAGE': js})
         post_request("{}/config/resetDB".format(ADDRESS))
         noseargs = ['testStorages', '-v', '--ignore-files=.*testConfig.*', '--with-xunit', '--xunit-file=%s_Results.xml' %js]
